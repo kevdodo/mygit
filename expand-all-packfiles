@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+git_dir="$(git rev-parse --show-toplevel)/.git"
+
+tmp_dir=$(mktemp -d)
+
+shopt -s nullglob
+for f in "$git_dir/objects/pack/"pack-*.pack
+do
+    echo "Unpacking $f"
+    mv "$f" "$tmp_dir/packfile"
+    git unpack-objects < "$tmp_dir/packfile"
+done
+shopt -u nullglob
+
+echo "Cleaning up packfile indexes"
+# Cleanup all index files, we just removed all the packfiles
+rm -f "$git_dir/objects/pack/pack-*.idx"
+
+# Cleanup references to the old packfiles
+echo "Running git fsck"
+git fsck
+
+
+exit 0 # not sure if ref expansion is needed yet
+
+echo "Expanding refs"
+while read -r line
+do
+    sha="$(echo $line | cut -c1-40)"
+    path="$(echo $line | cut -c42-)"
+    echo "Writing $sha to $path"
+    echo "$sha" > "$git_dir/$path"
+done < <(git show-ref)
