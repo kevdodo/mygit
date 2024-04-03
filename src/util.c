@@ -83,9 +83,13 @@ void make_parent_dirs(char *path) {
     char *file_start = strrchr(path, '/');
     if (file_start == NULL) return;
 
+    // we want to include the trailing slash so make_dirs works properly
+    // TODO: Not sure why these methods are separate to be honest
+    file_start++; // safe, moves to null terminator in worst case
+    char old_file_start = *file_start;
     *file_start = '\0';
     make_dirs(path);
-    *file_start = '/';
+    *file_start = old_file_start;
 }
 
 size_t get_file_size(FILE *f) {
