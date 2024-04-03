@@ -31,6 +31,11 @@ FILE *open_config_file(char *mode) {
     return file;
 }
 
+static char *skip_whitespace(char* line) {
+    while (*line && isspace(*line)) line++;
+    return line;
+}
+
 char *read_config_line(FILE *file) {
     while (true) {
         char *line = NULL;
@@ -40,6 +45,10 @@ char *read_config_line(FILE *file) {
             assert(feof(file));
             free(line);
             return NULL;
+        } else if (line_length < 1) {
+            // empty line
+            free(line);
+            continue;
         }
 
         assert(line[line_length - 1] == '\n');
@@ -83,9 +92,9 @@ config_t *read_config_file(FILE *file) {
         char *property_line;
         while (
             (property_line = read_config_line(file)) != NULL &&
-            property_line[0] == PROPERTY_START
+            property_line[0] != SECTION_START
         ) {
-            char *key_start = property_line + 1;
+            char *key_start = skip_whitespace(property_line);
             char *key_end = strstr(key_start, PROPERTY_SEPARATOR);
             assert(key_end != NULL);
             section->property_count++;
