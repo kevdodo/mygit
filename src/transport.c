@@ -102,7 +102,15 @@ _Noreturn void exec_ssh(
     strcpy(ssh_command, command);
     strcat(ssh_command, project);
     strcat(ssh_command, CLOSE_QUOTE);
-    char *argv[] = {(char *) SSH, (char *) ssh_login, ssh_command, NULL};
+    char *ssh_extra_arg;
+    char **argv;
+    if ((ssh_extra_arg = getenv("MYGIT_TESTS_SSH_EXTRA_ARG"))) {
+        char* the_argv[] = {(char *) SSH, (char*)ssh_extra_arg, (char *) ssh_login, ssh_command, NULL};
+        argv = the_argv;
+    } else {
+        char* the_argv[] = {(char *) SSH, (char *) ssh_login, ssh_command, NULL};
+        argv = the_argv;
+    }
     execvp(argv[0], argv);
     fprintf(stderr, "SSH command failed\n");
     assert(false);
