@@ -1,4 +1,4 @@
 test:
     script: "/testers/cs37/git/test/test"
 reveal:
-    script: "/testers/cs37/regex/reveal/test"
+    script: "/testers/cs37/git/reveal/test"
