@@ -90,8 +90,6 @@ void status(void) {
 
     list_node_t *curr_node = key_set(idx_file->entries);
     // printf("yoooooo");
-
-
     // while (curr_node != NULL){
     //     char *file_name = curr_node->value;
     //     printf("key: %s\n", file_name);
@@ -117,22 +115,26 @@ void status(void) {
 
         index_entry_t *entry = hash_table_get(idx_file->entries, file_name);
         printf("fname %s \n", entry->fname);
-        printf("hash %s\n", entry->sha1);
+        printf("hash   idx: %s\n", entry->sha1);
 
         char *hash_commit = (char *) hash_table_get(commit_table, file_name);
         if (hash_commit != NULL) {
-            printf("uhhhh");
-            // printf("hash commit %s", hash_commit);
+            printf("hash commit %s\n", hash_commit);
         } else {
+            // in the index, not in the commit 
+            printf("\tmodified: %s\n", file_name);
+
             printf("hash commit not found for file %s", file_name);
         }
-        // if ( != hash_table_get(commit_table, file_name)){
-        //     printf("\tmodified: %s", file_name);
-        // } 
+        if (strcmp(entry->sha1, (char *) hash_table_get(commit_table, file_name)) != 0){
+            printf("\tmodified: %s\n", file_name);
+        }
         curr_node = curr_node->next;
     }
 
-    free_hash_table(commit_table);
+
+    // TODO WHY IS THIS UNNECESSARY???
+    // free_hash_table(commit_table, free);
 
     // compare the two hashmaps to see if theres a difference lol
 
