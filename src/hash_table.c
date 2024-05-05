@@ -114,7 +114,6 @@ void *hash_table_add(hash_table_t *table, const char *key, void *value) {
 void *hash_table_get(const hash_table_t *table, const char *key) {
     linked_list_t *list = table->entries[hash_func(key) % BUCKETS];
 
-
     if (list == NULL) return NULL;
     
 

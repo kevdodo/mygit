@@ -8,6 +8,7 @@
 #include "object_io.h"
 #include "ref_io.h"
 
+#include "linked_list.h"
 
 #include "util.h"
 
@@ -21,26 +22,48 @@ struct linked_list {
 };
 
 
-void expand_tree(object_hash_t tree_hash){
+void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
     
     tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
 
     for (int i = 0; i < tree->entry_count; i++) {
         tree_entry_t *entry = &tree->entries[i];
-        printf("file name: %s\n", entry->name);
         if (entry->mode == MODE_DIRECTORY){
             // it's another tree object
-            expand_tree(entry->hash);
+            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 2));
+            strcpy(path, curr_chars);
+            strcat(path, entry->name);
+            strcat(path, "/");
+            printf("path: %s\n", path);
+            expand_tree(entry->hash, hash_table, path);
+            free(path);
+
         } else {
+
+            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
+            strcpy(path, curr_chars);
+            strcat(path, entry->name);
+
+            printf("final path: %s\n", path);
+
             printf("jawn is in the commit %s\n", entry->name);
+
+            // hash_table_add(hash_table, path, entry->hash);
+
+            char *hash_copy = strdup(entry->hash);
+            if (hash_copy == NULL) {
+                // Handle error
+            } else {
+                hash_table_add(hash_table, path, hash_copy);
+            }
+            free(path);
         }
     }
+    free_tree(tree);
 }
 
 void status(void) {
     printf("Not implemented.\n");
-
-
     bool *detached = malloc(sizeof(bool));
     char *head = read_head_file(detached);
 
@@ -48,11 +71,8 @@ void status(void) {
     printf("head: %s\n", head);
     // const char *PATH = ".git/refs/heads/";
 
-
-
-
     if (!*detached){
-        printf("detached brodie\n");
+        printf("not detached brodie\n");
     }
     char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     head_to_hash(head, *detached, hash);
@@ -61,8 +81,60 @@ void status(void) {
     object_hash_t tree_hash;
     memcpy(tree_hash, head_commit->tree_hash, sizeof(object_hash_t));  // Copy the tree_hash
 
-    expand_tree(tree_hash);  // Call the read_tree function
+    // map the file names of the commit to their hashes
+    hash_table_t *commit_table = hash_table_init();
+    expand_tree(tree_hash, commit_table, "");
 
+    // // Read index file
+    index_file_t *idx_file = read_index_file();
+
+    list_node_t *curr_node = key_set(idx_file->entries);
+    // printf("yoooooo");
+
+
+    // while (curr_node != NULL){
+    //     char *file_name = curr_node->value;
+    //     printf("key: %s\n", file_name);
+
+    //     // index_entry_t *entry = hash_table_get(idx_file->entries, file_name);
+    //     // printf("fname %s \n", entry->fname);
+    //     // printf("hash %s\n", entry->sha1);
+
+    //     char *hash_commit = (char *) hash_table_get(commit_table, file_name);
+    //     if (hash_commit != NULL) {
+    //         // printf("uhhhh");
+    //         printf("hash commit %s\n", hash_commit);
+    //     } else {
+    //         printf("hash commit not found for file %s", file_name);
+    //     }
+    //     curr_node = curr_node->next;
+    // }
+
+
+    while (curr_node != NULL){
+        char *file_name = curr_node->value;
+        printf("key: %s\n", file_name);
+
+        index_entry_t *entry = hash_table_get(idx_file->entries, file_name);
+        printf("fname %s \n", entry->fname);
+        printf("hash %s\n", entry->sha1);
+
+        char *hash_commit = (char *) hash_table_get(commit_table, file_name);
+        if (hash_commit != NULL) {
+            printf("uhhhh");
+            // printf("hash commit %s", hash_commit);
+        } else {
+            printf("hash commit not found for file %s", file_name);
+        }
+        // if ( != hash_table_get(commit_table, file_name)){
+        //     printf("\tmodified: %s", file_name);
+        // } 
+        curr_node = curr_node->next;
+    }
+
+    free_hash_table(commit_table);
+
+    // compare the two hashmaps to see if theres a difference lol
 
 
 
