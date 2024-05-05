@@ -1,5 +1,5 @@
 /*
- * The git protocol is described at https://github.com/git/git/blob/master/Documentation/technical/pack-protocol.txt#L103.
+ * The git protocol is described at https://github.com/git/git/blob/master/Documentation/gitprotocol-pack.txt
  * Fetching consists of several stages:
  * - The client opens an SSH connection to the server.
  *   Call open_transport(FETCH, ...) to initiate this SSH connection.
@@ -25,7 +25,7 @@
  *   Once the server returns that it is ready (or the client knows no more of its commits
  *   are common with the server), call finish_haves().
  * - The server figures out what needs to be sent to the client and sends a PACK file.
- *   This format is documented at https://github.com/git/git/blob/master/Documentation/technical/pack-format.txt.
+ *   This format is documented at https://github.com/git/git/blob/master/Documentation/gitformat-pack.txt
  *   The file contains all the new objects (commits, trees, etc.) that the client needs.
  *   Call receive_pack() to handle each object received from the server.
  *
@@ -122,7 +122,7 @@ void finish_haves(transport_t *);
 
 /**
  * The types of objects which can be received in a PACK file.
- * See https://github.com/git/git/blob/master/Documentation/technical/pack-format.txt.
+ * See https://github.com/git/git/blob/master/Documentation/gitformat-pack.txt
  *
  * `OBJ_REF_DELTA` is a special type indicating an object that is constructed
  * from sections of another object. See the link above for the format.
