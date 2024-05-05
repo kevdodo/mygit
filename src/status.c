@@ -21,6 +21,22 @@ struct linked_list {
 };
 
 
+void expand_tree(object_hash_t tree_hash){
+    
+    tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
+
+    for (int i = 0; i < tree->entry_count; i++) {
+        tree_entry_t *entry = &tree->entries[i];
+        printf("file name: %s\n", entry->name);
+        if (entry->mode == MODE_DIRECTORY){
+            // it's another tree object
+            expand_tree(entry->hash);
+        } else {
+            printf("jawn is in the commit %s\n", entry->name);
+        }
+    }
+}
+
 void status(void) {
     printf("Not implemented.\n");
 
@@ -45,13 +61,12 @@ void status(void) {
     object_hash_t tree_hash;
     memcpy(tree_hash, head_commit->tree_hash, sizeof(object_hash_t));  // Copy the tree_hash
 
-    tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
+    expand_tree(tree_hash);  // Call the read_tree function
 
-    for (int i = 0; i < tree->entry_count; i++) {
-        tree_entry_t *entry = &tree->entries[i];
-        printf("file name: %s\n", entry->name);
-        // Now you can access the fields of entry
-    }
+
+
+
+
 
     // printf("hash %s\n", hash);
 
