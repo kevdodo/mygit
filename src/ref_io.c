@@ -68,7 +68,7 @@ bool head_to_hash(const char *head, bool detached, object_hash_t hash) {
         memcpy(hash, head, sizeof(object_hash_t));
         return true;
     }
-
+    
     return get_branch_ref(head, hash);
 }
 

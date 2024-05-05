@@ -113,7 +113,10 @@ void *hash_table_add(hash_table_t *table, const char *key, void *value) {
 }
 void *hash_table_get(const hash_table_t *table, const char *key) {
     linked_list_t *list = table->entries[hash_func(key) % BUCKETS];
+
+
     if (list == NULL) return NULL;
+    
 
     for (list_node_t *it = list_head(list); it != NULL; it = node_next(it)) {
         key_value_t *pair = node_value(it);
