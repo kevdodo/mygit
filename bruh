@@ -4,55 +4,61 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 29	flags: 0
-100644 8fb403971e3d1e8c6656049ad07e96eb118eb22a 0	.gitindex
-  ctime: 1714978378:154647900
-  mtime: 1714978378:154647900
-  dev: 0	ino: 0
-  uid: 0	gid: 0
-  size: 4448	flags: 0
-100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.gitindex.lock
+100644 2ba1bc6f6b55822dcf5ef8bdf2949949d94b929d 0	.gitindex
   ctime: 1714978506:872594000
-  mtime: 1714978506:872594000
+  mtime: 1714978506:887883100
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 0	flags: 0
+  size: 4318	flags: 0
 100644 2b1eecb1823083550dc3205773d6761fb847d58a 0	.gitlab-ci.yml
   ctime: 1714978378:155642700
   mtime: 1714978378:155642700
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 104	flags: 0
-100644 0ce59d5200b68d90c0e83bab6b1e47df64a967a1 0	Makefile
+100644 fd1b7e93724b52179d5db87a206d3142ebb5ac01 0	Makefile
   ctime: 1714978378:155642700
-  mtime: 1714978378:156635800
+  mtime: 1715036255:664658600
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 786	flags: 0
+  size: 784	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	asdfasdfasdfasdfasdf
+  ctime: 1715036722:890647500
+  mtime: 1715036722:890647500
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	bbasd
+  ctime: 1715036899:295220300
+  mtime: 1715036899:295220300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	bin/.gitkeep
   ctime: 1714978378:156635800
   mtime: 1714978378:156635800
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 6517a4ac81babb13758ee1463fb1941d0d4f8a93 0	bruh
+100644 47a870440b9f474bb686d2970dd9a338053e60a7 0	bruh
   ctime: 1714978378:156635800
-  mtime: 1714978378:157638300
+  mtime: 1715036988:507229500
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 9657	flags: 0
+  size: 10303	flags: 0
 100644 4d88a063a8d0a466c3cdd7554abe5cd6c8d9b102 0	bruh.exe
   ctime: 1714978378:160656100
   mtime: 1714978378:161645800
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 257281	flags: 0
-100644 d2c95241b365d3ef87390956a208c86e4971c154 0	bruh2
+100644 e257f3144f9738977ad92abd4ef8f91405fddbc1 0	bruh2
   ctime: 1714978378:161645800
-  mtime: 1714978378:161645800
+  mtime: 1715036969:936090700
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 8238	flags: 0
-100644 642353c2b4c4b5a1dec697d11eb18d96e152343c 0	expand-all-packfiles
+  size: 8855	flags: 0
+100644 6f913a11ff73fa38a02933e9675d794f1ae5cf6b 0	expand-all-packfiles
   ctime: 1714978378:162635500
   mtime: 1714978378:162635500
   dev: 0	ino: 0
@@ -120,7 +126,7 @@
   size: 93	flags: 0
 100644 6d94a2d89d0699364f438fb595c74daa97f4460c 0	include/object_io.h
   ctime: 1714978378:167644100
-  mtime: 1714978378:167644100
+  mtime: 1714979404:726545700
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 1483	flags: 0
@@ -172,9 +178,9 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 774d5608a7e5676a460f04cb17f3c75cb1ab5fe0 0	src/add.c
+100644 0a12cfac34fd95aa5362140d4bbc3a7aa2b15599 0	src/add.c
   ctime: 1714978378:170637700
-  mtime: 1714978378:171636700
+  mtime: 1715036876:101055000
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 10196	flags: 0
@@ -196,12 +202,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 232	flags: 0
-100644 b5ce14e4e134f859bf7816d4f9186082222bb432 0	src/commit.c
+100644 694838c1cb786d7d5e2379c60b236dac3dbbaa35 0	src/commit.c
   ctime: 1714978378:175639500
-  mtime: 1714978378:175639500
+  mtime: 1715035262:300498600
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 2847	flags: 0
+  size: 6002	flags: 0
 100644 b549117398f36f979a65c013363b0157910df31d 0	src/config_io.c
   ctime: 1714978378:176638100
   mtime: 1714978378:176638100
@@ -220,9 +226,33 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 3970	flags: 0
-100644 1b1c30ea804c9807519d0a5af06d1794bec0b5f0 0	src/index_io.c
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	src/hmmmm/aaa.txt
+  ctime: 1714983841:664444800
+  mtime: 1714983841:664444800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	src/hmmmm/bb.txt
+  ctime: 1714983849:611973200
+  mtime: 1714983849:611973200
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	src/hmmmm/bruhhhh/hm.txt
+  ctime: 1714983933:655635700
+  mtime: 1714983933:655635700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	src/hmmmm/noooo/ccc.txt
+  ctime: 1714983864:302743900
+  mtime: 1714983864:302743900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 deed99df83d8dea934fff9a4f854dbaaf6e35748 0	src/index_io.c
   ctime: 1714978378:177636800
-  mtime: 1714978378:177636800
+  mtime: 1715036856:78535100
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 6521	flags: 0
@@ -232,12 +262,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 3554	flags: 0
-100644 3e3c3cd5093ab5791a6786d4790618ec99fa91bc 0	src/log.c
+100644 f196c3baf53df66507513f3d4e900c03a75ac3d6 0	src/log.c
   ctime: 1714978378:178635200
-  mtime: 1714978378:178635200
+  mtime: 1714983812:491258500
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 272	flags: 0
+  size: 302	flags: 0
 100644 32a0fd8c85253a2334d7f74d814bae566b4936ba 0	src/main.c
   ctime: 1714978378:178635200
   mtime: 1714978378:178635200
@@ -252,7 +282,7 @@
   size: 252912	flags: 0
 100644 ae4a7ac7c8292cc9f59a72b7afa1bdf4110b7bdd 0	src/mygit.c
   ctime: 1714978378:180636300
-  mtime: 1714978378:180636300
+  mtime: 1714982507:608420500
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 7029	flags: 0
@@ -298,13 +328,13 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 9553	flags: 0
-100644 79e3d61a84fb6ccf7f10bf9dfd79726d19e5994b 0	temp_idx_file
-  ctime: 1714978378:184635500
-  mtime: 1714978444:67561000
+100644 f208b9fea7855a0f5c992c473ae8cf9b5173991a 0	temp_idx_file
+  ctime: 1714978826:719533100
+  mtime: 1715037050:361444200
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 4244	flags: 0
-100644 9554c1572d8e0c8456ac0ca15f85cc243929140a 0	temp_lolski
+  size: 4660	flags: 0
+100644 72f64a47c3ec60bc83f2574ea5c5fc1051c01f0a 0	temp_lolski
   ctime: 1714978378:184635500
   mtime: 1714978378:184635500
   dev: 0	ino: 0

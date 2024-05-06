@@ -21,7 +21,7 @@
 /* Expected file signature for index files */
 const char DIRC_SIG[4] = {'D', 'I', 'R', 'C'};
 
-const char *INDEX_PATH = ".git/index"; // "temp_idx_file"; //     
+const char *INDEX_PATH = ".git/index"; //"temp_idx_file"; //      
 
 /*
  * Read a big-endian bytestream
@@ -83,9 +83,9 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
 
     n_read += fname_length + 1;
 
-    printf("file:%s\n", entry->fname);
+    // printf("file:%s\n", entry->fname);
     // printf("size:%u\n", entry->size);
-    printf("sha1:%s\n", entry->sha1);
+    // printf("sha1:%s\n", entry->sha1);
     // printf("mtime:%ld\n", entry->mtime);
     // printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
     // printf("\n");
@@ -128,10 +128,10 @@ index_file_t *read_index_file() {
                 version);
         exit(1);
     }
-    printf("version: %u\n", version);
+    // printf("version: %u\n", version);
 
     size_t n_entries = read32(f);
-    printf("n_entries: %lu\n", n_entries);
+    // printf("n_entries: %lu\n", n_entries);
     // free_index_entry(read_index_entry(f, version));
     // free_index_entry(read_index_entry(f, version));
     // free_index_entry(read_index_entry(f, version));

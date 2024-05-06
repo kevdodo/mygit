@@ -80,7 +80,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
         index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
     } else {
         // Handle error
-        printf("something wrong with stat");
+        // printf("something wrong with stat");
     }
 
     index_entry->mtime_nanoseconds = 0;
@@ -91,10 +91,10 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->mode = 0;
 
 
-    printf("aasdfasdf filepath: %s", index_entry_temp->fname);
+    // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (!is_executable(index_entry_temp->fname)){
-        printf("it's executeable\n");
+        // printf("it's executeable\n");
         index_entry->mode = 0b00000000000000000000000001000000111101101;
     } else {
         index_entry->mode = 0b00000000000000000000000001000000110100100;
@@ -104,13 +104,13 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->gid = 0;
 
     index_entry->file_size = index_entry_temp->size;
-    printf("file size  %u\n", index_entry->file_size);
+    // printf("file size  %u\n", index_entry->file_size);
 
     // copy the sha1 hash and file_name
     // index_entry->sha1_hash = malloc(sizeof(char) * HASH_BYTES);
 
     memcpy(index_entry->sha1_hash, index_entry_temp->sha1, HASH_STRING_LENGTH + 1);
-    printf("sha hash  %s\n", index_entry->sha1_hash);
+    // printf("sha hash  %s\n", index_entry->sha1_hash);
 
     index_entry->flags = get_flags(index_entry_temp->fname_length);
     index_entry->file_name = malloc(sizeof(char)*(index_entry_temp->fname_length + 1));
@@ -153,7 +153,7 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     fwrite(&index_entry->ctime_nanoseconds, sizeof(uint32_t), 1, f);
 
     uint8_t mtime_seconds[4];
-    printf("mtime: %u\n", index_entry->mtime_seconds);
+    // printf("mtime: %u\n", index_entry->mtime_seconds);
     write_be(index_entry->mtime_seconds, mtime_seconds, 4);
     fwrite(&mtime_seconds, sizeof(uint32_t), 1, f);
 
@@ -311,7 +311,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = ".git/index"; // "temp_idx_file"; // 
+    char idx_name[] =  "temp_idx_file"; //".git/index"; // 
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);
@@ -337,7 +337,7 @@ void add_files(const char **file_paths, size_t file_count)
     }
     fclose(new_index_file);
 
-    printf("yoooo what is up guys\n");
+    // printf("yoooo what is up guys\n");
     
     exit(1);
 }
