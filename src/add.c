@@ -65,7 +65,15 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     struct stat file_stat;
     bool executable = false;
-    // TODO: Should this be recalculated???
+
+
+
+    // if (index_entry_temp->mtime != 0){
+    //     index_entry->mtime_seconds = index_entry_temp->mtime;
+    // }
+
+
+    // TODO: Should this be recalculated and when???
     if (stat(index_entry_temp->fname, &file_stat) == 0) {
         index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
 
@@ -82,6 +90,8 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->mtime_nanoseconds = 0;
     index_entry->dev = 0;
     index_entry->ino = 0;
+
+    // index_entry->mode = index_entry_temp->
     
     index_entry->mode = 0b10000000000000000000000000000000;
 
@@ -283,74 +293,76 @@ uint32_t get_idx_file_cnts(const char **file_paths, size_t file_count, hash_tabl
 }
 
 
-
+// what to do with added files that are deleted, 
 void add_files(const char **file_paths, size_t file_count)
 {
     index_file_t *index_file = read_index_file();
 
-    // hash_table_t *index_table = index_file->entries;
-    // uint32_t index_cnts = hash_table_size(index_table);
-    // // add everything to the index_table
+    hash_table_t *index_table = index_file->entries;
+    uint32_t index_cnts = hash_table_size(index_table);
+    // add everything to the index_table
 
-    // for (size_t i=0; i < file_count; i++){
-    //     const char *file_path = file_paths[i];
+    for (size_t i=0; i < file_count; i++){
+        const char *file_path = file_paths[i];
         
-    //     char *file_contents = get_file_contents(file_path);
-    //     if (file_contents == NULL){
-    //         // file doesn't exist/deleted
-    //         printf("boy \"%s\" doesn't exist", file_path);
+        char *file_contents = get_file_contents(file_path);
+        if (file_contents == NULL){
+            // file doesn't exist/deleted
+            printf("boy \"%s\" doesn't exist\n", file_path);
 
-    //         if (hash_table_contains(index_table, file_path)){
-    //             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
-    //             free_index_entry(prev_entry);
-    //             hash_table_add(index_table, file_path, NULL);
-    //             index_cnts--;
-    //         }
+            if (hash_table_contains(index_table, file_path)){
+                index_entry_t *prev_entry = hash_table_get(index_table, file_path);
+                free_index_entry(prev_entry);
+                hash_table_add(index_table, file_path, NULL);
+                index_cnts--;
+            }
+            continue;
+        }
+        object_hash_t hash;
+        write_object(BLOB, file_contents, strlen(file_contents), hash);
+        index_entry_t *new_entry = malloc(sizeof(index_entry_t));
+        new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
+        strcpy(new_entry->fname, file_path);
+        new_entry->fname_length = strlen(file_path);
+        new_entry->mtime = 0;
+        memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
+        new_entry->size = strlen(file_contents);
 
-    //         continue;
-    //     }
+        // we needa free the previous one or else you get memory leaks
+        if (hash_table_contains(index_table, file_path)){
+            index_entry_t *prev_entry = hash_table_get(index_table, file_path);
+            free_index_entry(prev_entry);
+        } else {
+            index_cnts++;
+        }
+        hash_table_add(index_table, file_path, new_entry);
+    }
 
-    //     object_hash_t hash;
-    //     write_object(BLOB, file_contents, strlen(file_contents), hash);
-    //     index_entry_t *new_entry = malloc(sizeof(index_entry_t));
-    //     new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
-    //     strcpy(new_entry->fname, file_path);
-    //     new_entry->fname_length = strlen(file_path);
-    //     new_entry->mtime = 0;
-    //     memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
-    //     new_entry->size = strlen(file_contents);
+    hash_table_sort(index_table);
+    FILE *new_index_file = fopen("temp_idx_file", "wb");
 
-    //     // we needa free the previous one or else you get memory leaks
-    //     if (hash_table_contains(index_table, file_path)){
-    //         index_entry_t *prev_entry = hash_table_get(index_table, file_path);
-    //         free_index_entry(prev_entry);
-    //     }
-    //     hash_table_add(index_table, file_path, new_entry);
-    // }
+    write_index_header(new_index_file, index_cnts);
 
-    // hash_table_sort(index_table);
-    // FILE *new_index_file = fopen("temp_idx_file", "wb");
+    list_node_t *curr_node = key_set(index_table);
+    while (curr_node != NULL){
+        char *file_path = curr_node->value;
 
-    // write_index_header(new_index_file, index_cnts);
+        // file is still there
+        index_entry_t *idx_entry = (hash_table_get(index_table, file_path));
 
-    // list_node_t *curr_node = key_set(index_table);
-    // while (curr_node != NULL){
-    //     char *file_path = curr_node->value;
+        if (idx_entry != NULL){
+            index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
+            printf("file path: %s\n", file_path);
 
-    //     // file is still there
-    //     index_entry_t *idx_entry = (hash_table_get(index_table, file_path));
+            // printf("file size %u", full_idx->file_size);
+            // printf("file hash %s", full_idx->sha1_hash);
 
-    //     if (idx_entry != NULL){
-    //         index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
-    //         // printf("file size %u", full_idx->file_size);
-    //         printf("file hash %s", full_idx->sha1_hash);
-
-    //         write_index(new_index_file, full_idx);
-    //         free_full_index_entry(full_idx);
-    //     }
-    //     curr_node = curr_node->next;
-    // }
-    // fclose(new_index_file);
+            write_index(new_index_file, full_idx);
+            free_full_index_entry(full_idx);
+        }
+        curr_node = curr_node->next;
+    }
+    fclose(new_index_file);
 
     printf("yoooo what is up guys\n");
     

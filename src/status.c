@@ -63,32 +63,40 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
     free_tree(tree);
 }
 
-
-char **get_all_files_in_directory() {
+void get_all_files_in_directory_recursively(const char *dir_name, char **files, int *index) {
     DIR *d;
     struct dirent *dir;
-    d = opendir(".");
+    d = opendir(dir_name);
     if (d == NULL) {
-        return NULL;
+        return;
     }
 
+    char path[1024];
+    while ((dir = readdir(d)) != NULL) {
+        if (dir->d_type == DT_DIR) {
+            if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
+                continue;
+            snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
+            get_all_files_in_directory_recursively(path, files, index);
+        } else {
+            snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
+            files[*index] = strdup(path);
+            (*index)++;
+        }
+    }
+    closedir(d);
+}
+
+char **get_all_files_in_directory() {
     char **files = malloc(sizeof(char *) * 1024);  // Allocate memory for up to 1024 file names
     if (files == NULL) {
-        closedir(d);
         return NULL;
     }
 
-    int i = 0;
-    while ((dir = readdir(d)) != NULL) {
-        files[i] = strdup(dir->d_name);
-        if (files[i] == NULL) {
-            // Handle error
-        }
-        i++;
-    }
-    files[i] = NULL;  // Null-terminate the array
+    int index = 0;
+    get_all_files_in_directory_recursively(".", files, &index);
+    files[index] = NULL;  // Null-terminate the array
 
-    closedir(d);
     return files;
 }
 
@@ -119,136 +127,52 @@ void status(void) {
     index_file_t *idx_file = read_index_file();
 
     list_node_t *curr_node = key_set(idx_file->entries);
-    // printf("yoooooo");
-    // while (curr_node != NULL){
-    //     char *file_name = curr_node->value;
-    //     printf("key: %s\n", file_name);
 
-    //     // index_entry_t *entry = hash_table_get(idx_file->entries, file_name);
-    //     // printf("fname %s \n", entry->fname);
-    //     // printf("hash %s\n", entry->sha1);
+    // iterating through the index file
 
-    //     char *hash_commit = (char *) hash_table_get(commit_table, file_name);
-    //     if (hash_commit != NULL) {
-    //         // printf("uhhhh");
-    //         printf("hash commit %s\n", hash_commit);
-    //     } else {
-    //         printf("hash commit not found for file %s", file_name);
-    //     }
-    //     curr_node = curr_node->next;
-    // }
-
+    printf("Staged for commit:\n");
 
     while (curr_node != NULL){
         char *file_name = curr_node->value;
-        printf("key: %s\n", file_name);
-
-        index_entry_t *entry = hash_table_get(idx_file->entries, file_name);
-        printf("fname %s \n", entry->fname);
-        printf("hash   idx: %s\n", entry->sha1);
+        index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
 
         char *hash_commit = (char *) hash_table_get(commit_table, file_name);
-        if (hash_commit != NULL) {
-            printf("hash commit %s\n", hash_commit);
-        } else {
+        if (hash_commit == NULL) {
             // in the index, not in the commit 
-            printf("\tmodified: %s\n", file_name);
-
-            printf("hash commit not found for file %s", file_name);
-        }
-        if (strcmp(entry->sha1, (char *) hash_table_get(commit_table, file_name)) != 0){
-            printf("\tmodified: %s\n", file_name);
+            printf("\tadded: %s\n", file_name);
+        } else{
+            // The hashes are different, indicating modified
+            if (strcmp(idx_entry->sha1, (char *) hash_table_get(commit_table, file_name)) != 0){
+                printf("\tmodified: %s\n", file_name);
+            }
+            // otherwise they're the same file
         }
         curr_node = curr_node->next;
     }
 
 
+    list_node_t *commit_node = key_set(commit_table);
+
+    // iterating through the commit file
+    while (commit_node != NULL){
+        char *file_name = commit_node->value;
+        // printf("key: %s\n", file_name);
+
+        if (!hash_table_contains(idx_file->entries, file_name)){
+            // index file doesn't have it, but commit does
+            printf("\tdeleted: %s", file_name);
+        }
+        commit_node = commit_node->next;
+    }
+
+    printf("Not staged for commit:\n");
+
+    // char **files = get_all_files_in_directory();
+    // for (int i = 0; files[i] != NULL; i++) {
+    //     printf("%s\n", files[i]);
+    // }
+
     // TODO WHY IS THIS UNNECESSARY???
     // free_hash_table(commit_table, free);
-
-    // compare the two hashmaps to see if theres a difference lol
-
-
-
-
-
-    // printf("hash %s\n", hash);
-
-    // // first two characters is the directory of the object
-
-    // char first_two[3];  // Array to hold the first two characters and the null terminator
-    // strncpy(first_two, hash, 2);  // Copy the first two characters from hash
-    // first_two[2] = '\0';  // Add the null terminator
-    // printf("first two %s\n", first_two);
-
-    // int hash_length = strlen(hash);
-
-    // char last_38[hash_length - 1];  // Array to hold the last 38 characters and the null terminator
-    // strncpy(last_38, &hash[hash_length - 38], 38);  // Copy the last 38 characters from hash
-    // last_38[38] = '\0';  // Add the null terminator
-
-    // printf("last 38: %s\n", last_38);
-
-    // const char *OBJECT_DIRECTORY = ".git/objects/";
-
-    // // // Concatenate PATH and head to form the full path
-    // char *head_obj_path = malloc(sizeof(char) * (strlen(OBJECT_DIRECTORY) + strlen(first_two) + strlen(last_38) + 3)); // +3 for the null terminator and two '/' characters
-
-    // if (head_obj_path == NULL) {
-    //     perror("Failed to allocate memory for head_obj_path");
-    //     return;
-    // }
-
-    // strcpy(head_obj_path, OBJECT_DIRECTORY);
-    // strcat(head_obj_path, first_two);
-    // strcat(head_obj_path, "/");
-    // strcat(head_obj_path, last_38);
-
-    // printf("head_obj path: %s\n", head_obj_path);
-
-
-    // Open the file
-    // FILE *file = fopen(full_path, "r");
-    // if (file == NULL) {
-    //     perror("Failed to open file");
-    //     free(full_path);
-    //     return;
-    // }
-
-    // // Get the file contents
-    // char *file_contents = get_file_contents(full_path);
-    // if (file_contents == NULL) {
-    //     perror("Failed to get file contents");
-    //     fclose(file);
-    //     free(full_path);
-    //     return;
-    // }
-
-    // printf("File contents: %s\n", file_contents);
-
-    // Clean up
-    // free(file_contents);
-    // fclose(file);
-    // free(full_path);
-
-    // free(detached);
-
-    // index_file_t * index_file = read_index_file();
-
-    // hash_table_t *index_table = index_file->entries;
-    // // uint32_t index_cnts = get_idx_file_cnts(file_paths, file_count, index_table);
-    // // printf("index_cnts: %u\n", index_cnts);
-    // printf("Staged for commit:\n");
-    // list_node_t *current_node = key_set(index_table);
-    // while (current_node != NULL) {
-    //     const char *key = current_node->value;
-    //     // printf("current node: %s\n", key);
-    //     index_entry_t *index_entry = hash_table_get(index_table, key);
-    //     printf("fname %s\n", index_entry->fname);
-    //     current_node = current_node->next;
-    // }
-
-    // printf("Not staged for commit:\n");
-    // printf("Untracked Files\n");
     exit(1);
 }
