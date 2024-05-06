@@ -330,8 +330,8 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = ".git/index"; // 
-    FILE *new_index_file = fopen("temp_idx_file", "wb");
+    char idx_name[] = ".git/index"; // "temp_idx_file"
+    FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);
 
