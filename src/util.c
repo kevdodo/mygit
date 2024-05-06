@@ -103,7 +103,7 @@ size_t get_file_size(FILE *f) {
 char *get_file_contents(const char *file_path) {
     FILE *file = fopen(file_path, "rb");
     if (file == NULL) {
-        perror("Failed to open file");
+        printf("Failed to open file");
         return NULL;
     }
 
@@ -111,6 +111,7 @@ char *get_file_contents(const char *file_path) {
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
+
 
     // Allocate a buffer to hold the file contents
     char *buffer = malloc(file_size + 1);

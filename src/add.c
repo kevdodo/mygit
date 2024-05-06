@@ -42,7 +42,7 @@ typedef struct index_entry_full_t{
     uint32_t uid;
     uint32_t gid;
     uint32_t file_size;
-    char sha1_hash[HASH_BYTES];
+    char sha1_hash[HASH_STRING_LENGTH + 1];
     
     uint16_t flags;
 
@@ -95,16 +95,18 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->gid = 0;
 
     index_entry->file_size = index_entry_temp->size;
+    printf("file size  %u\n", index_entry->file_size);
 
     // copy the sha1 hash and file_name
     // index_entry->sha1_hash = malloc(sizeof(char) * HASH_BYTES);
 
-    memcpy(index_entry->sha1_hash, index_entry_temp->sha1, HASH_BYTES);
+    memcpy(index_entry->sha1_hash, index_entry_temp->sha1, HASH_STRING_LENGTH + 1);
+    printf("sha hash  %s\n", index_entry->sha1_hash);
 
     index_entry->flags = get_flags(index_entry_temp->fname_length);
     index_entry->file_name = malloc(sizeof(char)*(index_entry_temp->fname_length + 1));
-    strncpy(index_entry->file_name, index_entry_temp->fname, index_entry_temp->fname_length);
-    index_entry->file_name[index_entry_temp->fname_length] = '\0';
+    strcpy(index_entry->file_name, index_entry_temp->fname);
+    // index_entry->file_name[index_entry_temp->fname_length] = '\0';
 
     index_entry->null_byte = '\0';
 
@@ -116,29 +118,33 @@ void free_full_index_entry(index_entry_full_t *index_entry){
     free(index_entry);
 }
 
-size_t get_index_size(index_entry_full_t *index_entry){
-    // Account for the fact that it's a char pointer, and we just store the 
-    size_t index_size =  sizeof(index_entry_full_t) - sizeof(char *) - 
-    sizeof(size_t) + strlen(index_entry->file_name);
-    
-    size_t padding;
-    if (index_size % 8 == 0){
-        padding = 0;
-    } else {
-        padding = 8 - (index_size % 8);
+size_t get_padding(index_entry_full_t *index_entry){
+    // Account for the fact that it's a char pointer, and we just store the
+
+    int n_read = 62;
+    n_read += strlen(index_entry->file_name) + 1;
+
+    /* Pad such that n_read % 8 = 0 */
+    size_t padding = 8 - (n_read % 8); 
+
+    printf("your silly padding; %d\n", padding);
+
+    if (padding == 8){
+        return 0;
     }
-    return index_size + padding;
+    return padding;
+
+    // return padding;
 }
 
 
 void write_index(FILE *f, index_entry_full_t *index_entry){
-    size_t index_size = get_index_size(index_entry);
 
     fwrite(&index_entry->ctime_seconds, sizeof(uint32_t), 1, f);
     fwrite(&index_entry->ctime_nanoseconds, sizeof(uint32_t), 1, f);
 
     uint8_t mtime_seconds[4];
-    printf("mtime: %u", index_entry->mtime_seconds);
+    printf("mtime: %u\n", index_entry->mtime_seconds);
     write_be(index_entry->mtime_seconds, mtime_seconds, 4);
     fwrite(&mtime_seconds, sizeof(uint32_t), 1, f);
 
@@ -157,23 +163,46 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
 
     uint8_t file_size[4];
     write_be(index_entry->file_size, file_size, 4);
+    // read_be(file_size, 4)
     fwrite(&file_size, sizeof(uint32_t), 1, f);
 
     // fwrite(&index_entry->file_size, sizeof(uint32_t), 1, f);
     
-    uint8_t sha1_hash[HASH_BYTES];
-    write_be(index_entry->sha1_hash, sha1_hash, HASH_BYTES);
-    fwrite(&sha1_hash, sizeof(char), HASH_BYTES, f);
+    uint8_t hash_bytes[HASH_BYTES];
+    hex_to_hash(index_entry->sha1_hash, hash_bytes);
+    // write_be(index_entry->sha1_hash, sha1_hash, HASH_BYTES);
+
+    fwrite(&hash_bytes, sizeof(uint8_t), HASH_BYTES, f);
+    // fwrite(index_entry->sha1_hash, sizeof(uint8_t), HASH_STRING_LENGTH + 1, f);
 
     // fwrite(&index_entry->sha1_hash, sizeof(char), HASH_BYTES, f);
 
     uint8_t flags[2];
+    // printf(flags)
     write_be(index_entry->flags, flags, 2);
     // fwrite(&flags, sizeof(char), HASH_BYTES, f);
     fwrite(&flags, sizeof(uint16_t), 1, f);
 
+    // uint8_t file_name[(strlen(index_entry->file_name) + 1)];
+    // write_be(index_entry->file_name, file_name, strlen(index_entry->file_name));
+    // file_name[strlen(index_entry->file_name)] = '\0';
+    // fwrite(&file_name, sizeof(char), strlen(index_entry->file_name)+1, f);
 
-    // fwrite(index_entry->file_name, sizeof(char), strlen(index_entry->file_name), f);
+    fwrite(index_entry->file_name, sizeof(char), strlen(index_entry->file_name) + 1, f);
+
+    // uint16_t null_byte = 0;
+    // fwrite(&null_byte, sizeof(uint16_t), 1, f);
+
+    size_t padding = get_padding(index_entry);
+    assert(padding < 8);
+
+    uint8_t *padding_array = calloc(padding, sizeof(uint8_t));
+    if (padding_array == NULL) {
+        // Handle error
+    } else {
+        fwrite(padding_array, sizeof(uint8_t), padding, f);
+        free(padding_array);
+    }
 
 }
 
@@ -236,7 +265,6 @@ uint32_t get_idx_file_cnts(const char **file_paths, size_t file_count, hash_tabl
     uint32_t index_file_cnts = hash_table_size(index_table);
     for (size_t i=0; i < file_count; i++){
         const char *file_path = file_paths[i];
-        printf("filename: %s\n", file_path);
         // hash_table_add(index_table, file_path, "bruh");
         if (hash_table_contains(index_table, file_path)){
             printf("table contains %s", file_path);
@@ -247,7 +275,7 @@ uint32_t get_idx_file_cnts(const char **file_paths, size_t file_count, hash_tabl
             } else{
                 // file is still there
                 printf("its here\n");
-                index_file_cnts++;
+                // index_file_cnts++;
             }
         }
     }
@@ -258,56 +286,71 @@ uint32_t get_idx_file_cnts(const char **file_paths, size_t file_count, hash_tabl
 
 void add_files(const char **file_paths, size_t file_count)
 {
-    printf("hereee???");
+    index_file_t *index_file = read_index_file();
 
-    index_file_t * index_file = read_index_file();
+    // hash_table_t *index_table = index_file->entries;
+    // uint32_t index_cnts = hash_table_size(index_table);
+    // // add everything to the index_table
 
-    hash_table_t *index_table = index_file->entries;
+    // for (size_t i=0; i < file_count; i++){
+    //     const char *file_path = file_paths[i];
+        
+    //     char *file_contents = get_file_contents(file_path);
+    //     if (file_contents == NULL){
+    //         // file doesn't exist/deleted
+    //         printf("boy \"%s\" doesn't exist", file_path);
 
+    //         if (hash_table_contains(index_table, file_path)){
+    //             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
+    //             free_index_entry(prev_entry);
+    //             hash_table_add(index_table, file_path, NULL);
+    //             index_cnts--;
+    //         }
 
-    uint32_t index_cnts = get_idx_file_cnts(file_paths, file_count, index_table);
-    printf("index_cnts: %u\n", index_cnts);
-    FILE *new_index_file = fopen("temp_idx_file", "wb");
+    //         continue;
+    //     }
 
-    write_index_header(new_index_file, index_cnts);
+    //     object_hash_t hash;
+    //     write_object(BLOB, file_contents, strlen(file_contents), hash);
+    //     index_entry_t *new_entry = malloc(sizeof(index_entry_t));
+    //     new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
+    //     strcpy(new_entry->fname, file_path);
+    //     new_entry->fname_length = strlen(file_path);
+    //     new_entry->mtime = 0;
+    //     memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
+    //     new_entry->size = strlen(file_contents);
 
+    //     // we needa free the previous one or else you get memory leaks
+    //     if (hash_table_contains(index_table, file_path)){
+    //         index_entry_t *prev_entry = hash_table_get(index_table, file_path);
+    //         free_index_entry(prev_entry);
+    //     }
+    //     hash_table_add(index_table, file_path, new_entry);
+    // }
 
-    uint32_t index_file_cnts = hash_table_size(index_table);
-    for (size_t i=0; i < file_count; i++){
-        const char *file_path = file_paths[i];
-        printf("filename: %s\n", file_path);
-        // hash_table_add(index_table, file_path, "bruh");
-        if (hash_table_contains(index_table, file_path)){
-            if (access(file_path, F_OK) == -1){
-                // file was deleted
-                printf("not here\n");
-                index_file_cnts--;
-            } else{
-                // file is still there
-                printf("its here\n");
-                index_file_cnts++;
-                index_entry_full_t *full_idx = (hash_table_get(index_table, file_path));
+    // hash_table_sort(index_table);
+    // FILE *new_index_file = fopen("temp_idx_file", "wb");
 
-                char *file_contents = get_file_contents(file_path);
+    // write_index_header(new_index_file, index_cnts);
 
-                object_hash_t hash;
-                write_object(BLOB, file_contents, strlen(file_contents), hash);
-            }
-        } else {
-            // new file
-            if (access(file_path, F_OK) == -1){
-                // file was deleted
-                printf("not here\n");
-                index_file_cnts--;
-            } else{
+    // list_node_t *curr_node = key_set(index_table);
+    // while (curr_node != NULL){
+    //     char *file_path = curr_node->value;
 
-                char *file_contents = get_file_contents(file_path);
+    //     // file is still there
+    //     index_entry_t *idx_entry = (hash_table_get(index_table, file_path));
 
-                object_hash_t hash;
-                write_object(BLOB, file_contents, strlen(file_contents), hash);
-            }
-        }
-    }
+    //     if (idx_entry != NULL){
+    //         index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
+    //         // printf("file size %u", full_idx->file_size);
+    //         printf("file hash %s", full_idx->sha1_hash);
+
+    //         write_index(new_index_file, full_idx);
+    //         free_full_index_entry(full_idx);
+    //     }
+    //     curr_node = curr_node->next;
+    // }
+    // fclose(new_index_file);
 
     printf("yoooo what is up guys\n");
     

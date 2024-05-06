@@ -35,6 +35,7 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
             strcat(path, entry->name);
             strcat(path, "/");
             printf("path: %s\n", path);
+            printf("TREE HASH: %s\n", entry->hash);
             expand_tree(entry->hash, hash_table, path);
             free(path);
 
@@ -60,6 +61,35 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
         }
     }
     free_tree(tree);
+}
+
+
+char **get_all_files_in_directory() {
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(".");
+    if (d == NULL) {
+        return NULL;
+    }
+
+    char **files = malloc(sizeof(char *) * 1024);  // Allocate memory for up to 1024 file names
+    if (files == NULL) {
+        closedir(d);
+        return NULL;
+    }
+
+    int i = 0;
+    while ((dir = readdir(d)) != NULL) {
+        files[i] = strdup(dir->d_name);
+        if (files[i] == NULL) {
+            // Handle error
+        }
+        i++;
+    }
+    files[i] = NULL;  // Null-terminate the array
+
+    closedir(d);
+    return files;
 }
 
 void status(void) {
