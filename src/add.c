@@ -136,7 +136,7 @@ size_t get_padding(index_entry_full_t *index_entry){
     /* Pad such that n_read % 8 = 0 */
     size_t padding = 8 - (n_read % 8); 
 
-    printf("your silly padding; %d\n", padding);
+    // printf("your silly padding; %d\n", padding);
 
     if (padding == 8){
         return 0;
@@ -311,7 +311,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = ".git/index"; // "temp_idx_file"; // 
+    char idx_name[] = "temp_idx_file"; // ".git/index"; // 
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);

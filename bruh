@@ -4,12 +4,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 29	flags: 0
-100644 5beedadd30c211a2e7fcb5aa62a8611fb5345144 0	.gitindex
-  ctime: 1714973326:420817300
-  mtime: 1714973326:450950800
+100644 5fbc465fbd7605754fbff96528b33c05ef294b2c 0	.gitindex
+  ctime: 1714974449:362346600
+  mtime: 1714974449:383351400
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 4448	flags: 0
+  size: 4376	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.gitindex.lock
+  ctime: 1714976525:963439500
+  mtime: 1714976525:963439500
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
 100644 2b1eecb1823083550dc3205773d6761fb847d58a 0	.gitlab-ci.yml
   ctime: 1714454921:21162800
   mtime: 1714454921:22157100
@@ -28,24 +34,24 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 037a299eb62416e88cbc3c4be2b20edd2b74348c 0	bruh
+100644 4c7639dc93770c59d8f13306fe3e6cfe65b81916 0	bruh
   ctime: 1714967535:569841300
-  mtime: 1714973591:730663800
+  mtime: 1714974454:146058900
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 8212	flags: 0
+  size: 9339	flags: 0
 100644 4d88a063a8d0a466c3cdd7554abe5cd6c8d9b102 0	bruh.exe
   ctime: 1714970271:788183300
   mtime: 1714970341:512514200
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 257281	flags: 0
-100644 3c63ca99e7a9be90413de403007a0a18b0f6a955 0	bruh2
+100644 d2c95241b365d3ef87390956a208c86e4971c154 0	bruh2
   ctime: 1714967568:223778000
-  mtime: 1714973333:378176400
+  mtime: 1714974380:434809400
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 9506	flags: 0
+  size: 7926	flags: 0
 100644 642353c2b4c4b5a1dec697d11eb18d96e152343c 0	expand-all-packfiles
   ctime: 1714894412:595052600
   mtime: 1714894412:599060400
@@ -166,12 +172,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 6e537c56f3c41b9fc7c9cb9b954828d2323908be 0	src/add.c
+100644 774d5608a7e5676a460f04cb17f3c75cb1ab5fe0 0	src/add.c
   ctime: 1714454921:39690000
-  mtime: 1714973533:446101600
+  mtime: 1714974294:510382500
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 10947	flags: 0
+  size: 10196	flags: 0
 100644 98a5c556d0c6a88cae1a9482d14346b9e507d670 0	src/bruh.c
   ctime: 1714970226:27612400
   mtime: 1714972062:558007400
@@ -292,30 +298,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 9553	flags: 0
-100644 caa0556f19d349a6e71090a9fbcbe8bf3188d5bd 0	temp_idx_file
-  ctime: 1714973125:479112600
-  mtime: 1714973578:147750400
+100644 23a01440a150b02b0bb5dc60a7c1e178a7ead62f 0	temp_idx_file
+  ctime: 1714973649:404901100
+  mtime: 1714976494:934001600
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 4324	flags: 0
-100755 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	temp_idx_file.lock
-  ctime: 1714973596:941173300
-  mtime: 1714973596:941173300
-  dev: 0	ino: 0
-  uid: 0	gid: 0
-  size: 0	flags: 0
+  size: 4164	flags: 0
 100644 9554c1572d8e0c8456ac0ca15f85cc243929140a 0	temp_lolski
   ctime: 1714955895:321756000
   mtime: 1714956670:846511700
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 13268	flags: 0
-100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	testtest
-  ctime: 1714895067:99368400
-  mtime: 1714956599:948919800
-  dev: 0	ino: 0
-  uid: 0	gid: 0
-  size: 0	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	testtest2
   ctime: 1714962376:461833900
   mtime: 1714962376:461833900
