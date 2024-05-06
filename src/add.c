@@ -331,7 +331,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = ".git/index"; //"temp_idx_file"; //  
+    char idx_name[] = "temp_idx_file"; // ".git/index"; // 
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);
