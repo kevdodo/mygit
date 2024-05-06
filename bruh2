@@ -4,15 +4,15 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 29	flags: 0
-100644 f367217aae2ba4b6d6e690940f395b16ae462c1a 0	.gitindex
-  ctime: 1714969874:91359400
-  mtime: 1714969874:123359300
+100644 e664d6e1a16c68ec7125a1df1e3d945226656d60 0	.gitindex
+  ctime: 1714970869:229761400
+  mtime: 1714970875:192989500
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 4304	flags: 0
+  size: 4576	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.gitindex.lock
-  ctime: 1714970869:229761400
-  mtime: 1714970875:176459200
+  ctime: 1714971872:886911400
+  mtime: 1714971876:622295200
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
@@ -34,24 +34,24 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 af8d76423e50ca561b48fbac53996fd0f6e8108f 0	bruh
+100644 e0812ba221e960cfe299beb3ede037abda512115 0	bruh
   ctime: 1714967535:569841300
-  mtime: 1714970460:184428400
+  mtime: 1714971619:55132900
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 7042	flags: 0
+  size: 7180	flags: 0
 100644 4d88a063a8d0a466c3cdd7554abe5cd6c8d9b102 0	bruh.exe
   ctime: 1714970271:788183300
   mtime: 1714970341:512514200
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 257281	flags: 0
-100644 a3c9e8f0ae1697f9fa0fe25dda785505d629497a 0	bruh2
+100644 1a2e9764aa4b6c8218b60ad3bae82ba042aa968f 0	bruh2
   ctime: 1714967568:223778000
-  mtime: 1714969566:544058500
+  mtime: 1714971676:534402000
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 9159	flags: 0
+  size: 9685	flags: 0
 100755 642353c2b4c4b5a1dec697d11eb18d96e152343c 0	expand-all-packfiles
   ctime: 1714894412:595052600
   mtime: 1714894412:599060400
@@ -172,24 +172,24 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 3c8e05eb7d7c7c387c0681417054523a342a3610 0	src/add.c
+100644 6e537c56f3c41b9fc7c9cb9b954828d2323908be 0	src/add.c
   ctime: 1714454921:39690000
-  mtime: 1714970595:411590900
+  mtime: 1714971857:22693500
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 10998	flags: 0
-100644 148d92074f9b82dfdb9caddf92073e0d63f83864 0	src/bruh.c
+  size: 10947	flags: 0
+100644 9dd0e01f616d4ddcaf602e360b6f578d8219e139 0	src/bruh.c
   ctime: 1714970226:27612400
-  mtime: 1714970378:282413800
+  mtime: 1714971558:655717300
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 381	flags: 0
-100644 8ece3448bdaa03b1f249eada443acf383dbf8af5 0	src/bruh.exe
+  size: 384	flags: 0
+100644 be26590636e5448da95a94e126744267ac49ea40 0	src/bruh.exe
   ctime: 1714970271:788183300
-  mtime: 1714970379:519028200
+  mtime: 1714971561:35246000
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 257281	flags: 0
+  size: 253087	flags: 0
 100644 c855383c5babedd70eebec59e020c9bc436462ff 0	src/checkout.c
   ctime: 1714454921:40697700
   mtime: 1714454921:40697700
@@ -298,12 +298,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 9553	flags: 0
-100644 2881b078fba765d31240b45ff05804729a11bb52 0	temp_idx_file
+100644 3213cde9b620e524c92607ce2ac71dc59d5f1d69 0	temp_idx_file
   ctime: 1714808182:715060300
-  mtime: 1714970442:322329700
+  mtime: 1714971716:314398700
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 3724	flags: 0
+  size: 3788	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	temp_idx_file.lock
   ctime: 1714967887:61385200
   mtime: 1714967887:61385200

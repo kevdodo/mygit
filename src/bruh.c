@@ -9,7 +9,7 @@ int is_executable(const char *file_path) {
 }
 int main(int argc, char **argv)
 {
-    if (is_executable("expand-all-packfiles")) {
+    if (is_executable(".gitlab-ci.yml")) {
     printf("The file is executable.\n");
     } else {
         printf("The file is not executable.\n");
