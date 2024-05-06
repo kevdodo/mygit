@@ -15,6 +15,9 @@
 void commit(const char *commit_message) {
     (void)commit_message;
 
+
+    
+
     printf("Not implemented.\n");
     exit(1);
 }
