@@ -124,6 +124,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 916	flags: 0
+100755 e4a7dd9d0225aed28294d66245dd544e5006867e 0	lolski
+  ctime: 0:0
+  mtime: 1714969479:0
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 5	flags: 0
+100755 6b5fb2477e1d0f2378691d220fa2d80ffd3aadce 0	lolski2
+  ctime: 0:0
+  mtime: 1714969489:0
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 9	flags: 0
 100755 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	out/.gitkeep
   ctime: 0:0
   mtime: 1714454921:0
@@ -132,16 +144,10 @@
   size: 0	flags: 0
 100755 b5dca825c08c0b29ca6211c9b39429c8a2bc17fc 0	src/add.c
   ctime: 0:0
-  mtime: 1714970164:0
+  mtime: 1714971597:0
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 11042	flags: 0
-100755 d4a19541e3b421eb1291a4066493eb8cd5b13802 0	src/bruh.exe
-  ctime: 0:0
-  mtime: 1714970379:0
-  dev: 0	ino: 0
-  uid: 0	gid: 0
-  size: 3	flags: 0
 100755 c855383c5babedd70eebec59e020c9bc436462ff 0	src/checkout.c
   ctime: 0:0
   mtime: 1714454921:0
@@ -252,7 +258,7 @@
   size: 9553	flags: 0
 100755 4fb4148b48aae8adf10037eeaf5897f6b1a43e64 0	temp_idx_file
   ctime: 0:0
-  mtime: 1714970442:0
+  mtime: 1714971608:0
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 3644	flags: 0

@@ -3,11 +3,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+
+int is_executable(const char *file_path) {
+    return access(file_path, X_OK) == 0;
+}
 int main(int argc, char **argv)
 {
-    struct stat sb;
-    printf("%s is%s executable.\n", "bruh.exe", stat("bruh.exe", &sb) == 0 &&
-                                                sb.st_mode & S_IXUSR ? 
-                                                "" : " not");
-    return 0;
+    if (is_executable("expand-all-packfiles")) {
+    printf("The file is executable.\n");
+    } else {
+        printf("The file is not executable.\n");
+    }
 }   

@@ -57,6 +57,11 @@ uint16_t get_flags(uint32_t fsize){
     return (uint16_t) fsize;
 }
 
+
+int is_executable(const char *file_path) {
+    return access(file_path, X_OK) == 0;
+}
+
 index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry_full_t *index_entry = malloc(sizeof(index_entry_full_t));
 
@@ -70,16 +75,9 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     // }
 
     struct stat file_stat;
-    bool executable = false;
     // TODO: Should this be recalculated and when???
     if (stat(index_entry_temp->fname, &file_stat) == 0) {
         index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
-
-        if (file_stat.st_mode & S_IXUSR) {
-            executable = true;
-        } else {
-            executable = false;
-        }
     } else {
         // Handle error
         printf("something wrong with stat");
@@ -89,14 +87,17 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->dev = 0;
     index_entry->ino = 0;
 
-    // index_entry->mode = index_entry_temp->
     
     index_entry->mode = 0;
 
-    if (!executable){
-        index_entry->mode += 0b00000000000000000000000001000000110100100;
+
+    printf("aasdfasdf filepath: %s", index_entry_temp->fname);
+
+    if (!is_executable(index_entry_temp->fname)){
+        printf("it's executeable\n");
+        index_entry->mode = 0b00000000000000000000000001000000111101101;
     } else {
-        index_entry->mode += 0b00000000000000000000000001000000111101101;
+        index_entry->mode = 0b00000000000000000000000001000000110100100;
     }
     
     index_entry->uid = 0;
@@ -165,7 +166,6 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     write_be(index_entry->mode, mode, 4);
     fwrite(&mode, sizeof(uint32_t), 1, f);
     
-    // fwrite(&index_entry->mode, sizeof(uint32_t), 1, f);
     fwrite(&index_entry->uid, sizeof(uint32_t), 1, f);
     fwrite(&index_entry->gid, sizeof(uint32_t), 1, f);
 
