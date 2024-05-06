@@ -259,27 +259,6 @@ void write_index_header(FILE *f, uint32_t num_entries){
 }
 
 
-uint32_t get_idx_file_cnts(const char **file_paths, size_t file_count, hash_table_t *index_table){
-    uint32_t index_file_cnts = hash_table_size(index_table);
-    for (size_t i=0; i < file_count; i++){
-        const char *file_path = file_paths[i];
-        // hash_table_add(index_table, file_path, "bruh");
-        if (hash_table_contains(index_table, file_path)){
-            printf("table contains %s", file_path);
-            if (access(file_path, F_OK) == -1){
-                // file was deleted
-                printf("not here\n");
-                index_file_cnts--;
-            } else{
-                // file is still there
-                printf("its here\n");
-                // index_file_cnts++;
-            }
-        }
-    }
-    return index_file_cnts;
-}
-
 
 // what to do with added files that are deleted, 
 void add_files(const char **file_paths, size_t file_count)
@@ -292,12 +271,12 @@ void add_files(const char **file_paths, size_t file_count)
 
     for (size_t i=0; i < file_count; i++){
         const char *file_path = file_paths[i];
-        printf("file path: %s\n\n", file_path);
+        // printf("file path: %s\n\n", file_path);
         
         char *file_contents = get_file_contents(file_path);
         if (file_contents == NULL){
             // file doesn't exist/deleted
-            printf("boy \"%s\" doesn't exist\n", file_path);
+            // printf("boy \"%s\" doesn't exist\n", file_path);
 
             if (hash_table_contains(index_table, file_path)){
                 index_entry_t *prev_entry = hash_table_get(index_table, file_path);
@@ -324,6 +303,7 @@ void add_files(const char **file_paths, size_t file_count)
             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
             free_index_entry(prev_entry);
         } else {
+            // its a new one
             index_cnts++;
         }
         hash_table_add(index_table, file_path, new_entry);
@@ -331,7 +311,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = "temp_idx_file"; // ".git/index"; // 
+    char idx_name[] = ".git/index"; // "temp_idx_file"; // 
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);
@@ -345,7 +325,7 @@ void add_files(const char **file_paths, size_t file_count)
 
         if (idx_entry != NULL){
             index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
-            printf("file path: %s\n", file_path);
+            // printf("file path: %s\n", file_path);
 
             // printf("file size %u", full_idx->file_size);
             // printf("file hash %s", full_idx->sha1_hash);
