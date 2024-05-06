@@ -63,21 +63,19 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->ctime_seconds = 0;
     index_entry->ctime_nanoseconds = 0;
 
-    struct stat file_stat;
-    bool executable = false;
-
 
 
     // if (index_entry_temp->mtime != 0){
     //     index_entry->mtime_seconds = index_entry_temp->mtime;
     // }
 
-
+    struct stat file_stat;
+    bool executable = false;
     // TODO: Should this be recalculated and when???
     if (stat(index_entry_temp->fname, &file_stat) == 0) {
         index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
 
-        if (file_stat.st_mode & S_IXUSR || file_stat.st_mode & S_IXGRP || file_stat.st_mode & S_IXOTH) {
+        if (file_stat.st_mode & S_IXUSR) {
             executable = true;
         } else {
             executable = false;
@@ -93,9 +91,9 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     // index_entry->mode = index_entry_temp->
     
-    index_entry->mode = 0b0000000000000000000000000000000;
+    index_entry->mode = 0;
 
-    if (executable){
+    if (!executable){
         index_entry->mode += 0b00000000000000000000000001000000110100100;
     } else {
         index_entry->mode += 0b00000000000000000000000001000000111101101;
@@ -294,6 +292,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     for (size_t i=0; i < file_count; i++){
         const char *file_path = file_paths[i];
+        printf("file path: %s\n\n", file_path);
         
         char *file_contents = get_file_contents(file_path);
         if (file_contents == NULL){

@@ -4,15 +4,15 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 29	flags: 0
-100644 6db7e9369e48489af966f6ff4620a4ee9e343a8e 0	.gitindex
-  ctime: 1714969112:794102700
-  mtime: 1714969112:812113900
+100644 88aa178b0a288dd8931801827c06334f130b0199 0	.gitindex
+  ctime: 1714969154:156250200
+  mtime: 1714969159:593405600
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 3664	flags: 0
+  size: 4200	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.gitindex.lock
-  ctime: 1714969112:794102700
-  mtime: 1714969117:406468300
+  ctime: 1714969528:819740900
+  mtime: 1714969528:819740900
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
@@ -34,18 +34,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100644 41760550d76ab76eeb35692d0a09cfd156b2eaf4 0	bruh
+100644 e2a6c66a0ecf8fce445415d8b6b90311fc4f59f5 0	bruh
   ctime: 1714967535:569841300
-  mtime: 1714967813:43135300
+  mtime: 1714969514:828622800
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 7118	flags: 0
-100644 d24f75e2384260013afb3e8fedb436f734ba5aa8 0	bruh2
+  size: 6893	flags: 0
+100644 b096f461433b4a358382a4518ec4145148ac3d86 0	bruh2
   ctime: 1714967568:223778000
-  mtime: 1714967900:827608400
+  mtime: 1714969123:226800100
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 8466	flags: 0
+  size: 8821	flags: 0
 100755 642353c2b4c4b5a1dec697d11eb18d96e152343c 0	expand-all-packfiles
   ctime: 1714894412:595052600
   mtime: 1714894412:599060400
@@ -148,6 +148,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 916	flags: 0
+100644 e4a7dd9d0225aed28294d66245dd544e5006867e 0	lolski
+  ctime: 1714969476:525000700
+  mtime: 1714969479:356151000
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 5	flags: 0
+100644 6b5fb2477e1d0f2378691d220fa2d80ffd3aadce 0	lolski2
+  ctime: 1714969485:738060500
+  mtime: 1714969489:904653100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 9	flags: 0
 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	out/.gitkeep
   ctime: 1714454921:39181100
   mtime: 1714454921:39181100
@@ -156,7 +168,7 @@
   size: 0	flags: 0
 100644 266acb90131be41fbff9cd050d13d5f383a185c0 0	src/add.c
   ctime: 1714454921:39690000
-  mtime: 1714969048:916568600
+  mtime: 1714969316:659714100
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 11046	flags: 0
@@ -268,9 +280,9 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 9553	flags: 0
-100644 39d4d485c2b087c624f27d2beaf0d99c0dafccdc 0	temp_idx_file
+100644 179d0081c2a714156282199d735d84cd6e41d9e1 0	temp_idx_file
   ctime: 1714808182:715060300
-  mtime: 1714967804:748788800
+  mtime: 1714969502:916786200
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 3644	flags: 0
