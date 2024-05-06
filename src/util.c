@@ -103,7 +103,7 @@ size_t get_file_size(FILE *f) {
 char *get_file_contents(const char *file_path) {
     FILE *file = fopen(file_path, "rb");
     if (file == NULL) {
-        printf("Failed to open file");
+        // printf("Failed to open file");
         return NULL;
     }
 
@@ -124,7 +124,7 @@ char *get_file_contents(const char *file_path) {
     // Read the file into the buffer
     size_t bytes_read = fread(buffer, 1, file_size, file);
     if (bytes_read < (size_t) file_size) {
-        perror("Failed to read file");
+        // perror("Failed to read file");
         free(buffer);
         fclose(file);
         return NULL;
