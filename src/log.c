@@ -11,5 +11,6 @@
 void mygit_log(const char *ref) {
     (void)ref;
     printf("Not implemented.\n");
+    // get_branch_ref(ref, )
     exit(1);
 }
