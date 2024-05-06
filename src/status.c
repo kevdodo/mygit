@@ -23,7 +23,7 @@ struct linked_list {
 
 
 void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
-    
+    // TODO: make not recursive cuz maybe they have a stack overflow
     tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
 
     for (int i = 0; i < tree->entry_count; i++) {

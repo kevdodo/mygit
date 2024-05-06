@@ -180,24 +180,14 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     
     uint8_t hash_bytes[HASH_BYTES];
     hex_to_hash(index_entry->sha1_hash, hash_bytes);
-    // write_be(index_entry->sha1_hash, sha1_hash, HASH_BYTES);
 
     fwrite(&hash_bytes, sizeof(uint8_t), HASH_BYTES, f);
-    // fwrite(index_entry->sha1_hash, sizeof(uint8_t), HASH_STRING_LENGTH + 1, f);
-
-    // fwrite(&index_entry->sha1_hash, sizeof(char), HASH_BYTES, f);
 
     uint8_t flags[2];
-    // printf(flags)
     write_be(index_entry->flags, flags, 2);
-    // fwrite(&flags, sizeof(char), HASH_BYTES, f);
     fwrite(&flags, sizeof(uint16_t), 1, f);
 
-    // uint8_t file_name[(strlen(index_entry->file_name) + 1)];
-    // write_be(index_entry->file_name, file_name, strlen(index_entry->file_name));
-    // file_name[strlen(index_entry->file_name)] = '\0';
-    // fwrite(&file_name, sizeof(char), strlen(index_entry->file_name)+1, f);
-
+    // we already are writing the null byte with the file_name i guess
     fwrite(index_entry->file_name, sizeof(char), strlen(index_entry->file_name) + 1, f);
 
     // uint16_t null_byte = 0;
@@ -339,6 +329,8 @@ void add_files(const char **file_paths, size_t file_count)
     }
 
     hash_table_sort(index_table);
+
+    char idx_name[] = ".git/index"; // 
     FILE *new_index_file = fopen("temp_idx_file", "wb");
 
     write_index_header(new_index_file, index_cnts);
