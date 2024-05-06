@@ -45,9 +45,9 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
             strcpy(path, curr_chars);
             strcat(path, entry->name);
 
-            printf("final path: %s\n", path);
+            // printf("final path: %s\n", path);
 
-            printf("jawn is in the commit %s\n", entry->name);
+            // printf("jawn is in the commit %s\n", entry->name);
 
             // hash_table_add(hash_table, path, entry->hash);
 
@@ -149,7 +149,6 @@ void status(void) {
         }
         curr_node = curr_node->next;
     }
-
 
     list_node_t *commit_node = key_set(commit_table);
 

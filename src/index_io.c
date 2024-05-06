@@ -21,7 +21,7 @@
 /* Expected file signature for index files */
 const char DIRC_SIG[4] = {'D', 'I', 'R', 'C'};
 
-const char *INDEX_PATH = "temp_idx_file"; // ".git/index"; //    
+const char *INDEX_PATH = ".git/index"; // "temp_idx_file"; //    
 
 /*
  * Read a big-endian bytestream
@@ -59,7 +59,7 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
     fread(sha1, 1, HASH_BYTES, f);
     hash_to_hex(sha1, entry->sha1);
 
-    printf("hash %s\n", entry->sha1);
+    // printf("hash %s\n", entry->sha1);
 
 
     char flags[2];
@@ -83,19 +83,19 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
 
     n_read += fname_length + 1;
 
-    printf("file:%s\n", entry->fname);
-    printf("size:%u\n", entry->size);
-    printf("sha1:%s\n", entry->sha1);
-    printf("mtime:%ld\n", entry->mtime);
-    printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
-    printf("\n");
+    // printf("file:%s\n", entry->fname);
+    // printf("size:%u\n", entry->size);
+    // printf("sha1:%s\n", entry->sha1);
+    // printf("mtime:%ld\n", entry->mtime);
+    // printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
+    // printf("\n");
 
     /* Pad such that n_read % 8 = 0 */
     int pad = 8 - (n_read % 8);
     if (pad != 8)
         fseek(f, pad, SEEK_CUR);
 
-    printf("padding length: %d\n", pad);
+    // printf("padding length: %d\n", pad);
 
     return entry;
 }
