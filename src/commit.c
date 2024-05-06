@@ -74,7 +74,7 @@ void make_tree_from_idx(){
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
         char *pch = strtok(file_path, "/");
 
-
+        
         hash_table_add(stuff, pch, file_path);
         current = current->next;
     }

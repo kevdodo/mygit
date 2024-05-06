@@ -93,12 +93,12 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     // index_entry->mode = index_entry_temp->
     
-    index_entry->mode = 0b10000000000000000000000000000000;
+    index_entry->mode = 0b0000000000000000000000000000000;
 
     if (executable){
-        index_entry->mode += 0b00000000000000000000000000000000110100100;
+        index_entry->mode += 0b00000000000000000000000001000000110100100;
     } else {
-        index_entry->mode += 0b00000000000000000000000000000000111101101;
+        index_entry->mode += 0b00000000000000000000000001000000111101101;
     }
     
     index_entry->uid = 0;
@@ -308,8 +308,10 @@ void add_files(const char **file_paths, size_t file_count)
             }
             continue;
         }
+
         object_hash_t hash;
         write_object(BLOB, file_contents, strlen(file_contents), hash);
+
         index_entry_t *new_entry = malloc(sizeof(index_entry_t));
         new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
         strcpy(new_entry->fname, file_path);
@@ -330,7 +332,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] = ".git/index"; // "temp_idx_file"
+    char idx_name[] = "temp_idx_file"; // ".git/index"; // 
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts);

@@ -1,0 +1,300 @@
+100644 ec17f0ef9a3c55b1cb1be43f838d8a8b06fecf43 0	.gitignore
+  ctime: 1714454921:21162800
+  mtime: 1714454921:21162800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 29	flags: 0
+100644 6db7e9369e48489af966f6ff4620a4ee9e343a8e 0	.gitindex
+  ctime: 1714969112:794102700
+  mtime: 1714969112:812113900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 3664	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	.gitindex.lock
+  ctime: 1714969112:794102700
+  mtime: 1714969117:406468300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 2b1eecb1823083550dc3205773d6761fb847d58a 0	.gitlab-ci.yml
+  ctime: 1714454921:21162800
+  mtime: 1714454921:22157100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 104	flags: 0
+100644 0ce59d5200b68d90c0e83bab6b1e47df64a967a1 0	Makefile
+  ctime: 1714454921:22157100
+  mtime: 1714967255:85447300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 786	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	bin/.gitkeep
+  ctime: 1714454921:24163400
+  mtime: 1714454921:24163400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 41760550d76ab76eeb35692d0a09cfd156b2eaf4 0	bruh
+  ctime: 1714967535:569841300
+  mtime: 1714967813:43135300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 7118	flags: 0
+100644 d24f75e2384260013afb3e8fedb436f734ba5aa8 0	bruh2
+  ctime: 1714967568:223778000
+  mtime: 1714967900:827608400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 8466	flags: 0
+100755 642353c2b4c4b5a1dec697d11eb18d96e152343c 0	expand-all-packfiles
+  ctime: 1714894412:595052600
+  mtime: 1714894412:599060400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 777	flags: 0
+100644 661e87d55a4c835c68ec92594c4c0a5c36595813 0	include/add.h
+  ctime: 1714454921:26176900
+  mtime: 1714889262:616651200
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 183	flags: 0
+100644 b950eeae8aea44e7eb85c11dfcdcb0904c8b90bd 0	include/checkout.h
+  ctime: 1714454921:26176900
+  mtime: 1714454921:26176900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 137	flags: 0
+100644 979cc48faea9e8407f4858d69b37239c7a509066 0	include/commit.h
+  ctime: 1714454921:26176900
+  mtime: 1714454921:27173300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 90	flags: 0
+100644 21dc5a14662beb2212e6721db17d95adae367185 0	include/config_io.h
+  ctime: 1714454921:28179800
+  mtime: 1714454921:29176400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 1298	flags: 0
+100644 a5b8e44f9eba70b73bdcd4d34ac35f49546390fe 0	include/constants.h
+  ctime: 1714454921:29176400
+  mtime: 1714956722:907867100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 356	flags: 0
+100644 648f7b51fd6e2d13d00ac0a3f4da4cbc7a461317 0	include/fetch.h
+  ctime: 1714454921:30183900
+  mtime: 1714454921:31189800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 126	flags: 0
+100644 8fd07fb39a8783db3050b9162327f76fdb6364df 0	include/hash_table.h
+  ctime: 1714454921:31189800
+  mtime: 1714895303:634642700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 707	flags: 0
+100644 676c7e721706e252853d2eae9cd8a79d8793e0d2 0	include/index_io.h
+  ctime: 1714454921:32172800
+  mtime: 1714944475:73754600
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 604	flags: 0
+100644 28a562e9d8ab2917df07178794d4a6f003b73d5f 0	include/linked_list.h
+  ctime: 1714454921:33186600
+  mtime: 1714784807:332448300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 651	flags: 0
+100644 195ae2200c35b38b10e2bae2813c2ed4d68c7f46 0	include/log.h
+  ctime: 1714454921:33186600
+  mtime: 1714454921:34175900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 93	flags: 0
+100644 6d94a2d89d0699364f438fb595c74daa97f4460c 0	include/object_io.h
+  ctime: 1714454921:34175900
+  mtime: 1714962784:432569400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 1483	flags: 0
+100644 95db7f58650f75d190ee5f2c9f54ccb34e1014e3 0	include/push.h
+  ctime: 1714454921:35189600
+  mtime: 1714454921:35189600
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 527	flags: 0
+100644 c5083f3806b00198d0eba4c66551f2cd1fe36962 0	include/ref_io.h
+  ctime: 1714454921:35189600
+  mtime: 1714892361:602888900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 654	flags: 0
+100644 2e7699cc5b1f9debd233cee24b4d014ad94b91b5 0	include/status.h
+  ctime: 1714454921:36185700
+  mtime: 1714454921:36185700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 88	flags: 0
+100644 d2e8378dce98eb67cdaa9b41eb3fac0e0747b336 0	include/transport.h
+  ctime: 1714454921:37185400
+  mtime: 1714939654:359156800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 8243	flags: 0
+100644 5f121ca1de30c34f6789ccd7326c127165851dd8 0	include/util.h
+  ctime: 1714454921:38189500
+  mtime: 1714889301:603249000
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 916	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	out/.gitkeep
+  ctime: 1714454921:39181100
+  mtime: 1714454921:39181100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 266acb90131be41fbff9cd050d13d5f383a185c0 0	src/add.c
+  ctime: 1714454921:39690000
+  mtime: 1714969048:916568600
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 11046	flags: 0
+100644 c855383c5babedd70eebec59e020c9bc436462ff 0	src/checkout.c
+  ctime: 1714454921:40697700
+  mtime: 1714454921:40697700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 232	flags: 0
+100644 b5ce14e4e134f859bf7816d4f9186082222bb432 0	src/commit.c
+  ctime: 1714454921:40697700
+  mtime: 1714968757:563671700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 2847	flags: 0
+100644 b549117398f36f979a65c013363b0157910df31d 0	src/config_io.c
+  ctime: 1714454921:41700100
+  mtime: 1714454921:41700100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 10556	flags: 0
+100644 c3fb8e67ac0495c613ac3993f24ec7918e8ef4ae 0	src/fetch.c
+  ctime: 1714454921:41700100
+  mtime: 1714454921:42701500
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 1140	flags: 0
+100644 75a503923dfa1abed2171ecf296768b2438e6334 0	src/hash_table.c
+  ctime: 1714454921:42701500
+  mtime: 1714957466:61802600
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 3970	flags: 0
+100644 1b1c30ea804c9807519d0a5af06d1794bec0b5f0 0	src/index_io.c
+  ctime: 1714454921:44701500
+  mtime: 1714968659:297090500
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 6521	flags: 0
+100644 27e327a8d2dcebbb9d4e31dd0649b480231c6829 0	src/linked_list.c
+  ctime: 1714454921:44701500
+  mtime: 1714784813:546329000
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 3554	flags: 0
+100644 3e3c3cd5093ab5791a6786d4790618ec99fa91bc 0	src/log.c
+  ctime: 1714454921:45715500
+  mtime: 1714454921:45715500
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 272	flags: 0
+100644 32a0fd8c85253a2334d7f74d814bae566b4936ba 0	src/main.c
+  ctime: 1714454921:45715500
+  mtime: 1714777237:400691700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 345	flags: 0
+100644 886e85f8561faa5cee803eda7043f22d5403c29e 0	src/main.exe
+  ctime: 1714454921:49697200
+  mtime: 1714777232:976621900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 252912	flags: 0
+100644 ae4a7ac7c8292cc9f59a72b7afa1bdf4110b7bdd 0	src/mygit.c
+  ctime: 1714454921:50703400
+  mtime: 1714454921:51704000
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 7029	flags: 0
+100644 42f0cbec501fdfc3b3481416f582f1eb9d19852d 0	src/object_io.c
+  ctime: 1714454921:51704000
+  mtime: 1714962017:73228000
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 16478	flags: 0
+100644 dd3435e5c0e40a967dbef4dd26e8d3b95b7c580f 0	src/push.c
+  ctime: 1714454921:52697700
+  mtime: 1714454921:53705300
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 479	flags: 0
+100644 3c14d2b83578aebc9c4d880d70b460e73f55045e 0	src/ref_io.c
+  ctime: 1714454921:53705300
+  mtime: 1714958865:50094100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 4803	flags: 0
+100644 9198d74e2819ad48a4fd7f9770dbfbaaabc05cab 0	src/status.c
+  ctime: 1714454921:54704400
+  mtime: 1714964695:717574100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 5486	flags: 0
+100644 5637785d7573777f1c8360afa212ff8a076dbd08 0	src/transport.c
+  ctime: 1714454921:56702900
+  mtime: 1714454921:57702100
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 33282	flags: 0
+100644 3bfb963f6fd9e5b7629c2092c805519bf9a337ba 0	src/util.c
+  ctime: 1714454921:57702100
+  mtime: 1714954349:548380600
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 3683	flags: 0
+100644 e0d8cfb7361fdaaedc33a3772fd409458d6bdef8 0	src/writer.c
+  ctime: 1714939675:369078900
+  mtime: 1714944309:823570400
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 9553	flags: 0
+100644 39d4d485c2b087c624f27d2beaf0d99c0dafccdc 0	temp_idx_file
+  ctime: 1714808182:715060300
+  mtime: 1714967804:748788800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 3644	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	temp_idx_file.lock
+  ctime: 1714967887:61385200
+  mtime: 1714967887:61385200
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 9554c1572d8e0c8456ac0ca15f85cc243929140a 0	temp_lolski
+  ctime: 1714955895:321756000
+  mtime: 1714956670:846511700
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 13268	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	testtest
+  ctime: 1714895067:99368400
+  mtime: 1714956599:948919800
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	testtest2
+  ctime: 1714962376:461833900
+  mtime: 1714962376:461833900
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
