@@ -86,7 +86,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (index_entry->mode != 0){
-        if (is_executable(index_entry_temp->fname)){
+        if (!is_executable(index_entry_temp->fname)){
             index_entry->mode = 0b00000000000000000000000001000000111101101;
         } else {
             index_entry->mode = 0b00000000000000000000000001000000110100100;
@@ -321,7 +321,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] =  ".git/index"; //"temp_idx_file"; //   "dummy_index"; //   
+    char idx_name[] =  "temp_idx_file"; //".git/index"; //   "dummy_index"; //   
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts); //
