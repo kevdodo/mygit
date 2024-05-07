@@ -21,7 +21,7 @@
 /* Expected file signature for index files */
 const char DIRC_SIG[4] = {'D', 'I', 'R', 'C'};
 
-const char *INDEX_PATH = "temp_idx_file"; //".git/index"; //   
+const char *INDEX_PATH = ".git/index"; //"temp_idx_file"; //   
 
 /*
  * Read a big-endian bytestream
@@ -49,9 +49,14 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
     entry->mtime = read32(f);
     // printf("entry->mtime %u\n", entry->mtime);
 
-    fseek(f, 24, SEEK_CUR);
+    fseek(f, 12, SEEK_CUR);
+    entry->mode = read32(f);
+    printf("mode: %u\n", entry->mode);
+    
+    fseek(f, 8, SEEK_CUR);
 
     entry->size = read32(f);
+
     // printf("sizesss %u\n", entry->size);
 
 
@@ -83,12 +88,12 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
 
     n_read += fname_length + 1;
 
-    // printf("file:%s\n", entry->fname);
-    // printf("size:%u\n", entry->size);
-    // printf("sha1:%s\n", entry->sha1);
-    // printf("mtime:%ld\n", entry->mtime);
-    // printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
-    // printf("\n");
+    printf("file:%s\n", entry->fname);
+    printf("size:%u\n", entry->size);
+    printf("sha1:%s\n", entry->sha1);
+    printf("mtime:%ld\n", entry->mtime);
+    printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
+    printf("\n");
 
     /* Pad such that n_read % 8 = 0 */
     int pad = 8 - (n_read % 8);

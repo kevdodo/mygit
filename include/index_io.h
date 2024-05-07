@@ -13,6 +13,7 @@ typedef struct index_entry {
     char *fname;
     uint32_t fname_length;
     time_t mtime;
+    uint32_t mode;
 } index_entry_t;
 
 typedef struct index_file {

@@ -68,12 +68,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->ctime_seconds = 0;
     index_entry->ctime_nanoseconds = 0;
 
-
-
-    // if (index_entry_temp->mtime != 0){
-    //     index_entry->mtime_seconds = index_entry_temp->mtime;
-    // }
-
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
 
@@ -87,26 +81,25 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
         }
     } else {
         index_entry->mtime_seconds = index_entry->mtime_seconds;
-    }
-    // index_entry->mtime_seconds = index_entry->mtime_seconds;
-    
+    }    
 
     index_entry->mtime_nanoseconds = 0;
     index_entry->dev = 0;
     index_entry->ino = 0;
 
-    
-    index_entry->mode = 0;
-
-
     // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
-    if (!is_executable(index_entry_temp->fname)){
-        // printf("it's executeable\n");
-        index_entry->mode = 0b00000000000000000000000001000000111101101;
+    if (index_entry->mode != 0){
+        if (is_executable(index_entry_temp->fname)){
+            index_entry->mode = 0b00000000000000000000000001000000111101101;
+        } else {
+            index_entry->mode = 0b00000000000000000000000001000000110100100;
+        }
     } else {
-        index_entry->mode = 0b00000000000000000000000001000000110100100;
+        index_entry->mode = index_entry_temp->mode;
     }
+
+    
     
     index_entry->uid = 0;
     index_entry->gid = 0;
@@ -308,16 +301,21 @@ void add_files(const char **file_paths, size_t file_count)
         new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
         strcpy(new_entry->fname, file_path);
         new_entry->fname_length = strlen(file_path);
-        new_entry->mtime = 0;
         memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
         new_entry->size = strlen(file_contents);
 
+        // needs to be recalculated
+        new_entry->mode = 0; 
+        new_entry->mtime = 0;
         // we needa free the previous one or else you get memory leaks
         if (hash_table_contains(index_table, file_path)){
             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
+            // new_entry->mode = prev_entry->mode; 
+            // new_entry->mtime = prev_entry->mtime;
             free_index_entry(prev_entry);
         } else {
             // its a new one
+
             index_cnts++;
         }
         hash_table_add(index_table, file_path, new_entry);
@@ -327,8 +325,8 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] =  ".git/index"; // "temp_idx_file"; //  "dummy_index"; //   
-    FILE *new_index_file = fopen(idx_name, "wb");
+    char idx_name[] =  ".git/index"; //"temp_idx_file"; //   "dummy_index"; //   
+    FILE *new_index_file = fopen(idx_name, "w");
 
     write_index_header(new_index_file, index_cnts); //
 
