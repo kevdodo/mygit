@@ -77,17 +77,18 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
 
-    if (index_entry->mtime_seconds == 0){
-        if (stat(index_entry_temp->fname, &file_stat) == 0) {
-                index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
-            }
-        else {
-                // Handle error
-                // printf("something wrong with stat");
-        }
-    } else {
-        index_entry->mtime_seconds = index_entry->mtime_seconds;
-    }
+    // if (index_entry->mtime_seconds == 0){
+    //     if (stat(index_entry_temp->fname, &file_stat) == 0) {
+    //             index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
+    //         }
+    //     else {
+    //             // Handle error
+    //             // printf("something wrong with stat");
+    //     }
+    // } else {
+    //     index_entry->mtime_seconds = index_entry->mtime_seconds;
+    // }
+    index_entry->mtime_seconds = index_entry->mtime_seconds;
     
 
     index_entry->mtime_nanoseconds = 0;
@@ -97,7 +98,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     
     index_entry->mode = 0;
 
-    
+
     // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (!is_executable(index_entry_temp->fname)){
@@ -184,6 +185,10 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     // fwrite(&index_entry->file_size, sizeof(uint32_t), 1, f);
     
     uint8_t hash_bytes[HASH_BYTES];
+
+    printf("file name %s\n", index_entry->file_name);
+
+    printf("hash %s\n\n",  index_entry->sha1_hash);
     hex_to_hash(index_entry->sha1_hash, hash_bytes);
 
     fwrite(&hash_bytes, sizeof(uint8_t), HASH_BYTES, f);
@@ -280,7 +285,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     for (size_t i=0; i < file_count; i++){
         const char *file_path = file_paths[i];
-        // printf("file path: %s\n\n", file_path);
+        printf("file path: %s\n\n", file_path);
         
         char *file_contents = get_file_contents(file_path);
         if (file_contents == NULL){
@@ -296,7 +301,11 @@ void add_files(const char **file_paths, size_t file_count)
             }
             continue;
         }
+        printf("how did you get hear??\n");
 
+        // if (file_contents == NULL){
+        // }
+        // printf("file contents %s", file_contents);
         object_hash_t hash;
         write_object(BLOB, file_contents, strlen(file_contents), hash);
 
@@ -323,7 +332,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] =  ".git/index"; // "temp_idx_file";  // "dummy_index"; //   
+    char idx_name[] =  "temp_idx_file"; //".git/index";   // "dummy_index"; //   
     FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts); //

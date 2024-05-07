@@ -21,7 +21,7 @@
 /* Expected file signature for index files */
 const char DIRC_SIG[4] = {'D', 'I', 'R', 'C'};
 
-const char *INDEX_PATH = ".git/index";
+const char *INDEX_PATH = ".git/index"; //"temp_idx_file"; //   
 
 /*
  * Read a big-endian bytestream
@@ -47,19 +47,27 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
     /* Skip over metadata that I don't need */
     fseek(f, 8, SEEK_CUR);
     entry->mtime = read32(f);
+    // printf("entry->mtime %u\n", entry->mtime);
+
     fseek(f, 24, SEEK_CUR);
 
     entry->size = read32(f);
+    // printf("sizesss %u\n", entry->size);
+
 
     uint8_t sha1[HASH_BYTES];
     fread(sha1, 1, HASH_BYTES, f);
     hash_to_hex(sha1, entry->sha1);
+
+    // printf("hash %s\n", entry->sha1);
+
 
     char flags[2];
     fread(flags, 1, 2, f);
 
     int fname_length = ((flags[0] & 0x0F) << 9) + flags[1];
     entry->fname_length = fname_length;
+
 
     bool extended_flag = flags[0] & 0x40;
     if (version == 2 && extended_flag) {
@@ -70,22 +78,24 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
     int n_read = 62;
 
     entry->fname = (char *) malloc(fname_length + 1);
+
     fread(entry->fname, 1, fname_length + 1, f);
+
     n_read += fname_length + 1;
 
-#if DEBUG
-    printf("file:%s\n", entry->fname);
-    printf("size:%u\n", entry->size);
-    printf("sha1:%s\n", entry->sha1);
-    printf("mtime:%ld\n", entry->mtime);
-    printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
-    printf("\n");
-#endif
+    // printf("file:%s\n", entry->fname);
+    // printf("size:%u\n", entry->size);
+    // printf("sha1:%s\n", entry->sha1);
+    // printf("mtime:%ld\n", entry->mtime);
+    // printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
+    // printf("\n");
 
     /* Pad such that n_read % 8 = 0 */
     int pad = 8 - (n_read % 8);
     if (pad != 8)
         fseek(f, pad, SEEK_CUR);
+
+    // printf("padding length: %d\n", pad);
 
     return entry;
 }
@@ -98,6 +108,7 @@ index_file_t *empty_index_file(void) {
 }
 
 index_file_t *read_index_file() {
+
     index_file_t *idx = empty_index_file();
     FILE *f = fopen(INDEX_PATH, "r");
     if (!f) return idx; // index may not exist if it has no entries
@@ -117,12 +128,62 @@ index_file_t *read_index_file() {
                 version);
         exit(1);
     }
+    // printf("version: %u\n", version);
 
     size_t n_entries = read32(f);
+    // printf("n_entries: %lu\n", n_entries);
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
+    // free_index_entry(read_index_entry(f, version));
 
     for (unsigned int i = 0; i < n_entries; i++) {
         index_entry_t *entry = read_index_entry(f, version);
+        // printf("fname: %s\n", entry->fname);
         hash_table_add(idx->entries, entry->fname, entry);
+        // if (i == 2){
+        //     break;
+        // }
     }
 
     fclose(f);

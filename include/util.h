@@ -27,5 +27,7 @@ void make_dirs(char *path);
 void make_parent_dirs(char *path);
 
 size_t get_file_size(FILE *f);
+char *get_file_contents(const char *file_path);
+
 
 #endif // #ifndef UTIL_H
