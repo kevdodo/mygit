@@ -21,7 +21,7 @@
 /* Expected file signature for index files */
 const char DIRC_SIG[4] = {'D', 'I', 'R', 'C'};
 
-const char *INDEX_PATH = "temp_idx_file"; //".git/index"; //   
+const char *INDEX_PATH = ".git/index"; //"temp_idx_file"; //   
 
 /*
  * Read a big-endian bytestream
