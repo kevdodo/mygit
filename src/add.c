@@ -55,11 +55,16 @@ uint16_t get_flags(uint32_t fsize){
 
 
 int is_executable(const char *path) {
-    struct stat st;
-    if (stat(path, &st) < 0) {
-        return 0;
+    struct stat file_stat;
+
+    if (stat(path, &file_stat) != 0) {
+        return -1; // Return -1 to indicate error
     }
-    return st.st_mode & S_IXUSR;
+    if (file_stat.st_mode & S_IXUSR || file_stat.st_mode & S_IXGRP || file_stat.st_mode & S_IXOTH) {
+        return 1; // Return 1 to indicate executable
+    } else {
+        return 0; // Return 0 to indicate not executable
+    }
 }
 
 index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
@@ -291,6 +296,9 @@ void add_files(const char **file_paths, size_t file_count)
     hash_table_sort(index_table);
 
     char idx_name[] =  ".git/index"; // "temp_idx_file"; //
+
+
+    
     FILE *new_index_file = fopen(idx_name, "w");
 
     write_index_header(new_index_file, index_cnts); //
