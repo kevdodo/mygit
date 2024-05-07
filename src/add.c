@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
+
 struct list_node {
    list_node_t *next;
    void *value;
@@ -46,13 +47,13 @@ typedef struct index_entry_full_t{
     char null_byte;
 }index_entry_full_t;
 
+
 uint16_t get_flags(uint32_t fsize){
     if (fsize >= 0xfff){
         return 0xfff;
     }
     return (uint16_t) fsize;
 }
-
 
 int is_executable(const char *path) {
     struct stat file_stat;
@@ -75,8 +76,8 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
-
-    if (index_entry->mtime_seconds == 0){
+    printf("index_entry_temp->mtime %ld\n", index_entry_temp->mtime);
+    if (index_entry_temp->mtime == 0){
         if (stat(index_entry_temp->fname, &file_stat) == 0) {
                 index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
             }
@@ -85,7 +86,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
                 // printf("something wrong with stat");
         }
     } else {
-        index_entry->mtime_seconds = index_entry->mtime_seconds;
+        index_entry->mtime_seconds = index_entry_temp->mtime;
     }    
 
     index_entry->mtime_nanoseconds = 0;
@@ -108,10 +109,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->gid = 0;
 
     index_entry->file_size = index_entry_temp->size;
-    // printf("file size  %u\n", index_entry->file_size);
-
-    // copy the sha1 hash and file_name
-    // index_entry->sha1_hash = malloc(sizeof(char) * HASH_BYTES);
 
     memcpy(index_entry->sha1_hash, index_entry_temp->sha1, HASH_STRING_LENGTH + 1);
     // printf("sha hash  %s\n", index_entry->sha1_hash);
@@ -119,7 +116,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->flags = get_flags(index_entry_temp->fname_length);
     index_entry->file_name = malloc(sizeof(char)*(index_entry_temp->fname_length + 1));
     strcpy(index_entry->file_name, index_entry_temp->fname);
-    // index_entry->file_name[index_entry_temp->fname_length] = '\0';
 
     index_entry->null_byte = '\0';
 
@@ -153,6 +149,9 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
 
     fwrite(&index_entry->ctime_seconds, sizeof(uint32_t), 1, f);
     fwrite(&index_entry->ctime_nanoseconds, sizeof(uint32_t), 1, f);
+    
+    
+    printf("bruh %ld\n\n", index_entry->mtime_seconds);
 
     uint8_t mtime_seconds[4];
     // printf("mtime: %u\n", index_entry->mtime_seconds);
@@ -277,27 +276,24 @@ void add_files(const char **file_paths, size_t file_count)
         new_entry->size = strlen(file_contents);
 
         // needs to be recalculated
-        new_entry->mode = 0; 
-        new_entry->mtime = 0;
+
         // we needa free the previous one or else you get memory leaks
         if (hash_table_contains(index_table, file_path)){
             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
             free_index_entry(prev_entry);
         } else {
             // its a new one
+            new_entry->mode = 0; 
 
+            new_entry->mtime = 0;
             index_cnts++;
         }
         hash_table_add(index_table, file_path, new_entry);
     }
 
-    // printf("after size: %zu", index_cnts);
-
     hash_table_sort(index_table);
 
-    char idx_name[] =  ".git/index"; // "temp_idx_file"; //
-
-
+    char idx_name[] =  ".git/index"; //"temp_idx_file"; // 
     
     FILE *new_index_file = fopen(idx_name, "w");
 
@@ -319,8 +315,6 @@ void add_files(const char **file_paths, size_t file_count)
         curr_node = curr_node->next;
     }
     fclose(new_index_file); 
-
-    // printf("yoooo what is up guys\n");
     
     exit(1);
 }
