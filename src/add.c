@@ -6,12 +6,8 @@
 #include "object_io.h"
 #include "util.h"
 #include <sys/stat.h>
-
-
 #include <string.h>
 #include <unistd.h>
-
-
 
 struct list_node {
    list_node_t *next;
@@ -326,7 +322,7 @@ void add_files(const char **file_paths, size_t file_count)
     hash_table_sort(index_table);
 
     char idx_name[] =  ".git/index"; //"temp_idx_file"; //   "dummy_index"; //   
-    FILE *new_index_file = fopen(idx_name, "w");
+    FILE *new_index_file = fopen(idx_name, "wb");
 
     write_index_header(new_index_file, index_cnts); //
 
