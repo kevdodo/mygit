@@ -76,11 +76,16 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
-    if (stat(index_entry_temp->fname, &file_stat) == 0) {
-        index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
+
+    if (index_entry_temp->mtime == 0){
+        if (stat(index_entry_temp->fname, &file_stat) == 0) {
+            index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
+        } else {
+            // Handle error
+            printf("something wrong with stat");
+        }
     } else {
-        // Handle error
-        // printf("something wrong with stat");
+        index_entry->mtime_seconds = index_entry_temp->mtime;
     }
 
     index_entry->mtime_nanoseconds = 0;
