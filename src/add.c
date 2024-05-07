@@ -54,8 +54,12 @@ uint16_t get_flags(uint32_t fsize){
 }
 
 
-int is_executable(const char *file_path) {
-    return access(file_path, X_OK) == 0;
+int is_executable(const char *path) {
+    struct stat st;
+    if (stat(path, &st) < 0) {
+        return 0;
+    }
+    return st.st_mode & S_IXUSR;
 }
 
 index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
@@ -86,7 +90,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (index_entry->mode != 0){
-        if (!is_executable(index_entry_temp->fname)){
+        if (is_executable(index_entry_temp->fname)){
             index_entry->mode = 0b00000000000000000000000001000000111101101;
         } else {
             index_entry->mode = 0b00000000000000000000000001000000110100100;
@@ -94,8 +98,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     } else {
         index_entry->mode = index_entry_temp->mode;
     }
-
-    
     
     index_entry->uid = 0;
     index_entry->gid = 0;
@@ -132,8 +134,6 @@ size_t get_padding(index_entry_full_t *index_entry){
 
     /* Pad such that n_read % 8 = 0 */
     size_t padding = 8 - (n_read % 8); 
-
-    // printf("your silly padding; %d\n", padding);
 
     if (padding == 8){
         return 0;
@@ -217,35 +217,6 @@ index_entry_t *make_index_entry(size_t size, object_hash_t sha1, char *fname, ui
 }
 
 
-char *get_contents(const char *file_path){
-    FILE *file = fopen(file_path, "rb");
-    if (file == NULL){
-        perror("Could not open file");
-    }
-
-    // Get the size of the file
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char *buffer = malloc(file_size);
-    if (buffer == NULL) {
-        fprintf(stderr, "Failed to allocate memory\n");
-        fclose(file);
-    }
-
-    size_t bytes_read = fread(buffer, 1, file_size, file);
-    if (bytes_read < (size_t) file_size) {
-        fprintf(stderr, "Failed to read file %s\n", file_path);
-        free(buffer);
-        fclose(file);
-    }
-
-    fclose(file);
-
-    return buffer;
-}
-
 void write_index_header(FILE *f, uint32_t num_entries){
     // for the null character
     fwrite("DIRC", sizeof(char), 4, f);
@@ -306,8 +277,6 @@ void add_files(const char **file_paths, size_t file_count)
         // we needa free the previous one or else you get memory leaks
         if (hash_table_contains(index_table, file_path)){
             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
-            // new_entry->mode = prev_entry->mode; 
-            // new_entry->mtime = prev_entry->mtime;
             free_index_entry(prev_entry);
         } else {
             // its a new one
