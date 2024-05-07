@@ -51,7 +51,7 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
 
     fseek(f, 12, SEEK_CUR);
     entry->mode = read32(f);
-    printf("mode: %u\n", entry->mode);
+    // printf("mode: %u\n", entry->mode);
     
     fseek(f, 8, SEEK_CUR);
 
@@ -88,12 +88,12 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
 
     n_read += fname_length + 1;
 
-    printf("file:%s\n", entry->fname);
-    printf("size:%u\n", entry->size);
-    printf("sha1:%s\n", entry->sha1);
-    printf("mtime:%ld\n", entry->mtime);
-    printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
-    printf("\n");
+    // printf("file:%s\n", entry->fname);
+    // printf("size:%u\n", entry->size);
+    // printf("sha1:%s\n", entry->sha1);
+    // printf("mtime:%ld\n", entry->mtime);
+    // printf("stage:%d\n", (flags[0] & 0xC0) >> 6);
+    // printf("\n");
 
     /* Pad such that n_read % 8 = 0 */
     int pad = 8 - (n_read % 8);
