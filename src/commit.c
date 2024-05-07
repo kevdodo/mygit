@@ -125,6 +125,8 @@ void make_tree_from_idx(){
 
     tree_t *root_tree = make_empty_tree();
 
+    char *prev_dir = "";
+
     hash_table_add(dir_tree_map, "", root_tree);
 
 
@@ -132,6 +134,7 @@ void make_tree_from_idx(){
         char *file_path = current->value;
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
 
+        
         char *str = strdup(file_path);
         printf("full file: %s\n", str);
 
