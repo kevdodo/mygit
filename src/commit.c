@@ -73,10 +73,7 @@ void add_tree(tree_t *tree, char*last_dir, index_entry_t *index_entry){
 
 
 void iterate_directories(index_entry_t *index_entry, hash_table_t *directory_map) {
-
     char *file_path = index_entry->fname;
-
-
     char *file_path_copy = strdup(file_path);
     char *curr_directory = malloc(1);  
     *curr_directory = '\0';  
@@ -92,6 +89,11 @@ void iterate_directories(index_entry_t *index_entry, hash_table_t *directory_map
             tree_t *tree = hash_table_get(directory_map, curr_directory);
             // tree_entry_t *entry = (file_path, MODE_FILE, index_entry->sha1);
             // add_to_tree(tree, entry);
+        } else {
+            tree_t *tree = make_empty_tree();
+            tree_entry_t *entry = make_tree_entry(index_entry->fname, MODE_FILE, index_entry->sha1);
+            add_to_tree(tree, entry);
+            hash_table_add(directory_map, index_entry->fname, entry);
         }
         part = next_part;
         next_part = strtok(NULL, "/");
@@ -113,7 +115,6 @@ void make_tree_from_idx(){
     list_node_t *current = head;
 
     // maps file_names to file names, and directories to all their shit
-    
     // directories -> tree directories
     hash_table_t *dir_tree_map = hash_table_init();
 
@@ -129,7 +130,7 @@ void make_tree_from_idx(){
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
         
         char *str = strdup(file_path);
-        printf("full file: %s\n", str);
+        // printf("full file: %s\n", str);
 
         iterate_directories(idx_entry, dir_tree_map);
 
@@ -140,6 +141,7 @@ void make_tree_from_idx(){
         // printf("Current directory path: %s\n", curr_dir_path);
         // hash_table_add(stuff, pch, file_path);
         current = current->next;
+        free(str);
     }
 
 
@@ -151,7 +153,7 @@ void make_tree_from_idx(){
     // }
 
     free_index_file(index_file);
-    // free_hash_table(index_table, free_tree);
+    free_hash_table(dir_tree_map, free_tree);
 
 }
 
@@ -178,6 +180,6 @@ void commit(const char *commit_message) {
     // index_file_t *read_index_file();
     make_tree_from_idx();
 
-    printf("Not implemented.\n");
+    // printf("Not implemented.\n");
     exit(1);
 }
