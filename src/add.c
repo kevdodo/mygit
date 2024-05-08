@@ -97,12 +97,13 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     if (index_entry->mode != 0){
         if (is_executable(index_entry_temp->fname)){
-            index_entry->mode = 0b00000000000000000000000001000000110100100;//0b00000000000000000000000001000000111101101;
+            index_entry->mode = 0b00000000000000000000000001000000110100100;
+           // 0b00000000000000000000000001000000111101101 //0b00000000000000000000000001000000110100100;//
         } else {
             index_entry->mode = 0b00000000000000000000000001000000110100100;
         }
     } else {
-        index_entry->mode = index_entry_temp->mode;
+        index_entry->mode = 0b00000000000000000000000001000000110100100; //index_entry_temp->mode;
     }
     
     index_entry->uid = 0;
@@ -172,16 +173,10 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
 
     uint8_t file_size[4];
     write_be(index_entry->file_size, file_size, 4);
-    // read_be(file_size, 4)
     fwrite(&file_size, sizeof(uint32_t), 1, f);
-
-    // fwrite(&index_entry->file_size, sizeof(uint32_t), 1, f);
     
     uint8_t hash_bytes[HASH_BYTES];
 
-    // printf("file name %s\n", index_entry->file_name);
-
-    // printf("hash %s\n\n",  index_entry->sha1_hash);
     hex_to_hash(index_entry->sha1_hash, hash_bytes);
 
     fwrite(&hash_bytes, sizeof(uint8_t), HASH_BYTES, f);
@@ -234,14 +229,11 @@ void write_index_header(FILE *f, uint32_t num_entries){
     fwrite(&num_entry_bytes, sizeof(uint32_t), 1, f);
 }
 
-
-
 // what to do with added files that are deleted, 
 void add_files(const char **file_paths, size_t file_count)
 {
     index_file_t *index_file = read_index_file();
 
-    // printf("before size: %zu", hash_table_size(index_file->entries));
 
     hash_table_t *index_table = index_file->entries;
     uint32_t index_cnts = hash_table_size(index_table);
@@ -304,10 +296,8 @@ void add_files(const char **file_paths, size_t file_count)
 
         // file is still there
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
-
         if (idx_entry != NULL){
             index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
-
             write_index(new_index_file, full_idx);
             free_full_index_entry(full_idx);
         }
