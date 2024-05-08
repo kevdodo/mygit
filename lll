@@ -10,13 +10,19 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 104	flags: 0
-100755 0ce59d5200b68d90c0e83bab6b1e47df64a967a1 0	Makefile
+100755 fd1b7e93724b52179d5db87a206d3142ebb5ac01 0	Makefile
   ctime: 0:0
-  mtime: 1715049368:0
+  mtime: 3200171710:0
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 786	flags: 0
+  size: 784	flags: 0
 100755 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	aaaa
+  ctime: 0:0
+  mtime: 1715048757:0
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 0	flags: 0
+100755 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0	aaaab
   ctime: 0:0
   mtime: 1715048757:0
   dev: 0	ino: 0
@@ -64,18 +70,18 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 7426	flags: 0
-100755 ecfdda06e2bd604a23ae9ca28851a2ebb9404fbb 0	debuggy
+100755 1b8153328935a7c1061055518c152397b4cfb20b 0	debuggy
   ctime: 0:0
-  mtime: 1715055917:0
+  mtime: 1715056273:0
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 8039	flags: 0
-100755 23822db8d72f44223265ed1dd04343378d18f369 0	debuggy2
+  size: 8487	flags: 0
+100755 e2a9f425a14176b989410dc84fdf93599f58d9a2 0	debuggy2
   ctime: 0:0
-  mtime: 1715055934:0
+  mtime: 1715056358:0
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 8112	flags: 0
+  size: 10601	flags: 0
 100755 6f913a11ff73fa38a02933e9675d794f1ae5cf6b 0	expand-all-packfiles
   ctime: 0:0
   mtime: 1715044282:0
@@ -196,9 +202,9 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100755 5bb6fa16e4277e5921e5edb69157e942ae4e3396 0	src/add.c
+100755 cbfc8455e057ff29b8bc0857c124b3ecf9041dbf 0	src/add.c
   ctime: 0:0
-  mtime: 1715055817:0
+  mtime: 1715139218:0
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 9776	flags: 0
@@ -250,6 +256,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 272	flags: 0
+100755 83a38a6caec94c8a0565504b11389e15502d41bc 0	src/main.c
+  ctime: 0:0
+  mtime: 1715140017:0
+  dev: 0	ino: 0
+  uid: 0	gid: 0
+  size: 698	flags: 0
 100755 ae4a7ac7c8292cc9f59a72b7afa1bdf4110b7bdd 0	src/mygit.c
   ctime: 0:0
   mtime: 1715044282:0
@@ -304,12 +316,12 @@
   dev: 0	ino: 0
   uid: 0	gid: 0
   size: 0	flags: 0
-100755 f162bc2140b667ac441e67597cdb149bde6722de 0	temp_idx_file
+100755 41196caa77708da3d2fa4049a39e046566a1f48a 0	temp_idx_file
   ctime: 0:0
-  mtime: 1715055901:0
+  mtime: 1715056259:0
   dev: 0	ino: 0
   uid: 0	gid: 0
-  size: 4228	flags: 0
+  size: 4460	flags: 0
 100755 8fc4b731e0e30d8b1e821f3f8196e5eb4f59a878 0	temp_idx_file2
   ctime: 0:0
   mtime: 1715051373:0

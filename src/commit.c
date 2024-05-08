@@ -12,7 +12,6 @@
 #include "util.h"
 
 
-
 struct list_node {
    list_node_t *next;
    void *value;
@@ -21,36 +20,6 @@ struct linked_list {
     list_node_t *head;
     list_node_t **tail;
 };
-
-
-// typedef struct tree_node {
-//     char *name;
-//     struct tree_node **children;
-//     size_t child_count;
-// } tree_node_t;
-
-// tree_node_t *create_tree_node(char *name) {
-//     tree_node_t *node = malloc(sizeof(tree_node_t));
-//     if (node == NULL) {
-//         return NULL;
-//     }
-//     node->name = name;
-//     node->children = NULL;
-//     node->child_count = 0;
-//     return node;
-// }
-
-// int add_child(tree_node_t *parent, tree_node_t *child) {
-//     parent->children = realloc(parent->children, sizeof(tree_node_t *) * (parent->child_count + 1));
-//     if (parent->children == NULL) {
-//         return -1;
-//     }
-//     parent->children[parent->child_count] = child;
-//     parent->child_count++;
-//     return 0;
-// }
-
-
 
 // dictionary from directories to the tree objects
 tree_entry_t *make_tree_entry(char *name, file_mode_t mode, object_hash_t hash){
@@ -103,10 +72,36 @@ void add_tree(tree_t *tree, char*last_dir, index_entry_t *index_entry){
 // } tree_entry_t;
 
 
+void iterate_directories(index_entry_t *index_entry, hash_table_t *directory_map) {
+
+    char *file_path = index_entry->fname;
+
+
+    char *file_path_copy = strdup(file_path);
+    char *curr_directory = malloc(1);  
+    *curr_directory = '\0';  
+    char *part = strtok(file_path_copy, "/");
+    char *next_part = strtok(NULL, "/");
+    while (next_part != NULL) {
+        curr_directory = realloc(curr_directory, strlen(curr_directory) + strlen(part) + 2);
+        strcat(curr_directory, part);  
+        strcat(curr_directory, "/");
+        printf("Directory: %s\n", curr_directory);
+
+        if (hash_table_contains(directory_map, curr_directory)){
+            tree_t *tree = hash_table_get(directory_map, curr_directory);
+            // tree_entry_t *entry = (file_path, MODE_FILE, index_entry->sha1);
+            // add_to_tree(tree, entry);
+        }
+        part = next_part;
+        next_part = strtok(NULL, "/");
+        printf("part: %s\n", part);
+    }
+    free(file_path_copy);
+    free(curr_directory);
+}
 void make_tree_from_idx(){
     index_file_t *index_file = read_index_file();
-
-
     hash_table_t *index_table = index_file->entries;
 
     hash_table_sort(index_table);
@@ -118,8 +113,7 @@ void make_tree_from_idx(){
     list_node_t *current = head;
 
     // maps file_names to file names, and directories to all their shit
-
-
+    
     // directories -> tree directories
     hash_table_t *dir_tree_map = hash_table_init();
 
@@ -133,39 +127,16 @@ void make_tree_from_idx(){
     while (current != NULL) {
         char *file_path = current->value;
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
-
         
         char *str = strdup(file_path);
         printf("full file: %s\n", str);
 
-        char *pch = strtok (str,"/");
+        iterate_directories(idx_entry, dir_tree_map);
 
-        char *last_pch = "";
+        // char *pch = strtok(str,"/");
+
+        // char *last_pch = "";
         
-        // char *curr_dir_path = malloc(1);  // Start with enough space for the null character
-        // *curr_dir_path = '\0';  // Make it an empty string
-
-        // while (pch != NULL) {
-        //     printf ("%s\n", pch);
-
-        //     // Resize curr_dir_path and append the current token and a slash
-        //     curr_dir_path = realloc(curr_dir_path, strlen(curr_dir_path) + strlen(last_pch) + 2);
-        //     strcat(curr_dir_path, last_pch);
-        //     if (strcmp(last_pch, "") != 0){
-        //         strcat(curr_dir_path, "/");
-        //     }
-
-        //     if (!hash_table_get(dir_tree_map, curr_dir_path)){
-        //         // want to make a new tree if it hasn't been initialized already
-        //         tree_t *new_tree = make_empty_tree();
-        //         hash_table_add(dir_tree_map, curr_dir_path, new_tree);
-        //     } else {
-        //         tree_t *tree = hash_table_get(dir_tree_map, curr_dir_path);
-        //         add_tree(tree, last_pch);
-        //     }
-        //     last_pch = pch;
-        //     pch = strtok(NULL, "/");
-        // }
         // printf("Current directory path: %s\n", curr_dir_path);
         // hash_table_add(stuff, pch, file_path);
         current = current->next;
@@ -180,7 +151,7 @@ void make_tree_from_idx(){
     // }
 
     free_index_file(index_file);
-    // free_hash_table(index_table, free);
+    // free_hash_table(index_table, free_tree);
 
 }
 

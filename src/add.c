@@ -76,7 +76,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
-    printf("index_entry_temp->mtime %ld\n", index_entry_temp->mtime);
+    // printf("index_entry_temp->mtime %ld\n", index_entry_temp->mtime);
     if (index_entry_temp->mtime == 0){
         if (stat(index_entry_temp->fname, &file_stat) == 0) {
                 index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
@@ -97,7 +97,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
 
     if (index_entry->mode != 0){
         if (is_executable(index_entry_temp->fname)){
-            index_entry->mode = 0b00000000000000000000000001000000111101101;
+            index_entry->mode = 0b00000000000000000000000001000000110100100;//0b00000000000000000000000001000000111101101;
         } else {
             index_entry->mode = 0b00000000000000000000000001000000110100100;
         }
@@ -151,7 +151,7 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     fwrite(&index_entry->ctime_nanoseconds, sizeof(uint32_t), 1, f);
     
     
-    printf("bruh %ld\n\n", index_entry->mtime_seconds);
+    // printf("bruh %ld\n\n", index_entry->mtime_seconds);
 
     uint8_t mtime_seconds[4];
     // printf("mtime: %u\n", index_entry->mtime_seconds);
