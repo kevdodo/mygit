@@ -258,7 +258,6 @@ void add_files(const char **file_paths, size_t file_count)
             if (hash_table_contains(index_table, file_path)){
 
                 index_entry_t *prev_entry = hash_table_get(index_table, file_path);
-                // printf()
                 free_index_entry(prev_entry);
                 hash_table_add(index_table, file_path, NULL);
                 index_cnts--;
