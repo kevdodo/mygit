@@ -301,5 +301,6 @@ void add_files(const char **file_paths, size_t file_count)
         curr_node = curr_node->next;
     }
     fclose(new_index_file);     
+    free_index_file(index_file);
     // exit(1);
 }
