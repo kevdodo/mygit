@@ -188,9 +188,6 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     // we already are writing the null byte with the file_name i guess
     fwrite(index_entry->file_name, sizeof(char), strlen(index_entry->file_name) + 1, f);
 
-    // uint16_t null_byte = 0;
-    // fwrite(&null_byte, sizeof(uint16_t), 1, f);
-
     size_t padding = get_padding(index_entry);
     assert(padding < 8);
 
@@ -284,7 +281,7 @@ void add_files(const char **file_paths, size_t file_count)
 
     hash_table_sort(index_table);
 
-    char idx_name[] =  ".git/index"; //"temp_idx_file"; // 
+    char idx_name[] =  ".git/index"; //"temp_idx_file"; //
     
     FILE *new_index_file = fopen(idx_name, "w");
 

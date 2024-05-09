@@ -295,7 +295,28 @@ tree_t *read_tree(const object_hash_t hash) {
 }
 
 void free_tree(tree_t *tree) {
+    if (tree->entries == NULL){
+        printf("why the tree null\n");
+        free(tree);
+        return;
+    }
     for (size_t i = 0; i < tree->entry_count; i++) free(tree->entries[i].name);
+    free(tree->entries);
+    free(tree);
+}
+
+void free_tree_entry(tree_entry_t *tree_entry){
+    free(tree_entry->name);
+    free(tree_entry);
+}
+
+void free_tree_mine(tree_t *tree) {
+    if (tree->entries == NULL){
+        printf("why the tree null\n");
+        free(tree);
+        return;
+    }
+    // for (size_t i = 0; i < tree->entry_count; i++) free_tree_entry(&tree->entries[i]);
     free(tree->entries);
     free(tree);
 }

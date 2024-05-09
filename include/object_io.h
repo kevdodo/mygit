@@ -66,4 +66,7 @@ void write_object(
     object_hash_t hash
 );
 
+void free_tree_entry(tree_entry_t *tree_entry);
+void free_tree_mine(tree_t *tree);
+
 #endif // #ifndef OBJECT_IO_H
