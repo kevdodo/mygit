@@ -103,7 +103,6 @@ char **get_all_files_in_directory() {
 }
 
 void status(void) {
-    printf("Not implemented.\n");
     bool *detached = malloc(sizeof(bool));
     char *head = read_head_file(detached);
 
@@ -111,9 +110,9 @@ void status(void) {
     printf("head: %s\n", head);
     // const char *PATH = ".git/refs/heads/";
 
-    if (!*detached){
-        printf("not detached brodie\n");
-    }
+    // if (!*detached){
+    //     printf("not detached brodie\n");
+    // }
     char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     head_to_hash(head, *detached, hash);
 
@@ -138,15 +137,13 @@ void status(void) {
         char *file_name = curr_node->value;
         index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
 
-        // printf("file name idx: %s\n", file_name);
-
         char *hash_commit = (char *) hash_table_get(commit_table, file_name);
         if (hash_commit == NULL) {
             // in the index, not in the commit 
-            printf("\tadded: %s\n", file_name);
+            printf("\tnew file: %s\n", file_name);
         } else{
             // The hashes are different, indicating modified
-            if (strcmp(idx_entry->sha1, (char *) hash_table_get(commit_table, file_name)) != 0){
+            if (strcmp(idx_entry->sha1, hash_commit) != 0){
                 printf("\tmodified: %s\n", file_name);
             }
             // otherwise they're the same file
@@ -181,7 +178,11 @@ void status(void) {
         get_object_hash(BLOB, file_contents, strlen(file_contents), hash);
 
         if (hash_table_contains(idx_file->entries, file_path)){
-            if (strcmp(file_path, (char *) hash_table_get(idx_file->entries, file_path)) != 0){
+            index_entry_t *index_entry = hash_table_get(idx_file->entries, file_path);
+            printf("idx_hash  %s\n", index_entry->sha1);
+            printf("file hash %s\n",  hash);
+            
+            if (strcmp(hash, index_entry->sha1) != 0){
                 printf("\tmodified: %s\n", file_path);
             }
         }
