@@ -176,7 +176,6 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     fwrite(&file_size, sizeof(uint32_t), 1, f);
     
     uint8_t hash_bytes[HASH_BYTES];
-
     hex_to_hash(index_entry->sha1_hash, hash_bytes);
 
     fwrite(&hash_bytes, sizeof(uint8_t), HASH_BYTES, f);
