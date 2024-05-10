@@ -424,12 +424,15 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
 
             char mode_str[12];  // Large enough to hold a 32-bit integer in octal
             sprintf(mode_str, "%o", idx_entry->mode);
-            size_t total_size = curr_size + strlen(mode_str) + strlen(dir_file.file_dir_name) + HASH_BYTES + 2;
+            size_t total_size = curr_size + strlen(mode_str) + strlen(dir_file.file_dir_name) + HASH_BYTES + 3;
             contents = realloc(contents, total_size);
             
             
             memcpy(contents + curr_size, mode_str, strlen(mode_str));
             curr_size += strlen(mode_str);
+            
+            memcpy(contents + curr_size, " ", 1);
+            curr_size += 1;
             memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
             curr_size += strlen(dir_file.file_dir_name);
             memcpy(contents + curr_size, "\0", 1);
@@ -616,21 +619,6 @@ char* get_unix_timestamp_and_timezone() {
     return timestamp_and_timezone_str;
 }
 
-char *get_commit_hash(){
-    bool detached;    
-    char *head = read_head_file(&detached);
-
-    // get to the hash of the head
-    printf("head: %s\n", head);
-
-    if (!detached){
-        printf("not detached brodie\n");
-    }
-    char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
-    head_to_hash(head, detached, hash);
-    free(head);
-    return hash;
-}
 
 char* create_commit_message(const char* tree_hash, const char* commit_message, char **parent_hashes) {
     // Calculate the size of the commit message
@@ -672,7 +660,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
 
     strcpy(commit_message_str, "tree ");
     strcat(commit_message_str, tree_hash);
-    strcat(commit_message_str, "\n\n");
+    strcat(commit_message_str, "\n");
 
     for (size_t i = 0; parent_hashes[i] != NULL; i++) {
         strcat(commit_message_str, "parent ");
@@ -717,9 +705,20 @@ void commit(const char *commit_message) {
     printf("tree hash %s\n", tree_hash);
 
 
-    char *commit_hash = get_commit_hash();
-    assert(commit_hash != NULL);
+    bool detached;    
+    char *head = read_head_file(&detached);
 
+    // get to the hash of the head
+    printf("head: %s\n", head);
+
+    char *commit_hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
+    bool found = head_to_hash(head, detached, commit_hash);
+    if (!found){
+        free(commit_hash);
+        commit_hash = NULL;
+    }
+
+    free(head);
     printf("commit hash %s\n", commit_hash);
 
     // make multiple parent hashes
@@ -735,8 +734,9 @@ void commit(const char *commit_message) {
     printf("hash %s\n", hash);
     free_hash_table(tree_map, free);
     free(msg);
-    free(commit_hash);
+    if (commit_hash != NULL){
+        free(commit_hash);
+    }
     free(parent_hashes);
 
-    // exit(1);
 }
