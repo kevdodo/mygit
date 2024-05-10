@@ -376,57 +376,84 @@ bool can_hash(directory_t *dir, hash_table_t *dir_map){
 }
 
 
-void write_tree(FILE *f, directory_t *directory, const hash_table_t * index_table, hash_table_t *tree_map) {
+void write_tree(directory_t *directory, const hash_table_t * index_table, const hash_table_t *tree_map) {
     
-    char *contents = malloc(1);
-    
+    uint8_t *contents = malloc(1);
+    size_t curr_size = 0;
+    printf("im hereee: %s\n", directory->name);
 
-    *contents = '\0';
+    // *contents = '\0';
     for (size_t i=0; i < directory->num_files; i ++){
         directory_file_t dir_file = directory->directory_files[i];
+        printf("dir nameeee: %s\n", dir_file.file_dir_name);
 
         if (dir_file.is_directory){
-            // object_hash_t tree_hash = hash_table_get(tree_map, dir_file.file_dir_name);
-            // // fwrite(f, )
-            // // uint8_t hash_bytes[HASH_BYTES];
-            // // hex_to_hash(tree_hash, hash_bytes);
-            // contents = realloc(contents, sizeof(contents) + sizeof(MODE_DIRECTORY) + sizeof(char)*(strlen(dir_file.file_dir_name) + 1 + HASH_BYTES));
-            // strcat(contents, "10064");
-            // strcat(contents, dir_file.file_dir_name);
-            // strcat(contents, tree_hash);
-            // printf("contents: %s", contents);
+            printf("YUPPPP: %s\n", dir_file.file_dir_name);
+
+            assert(hash_table_contains(tree_map, dir_file.file_dir_name));
+
+            void *tree_hash = hash_table_get(tree_map, dir_file.file_dir_name);
+            printf("tree hash: %s\n", (char *) tree_hash);
+            // printf("tree hash len: %s\n", strlen(tree_hash));
+
+            contents = realloc(contents, curr_size + strlen("40000 ") + strlen(dir_file.file_dir_name) + 2 + HASH_BYTES);
+            
+            memcpy(contents + curr_size, "40000 ", strlen("40000 "));
+            curr_size += strlen("40000 ");
+
+
+            memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
+            curr_size += strlen(dir_file.file_dir_name);
+
+            memcpy(contents + curr_size, "\0", 1);
+            curr_size += 1;
+
+            uint8_t hash_bytes[HASH_BYTES];
+            hex_to_hash(tree_hash, hash_bytes);
+            memcpy(contents + curr_size, hash_bytes, HASH_BYTES);
+            curr_size += HASH_BYTES;
+
         } else {
             char *full_name = get_full_name(directory->name, dir_file.file_dir_name);
             printf("full name : %s\n", full_name);
             index_entry_t *idx_entry = hash_table_get(index_table, full_name);
             assert(idx_entry != NULL);
-            // fwrite(f, )
+
+
+            size_t total_size = curr_size + strlen("100644 ") + strlen(dir_file.file_dir_name) + HASH_BYTES + 2;
+            contents = realloc(contents, total_size);
+            
+            memcpy(contents + curr_size, "100644 ", strlen("100644 "));
+            curr_size += strlen("100644 ");
+            // strcat(contents, "100644 ");
+            memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
+            curr_size += strlen(dir_file.file_dir_name);
+            memcpy(contents + curr_size, "\0", 1);
+
+            curr_size += 1;
+
+            // size_t contents_len = strlen(contents);
             uint8_t hash_bytes[HASH_BYTES];
             hex_to_hash(idx_entry->sha1, hash_bytes);
-            size_t total_size = strlen(contents) + strlen("10064 ") + strlen(dir_file.file_dir_name) + 2*HASH_BYTES + 3;
-            contents = realloc(contents, total_size);
-
-            strcat(contents, "10064 ");
-            strcat(contents, dir_file.file_dir_name);
-            strcat(contents,"\0");
-
-            for (int i = 0; i < HASH_BYTES; i++) {
-                char str[3];
-                sprintf(str, "%02x", hash_bytes[i]);
-                strcat(contents, str);
-            }
+            memcpy(contents + curr_size, hash_bytes, HASH_BYTES);
+            curr_size += HASH_BYTES;
             
             // strcat(contents, hash_bytes);
-            printf("contents: \n%s\n", contents);
+            // printf("contents: \n%s\n", contents);
             free(full_name);
         }
     }
-    size_t len = strlen(contents);
+    // size_t len = strlen(contents);
     object_hash_t hash;
-    write_object(TREE, contents, strlen(contents), hash);
+    write_object(TREE, (void *)contents, curr_size, hash);
     // if (fwrite(contents, sizeof(char), len, f) != len) {
     //     fprintf(stderr, "Error writing to file\n");
     // }
+
+    char *hash_brodie = malloc(sizeof(char) * 41);
+    strcpy(hash_brodie, hash);
+
+    hash_table_add(tree_map, directory->name, hash_brodie);
     printf("hash %s\n", (char *)hash);
     free(contents);
 }
@@ -436,7 +463,7 @@ void write_tree(FILE *f, directory_t *directory, const hash_table_t * index_tabl
 
 
 
-void directory_traversal(FILE *f, directory_t *curr_root_directory, const hash_table_t *dir_map, const hash_table_t * index_table){
+void directory_traversal(directory_t *curr_root_directory, const hash_table_t *dir_map, const hash_table_t * index_table, const hash_table_t * tree_map){
 
 
     printf("------------------dir from function-------------------\n\n");
@@ -445,15 +472,12 @@ void directory_traversal(FILE *f, directory_t *curr_root_directory, const hash_t
     if (can_hash(curr_root_directory, dir_map) ){
         char *dir_name = get_last_dir(curr_root_directory->name);
 
-        printf("i can be hashed %s", dir_name);
+        printf("i can be hashed %s\n", dir_name);
         // hash the stuff and return remember to write name of the tree not the
         // name of the 
-
-        // write_tree()
+        write_tree(curr_root_directory, index_table, tree_map);
         free(dir_name);
         return;
-    } else {
-        printf("i can't be hashed %s\n", curr_root_directory->name);
     }
     for (size_t i=0; i < curr_root_directory->num_files; i ++){
         directory_file_t dir_file = curr_root_directory->directory_files[i];
@@ -478,7 +502,7 @@ void directory_traversal(FILE *f, directory_t *curr_root_directory, const hash_t
 
             directory_t * directory = hash_table_get(dir_map, name_w_slash);
             if (!directory->completed){
-                directory_traversal(f, directory, dir_map, index_table);
+                directory_traversal(directory, dir_map, index_table, tree_map);
                 directory->completed = true;
             } else{
                 printf("yuhhhhh");
@@ -492,7 +516,14 @@ void directory_traversal(FILE *f, directory_t *curr_root_directory, const hash_t
             assert(hash_table_contains(index_table, full_path));
             free(full_path);
         }
-    }
+    }    
+    char *dir_name = get_last_dir(curr_root_directory->name);
+
+    printf("i can be hashed %s\n", dir_name);
+    // hash the stuff and return remember to write name of the tree not the
+    // name of the 
+    write_tree(curr_root_directory, index_table, tree_map);
+    free(dir_name);
     curr_root_directory->completed = true;
     printf("------------------end of function-------------------\n");
 }
@@ -530,30 +561,18 @@ void make_tree_from_idx(){
 
     debug_map((const hash_table_t *)dir_map);
 
-    directory_t *dir_bruhh = hash_table_get(dir_map, "");
-
-    // printf("---------------dir from root------------------\n");
-    // for (size_t i=0; i < root_dir->num_files; i++){
-    //     directory_file_t dir_file = root_dir->directory_files[i];
-    //     if (dir_file.is_directory){
-    //         printf("\tdirectory: %s\n", dir_file.file_dir_name);
-    //         get_last_dir(dir_file.file_dir_name);
-    //     } else {
-    //         printf("\tnot a directory: %s\n", dir_file.file_dir_name);
-    //     }
-    // }
-
-
-
-    directory_traversal(NULL, root_dir, dir_map, index_file->entries);
-
-    directory_t *brodie4 = hash_table_get(dir_map, "src/brodie2/brodie3/brodie4/");
+    directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
 
     hash_table_t *tree_map = hash_table_init();
-    FILE *obj = fopen("uhhhh", "w");
-    write_tree(obj, brodie4, index_table, tree_map);
 
-    free_hash_table(tree_map, NULL);
+    directory_traversal(dir_bruhh, dir_map, index_file->entries, tree_map);
+
+    // directory_t *brodie4 = hash_table_get(dir_map, "src/brodie2/brodie3/");
+
+    // FILE *obj = fopen("uhhhh", "w");
+    // write_tree(obj, brodie4, index_table, tree_map);
+
+    free_hash_table(tree_map, free);
 
     free_hash_table(dir_map, (free_func_t) free_directory);
 
