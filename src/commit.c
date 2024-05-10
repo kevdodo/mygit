@@ -740,5 +740,4 @@ void commit(const char *commit_message) {
         free(commit_hash);
     }
     free(parent_hashes);
-
 }
