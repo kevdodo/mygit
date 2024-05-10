@@ -732,6 +732,8 @@ void commit(const char *commit_message) {
     write_object(COMMIT, msg, strlen(msg), hash);
 
     printf("hash %s\n", hash);
+
+    set_branch_ref(head, hash);
     free_hash_table(tree_map, free);
     free(msg);
     if (commit_hash != NULL){
