@@ -482,15 +482,15 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
     for (size_t i=0; i < curr_root_directory->num_files; i ++){
         directory_file_t dir_file = curr_root_directory->directory_files[i];
         char *file_name = dir_file.file_dir_name;
-        printf("file name %s\n", dir_file.file_dir_name);
+        // printf("file name %s\n", dir_file.file_dir_name);
 
         if (dir_file.is_directory){
-            printf("dir name: %s\n", dir_file.file_dir_name);
+            // printf("dir name: %s\n", dir_file.file_dir_name);
             char *name_w_slash;
             if (dir_file.file_dir_name[strlen(dir_file.file_dir_name)-1] != '/'){
-                printf("bruhhhh\n");
+                // printf("bruhhhh\n");
 
-                printf("   %c ???????", dir_file.file_dir_name[strlen(dir_file.file_dir_name)-1]);
+                // printf("   %c ???????", dir_file.file_dir_name[strlen(dir_file.file_dir_name)-1]);
                 name_w_slash = add_a_stupid_slash(dir_file.file_dir_name);
             } else {
                 name_w_slash = strdup(dir_file.file_dir_name);
@@ -504,15 +504,13 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
             if (!directory->completed){
                 directory_traversal(directory, dir_map, index_table, tree_map);
                 directory->completed = true;
-            } else{
-                printf("yuhhhhh");
-            }
+            } 
             free(name_w_slash);
         } else {
             // it has to be a blob object, make it into the tree entry
             char *full_path = get_full_name(curr_root_directory->name, file_name);
             // 
-            printf("full path: %s\n", full_path);
+            // printf("full path: %s\n", full_path);
             assert(hash_table_contains(index_table, full_path));
             free(full_path);
         }
@@ -559,7 +557,7 @@ char *make_tree_from_idx(hash_table_t *tree_map){
         free(str);
     }
 
-    debug_map((const hash_table_t *)dir_map);
+    // debug_map((const hash_table_t *)dir_map);
 
     // directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
 
@@ -704,7 +702,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     free(author_date_unix);
     free(committer_date_unix);
 
-    printf("commit message:\n\n\n %s\n", commit_message_str);
+    printf("commit message:\n\n\n%s\n", commit_message_str);
     free_config(config);
 
     return commit_message_str;
