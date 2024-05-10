@@ -273,7 +273,7 @@ char *get_last_dir(char *file_dir_name){
     if (count != 0){
         last_dir = strdup(full_name_splitted[count-1]);
     } else {
-        last_dir = full_name;
+        last_dir = strdup(full_name);
     }
     // printf("\t\tlast_dir: %s\n\n", last_dir);
 
@@ -396,14 +396,16 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
             printf("tree hash: %s\n", (char *) tree_hash);
             // printf("tree hash len: %s\n", strlen(tree_hash));
 
-            contents = realloc(contents, curr_size + strlen("40000 ") + strlen(dir_file.file_dir_name) + 2 + HASH_BYTES);
+            char *last_dir = get_last_dir(dir_file.file_dir_name);
+
+            contents = realloc(contents, curr_size + strlen("40000 ") + strlen(last_dir) + 2 + HASH_BYTES);
             
             memcpy(contents + curr_size, "40000 ", strlen("40000 "));
             curr_size += strlen("40000 ");
 
 
-            memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
-            curr_size += strlen(dir_file.file_dir_name);
+            memcpy(contents + curr_size, last_dir, strlen(last_dir));
+            curr_size += strlen(last_dir);
 
             memcpy(contents + curr_size, "\0", 1);
             curr_size += 1;
@@ -412,10 +414,11 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
             hex_to_hash(tree_hash, hash_bytes);
             memcpy(contents + curr_size, hash_bytes, HASH_BYTES);
             curr_size += HASH_BYTES;
+            free(last_dir);
 
         } else {
             char *full_name = get_full_name(directory->name, dir_file.file_dir_name);
-            printf("full name : %s\n", full_name);
+            // printf("full name : %s\n", full_name);
             index_entry_t *idx_entry = hash_table_get(index_table, full_name);
             assert(idx_entry != NULL);
 
@@ -423,7 +426,7 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
             size_t total_size = curr_size + strlen("100644 ") + strlen(dir_file.file_dir_name) + HASH_BYTES + 2;
             contents = realloc(contents, total_size);
             
-            memcpy(contents + curr_size, "100644 ", strlen("100644 "));
+            memcpy(contents + curr_size, "100755 ", strlen("100644 "));
             curr_size += strlen("100644 ");
             // strcat(contents, "100644 ");
             memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
@@ -443,12 +446,8 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
             free(full_name);
         }
     }
-    // size_t len = strlen(contents);
     object_hash_t hash;
     write_object(TREE, (void *)contents, curr_size, hash);
-    // if (fwrite(contents, sizeof(char), len, f) != len) {
-    //     fprintf(stderr, "Error writing to file\n");
-    // }
 
     char *hash_brodie = malloc(sizeof(char) * 41);
     strcpy(hash_brodie, hash);
@@ -519,7 +518,7 @@ void directory_traversal(directory_t *curr_root_directory, const hash_table_t *d
     }    
     char *dir_name = get_last_dir(curr_root_directory->name);
 
-    printf("i can be hashed %s\n", dir_name);
+    // printf("i can be hashed %s\n", dir_name);
     // hash the stuff and return remember to write name of the tree not the
     // name of the 
     write_tree(curr_root_directory, index_table, tree_map);
@@ -528,7 +527,7 @@ void directory_traversal(directory_t *curr_root_directory, const hash_table_t *d
     printf("------------------end of function-------------------\n");
 }
 
-void make_tree_from_idx(){
+char *make_tree_from_idx(){
     index_file_t *index_file = read_index_file();
     hash_table_t *index_table = index_file->entries;
 
@@ -561,16 +560,15 @@ void make_tree_from_idx(){
 
     debug_map((const hash_table_t *)dir_map);
 
-    directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
+    // directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
 
     hash_table_t *tree_map = hash_table_init();
 
-    directory_traversal(dir_bruhh, dir_map, index_file->entries, tree_map);
+    directory_traversal(root_dir, dir_map, index_file->entries, tree_map);
 
-    // directory_t *brodie4 = hash_table_get(dir_map, "src/brodie2/brodie3/");
+    char *final_hash = hash_table_get(tree_map, "");
 
-    // FILE *obj = fopen("uhhhh", "w");
-    // write_tree(obj, brodie4, index_table, tree_map);
+    printf("final hash %s", final_hash);
 
     free_hash_table(tree_map, free);
 
@@ -578,6 +576,7 @@ void make_tree_from_idx(){
 
     free_index_file(index_file);
     // free_hash_table(dir_tree_map, free_tree);
+    return final_hash;
 
 }
 
@@ -599,10 +598,100 @@ commit_t *get_head_commit(){
     return head_commit;
 }
 
+// char* create_commit_message(const char* tree_hash, const char** parent_hashes, const char* commit_message) {
+//     // Calculate the size of the commit message
+//     size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
+//                           strlen(tree_hash) +
+//                           strlen(commit_message) +
+//                           2 * (strlen(get_author_name()) + strlen(get_author_email()) + strlen(get_unix_timestamp()) + strlen(TIMEZONE));
+
+//     // Add the size of the parent commit hashes
+//     for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
+//         message_size += strlen("parent \n") + HASH_STRING_LENGTH;
+//     }
+
+//     // Allocate memory for the commit message
+//     char* commit_message_str = malloc(message_size + 1);
+//     if (commit_message_str == NULL) {
+//         fprintf(stderr, "Failed to allocate memory for commit message\n");
+//         exit(1);
+//     }
+
+//     // Start creating the commit message
+//     strcpy(commit_message_str, "tree ");
+//     strcat(commit_message_str, tree_hash);
+//     strcat(commit_message_str, "\n");
+
+//     // Add the parent commit hashes
+//     for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
+//         strcat(commit_message_str, "parent ");
+//         strcat(commit_message_str, *parent_hash);
+//         strcat(commit_message_str, "\n");
+//     }
+
+//     // Add the author and committer info
+//     strcat(commit_message_str, "author ");
+//     strcat(commit_message_str, get_author_name());
+//     strcat(commit_message_str, " <");
+//     strcat(commit_message_str, get_author_email());
+//     strcat(commit_message_str, "> ");
+//     strcat(commit_message_str, get_unix_timestamp());
+//     strcat(commit_message_str, " ");
+//     strcat(commit_message_str, TIMEZONE);
+//     strcat(commit_message_str, "\ncommitter ");
+//     strcat(commit_message_str, get_author_name());
+//     strcat(commit_message_str, " <");
+//     strcat(commit_message_str, get_author_email());
+//     strcat(commit_message_str, "> ");
+//     strcat(commit_message_str, get_unix_timestamp());
+//     strcat(commit_message_str, " ");
+//     strcat(commit_message_str, TIMEZONE);
+//     strcat(commit_message_str, "\n\n");
+
+//     // Add the commit message
+//     strcat(commit_message_str, commit_message);
+//     strcat(commit_message_str, "\n");
+
+//     return commit_message_str;
+// }
+
 void commit(const char *commit_message) {
 
     // index_file_t *read_index_file();
-    make_tree_from_idx();
+
+    char *tree_hash = make_tree_from_idx();
+
+    bool *detached = malloc(sizeof(bool));
+    char *head = read_head_file(detached);
+
+    commit_t * commit = get_head_commit();
+
+    printf("head : %s\n", head);
+
+    if (!*detached){
+        printf("not detached brodie\n");
+        config_t *config = read_config();
+        // config_section_t *user_sec = get_section(config, "user");
+        printf("config count %s\n", config->section_count);
+        for (size_t i =0 ;i < config->section_count; i++){
+            printf("section name %s", config->sections[i].name);
+        }
+        
+        // config_section_t *config_sec = get_branch_section(config, head);
+        // printf("branch name: %s\n", config_sec->name);
+        // for (size_t i =0 ;i < user_sec->property_count; i++){
+        //     config_property_t prop = user_sec->properties[i];
+        //     printf("prop key: %s\n", prop.key);
+        //     printf("prop value: %s\n", prop.value);
+        // }
+
+    }
+    free(detached);
+    // for (size_t i=0; i < config->section_count; i++){
+    //     config_section_t sec = config->sections[i];
+    //     printf("name %s\n", sec.name);
+    // }
+    // free(commit);
 
     // printf("Not implemented.\n");
     exit(1);
