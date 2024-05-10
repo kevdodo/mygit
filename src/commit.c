@@ -462,7 +462,7 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
 
 
 
-void directory_traversal(directory_t *curr_root_directory, const hash_table_t *dir_map, const hash_table_t * index_table, const hash_table_t * tree_map){
+void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map, const hash_table_t * index_table, const hash_table_t * tree_map){
 
 
     printf("------------------dir from function-------------------\n\n");
@@ -527,7 +527,7 @@ void directory_traversal(directory_t *curr_root_directory, const hash_table_t *d
     printf("------------------end of function-------------------\n");
 }
 
-char *make_tree_from_idx(){
+char *make_tree_from_idx(hash_table_t *tree_map){
     index_file_t *index_file = read_index_file();
     hash_table_t *index_table = index_file->entries;
 
@@ -562,15 +562,13 @@ char *make_tree_from_idx(){
 
     // directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
 
-    hash_table_t *tree_map = hash_table_init();
+    // hash_table_t *tree_map = hash_table_init();
 
     directory_traversal(root_dir, dir_map, index_file->entries, tree_map);
 
     char *final_hash = hash_table_get(tree_map, "");
 
     printf("final hash %s", final_hash);
-
-    free_hash_table(tree_map, free);
 
     free_hash_table(dir_map, (free_func_t) free_directory);
 
@@ -599,114 +597,147 @@ commit_t *get_head_commit(bool *detached){
     return head_commit;
 }
 
-char* create_commit_message(const char* tree_hash, const char** parent_hashes, const char *author_name, char *author_email, const char* commit_message) {
+
+
+
+char* get_unix_timestamp_and_timezone() {
+    time_t current_time = time(NULL);
+    struct tm* local_time_info = localtime(&current_time);
+
+    // Calculate the timezone offset in hours and minutes
+    int timezone_offset_hours = local_time_info->tm_gmtoff / 3600;
+    int timezone_offset_minutes = labs((local_time_info->tm_gmtoff % 3600) / 60);
+
+    char* timestamp_and_timezone_str = malloc(30);  // Large enough to hold the timestamp and timezone
+    if (timestamp_and_timezone_str == NULL) {
+        fprintf(stderr, "Failed to allocate memory for timestamp_and_timezone_str\n");
+        exit(1);
+    }
+    sprintf(timestamp_and_timezone_str, "%ld %+03d%02d", (long)current_time, timezone_offset_hours, timezone_offset_minutes);
+    return timestamp_and_timezone_str;
+}
+
+char *get_commit_hash(){
+    bool detached;    
+    char *head = read_head_file(&detached);
+
+    // get to the hash of the head
+    printf("head: %s\n", head);
+
+    if (!detached){
+        printf("not detached brodie\n");
+    }
+    char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
+    head_to_hash(head, detached, hash);
+    free(head);
+    return hash;
+}
+
+char* create_commit_message(const char* tree_hash, const char* commit_message, char **parent_hashes) {
     // Calculate the size of the commit message
-
-    time_t t = time(NULL);
-    struct tm lt = {0};
-
-    localtime_r(&t, &lt);
-
-    printf("Offset to GMT is %lds.\n", lt.tm_gmtoff);
+   
     
+    config_t *config = read_global_config();
+
+    config_section_t *config_section = get_section(config, "user");
+
+    for (size_t i =0 ;i < config_section->property_count; i++){   
+        printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
+    }
+
+    char *author_email = config_section->properties[0].value;
+    char *author_name = config_section->properties[1].value;
     
-    // size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
-    //                       strlen(tree_hash) +
-    //                       strlen(commit_message) +
-    //                       2 * (strlen(author_name) + strlen(author_email) + strlen(get_unix_timestamp()) + strlen(5));
+    size_t count = 0;
+    size_t parent_len = 0;
+    for (size_t i =0 ; parent_hashes[i] != NULL; i++){  
+        printf("parent_hash %s\n", parent_hashes[i]); 
+        parent_len += strlen(parent_hashes[i]);
+        count++;
+    }
+    char* author_date_unix = get_unix_timestamp_and_timezone();
+    char* committer_date_unix = get_unix_timestamp_and_timezone();
 
-    // // Add the size of the parent commit hashes
-    // for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
-    //     message_size += strlen("parent \n") + HASH_STRING_LENGTH;
-    // }
+    printf("author date unix %s\n", author_date_unix);
 
-    // // Allocate memory for the commit message
-    // char* commit_message_str = malloc(message_size + 1);
-    // if (commit_message_str == NULL) {
-    //     fprintf(stderr, "Failed to allocate memory for commit message\n");
-    //     exit(1);
-    // }
+    size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
+                      strlen(tree_hash) + parent_len + count *strlen("parent ") + 
+                      strlen(commit_message) + 
+                      2 * (strlen(author_name) + strlen(author_email) + strlen(author_date_unix) + 5);
 
-    // // Start creating the commit message
-    // strcpy(commit_message_str, "tree ");
-    // strcat(commit_message_str, tree_hash);
-    // strcat(commit_message_str, "\n");
+    char *commit_message_str = malloc(sizeof(char) * message_size);
+    if (commit_message_str == NULL) {
+        fprintf(stderr, "Failed to allocate memory for commit_message_str\n");
+        exit(1);
+    }
 
-    // // Add the parent commit hashes
-    // for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
-    //     strcat(commit_message_str, "parent ");
-    //     strcat(commit_message_str, *parent_hash);
-    //     strcat(commit_message_str, "\n");
-    // }
+    strcpy(commit_message_str, "tree ");
+    strcat(commit_message_str, tree_hash);
+    strcat(commit_message_str, "\n\n");
 
-    // // Add the author and committer info
-    // strcat(commit_message_str, "author ");
-    // strcat(commit_message_str, get_author_name());
-    // strcat(commit_message_str, " <");
-    // strcat(commit_message_str, get_author_email());
-    // strcat(commit_message_str, "> ");
-    // strcat(commit_message_str, get_unix_timestamp());
-    // strcat(commit_message_str, " ");
-    // // strcat(commit_message_str, TIMEZONE);
-    // strcat(commit_message_str, "\ncommitter ");
-    // strcat(commit_message_str, get_author_name());
-    // strcat(commit_message_str, " <");
-    // strcat(commit_message_str, get_author_email());
-    // strcat(commit_message_str, "> ");
-    // strcat(commit_message_str, get_unix_timestamp());
-    // strcat(commit_message_str, " ");
-    // // strcat(commit_message_str, TIMEZONE);
-    // strcat(commit_message_str, "\n\n");
+    for (size_t i = 0; parent_hashes[i] != NULL; i++) {
+        strcat(commit_message_str, "parent ");
+        strcat(commit_message_str, parent_hashes[i]);
+        strcat(commit_message_str, "\n");
+    }
 
-    // // Add the commit message
-    // strcat(commit_message_str, commit_message);
-    // strcat(commit_message_str, "\n");
+    strcat(commit_message_str, "author ");
+    strcat(commit_message_str, author_name);
+    strcat(commit_message_str, " <");
+    strcat(commit_message_str, author_email);
+    strcat(commit_message_str, "> ");
+    strcat(commit_message_str, author_date_unix);
+    strcat(commit_message_str, "\n");
 
-    return NULL; //commit_message_str;
+    strcat(commit_message_str, "committer ");
+    strcat(commit_message_str, author_name);
+    strcat(commit_message_str, " <");
+    strcat(commit_message_str, author_email);
+    strcat(commit_message_str, "> ");
+    strcat(commit_message_str, committer_date_unix);
+    strcat(commit_message_str, "\n\n");
+
+    strcat(commit_message_str, commit_message);
+    strcat(commit_message_str, "\n");
+
+    free(author_date_unix);
+    free(committer_date_unix);
+
+    printf("commit message:\n\n\n %s\n", commit_message_str);
+    free_config(config);
+
+    return commit_message_str;
 }
 
 void commit(const char *commit_message) {
 
     // index_file_t *read_index_file();
+    hash_table_t *tree_map = hash_table_init();
 
-    char *tree_hash = make_tree_from_idx();
-
-    bool detached;
-
-    commit_t * commit = get_head_commit(&detached);
-    free_commit(commit);
-
-    if (!detached){
-        printf("not detached brodie\n\n");
-        config_t *config = read_global_config();
-
-        for (size_t i =0 ;i < config->section_count; i++){   
-            // printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
-            config_section_t sec = config->sections[i];
-            printf("sec name %s\n", sec.name);
-            
-            for (size_t i =0 ;i < sec.property_count; i++){   
-                printf("key1 %s, val1 %s\n", sec.properties[i].key, sec.properties[i].value);
-            }
-        }
-        config_section_t *config_section = get_section(config, "user");
-
-        for (size_t i =0 ;i < config_section->property_count; i++){   
-            printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
-        }
-        printf("\n");
-        free_config(config);
-    }
+    char *tree_hash = make_tree_from_idx(tree_map);
+    printf("tree hash %s\n", tree_hash);
 
 
-    time_t t = time(NULL);
-    struct tm lt = {0};
+    char *commit_hash = get_commit_hash();
+    assert(commit_hash != NULL);
 
-    localtime_r(&t, &lt);
+    printf("commit hash %s\n", commit_hash);
 
-    printf("Offset to GMT is %lds.\n", lt.tm_gmtoff);
-    printf("bruh %ld\n", lt.tm_gmtoff / 60 / 60);
-    free(detached);
+    // make multiple parent hashes
+    char **parent_hashes = malloc(sizeof(char *) * 2);
+    parent_hashes[0] = commit_hash;
+    parent_hashes[1] = NULL;
 
-    exit(1);
+    char * msg = create_commit_message(tree_hash, commit_message, parent_hashes);
+    
+    object_hash_t hash; 
+    write_object(COMMIT, msg, strlen(msg), hash);
+
+    printf("hash %s\n", hash);
+    free_hash_table(tree_map, free);
+    free(msg);
+    free(commit_hash);
+    free(parent_hashes);
+
+    // exit(1);
 }
