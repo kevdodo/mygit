@@ -6,19 +6,10 @@
 #include "object_io.h"
 #include "util.h"
 #include <sys/stat.h>
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/start
 #include <string.h>
 #include <unistd.h>
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/start
 struct list_node {
    list_node_t *next;
    void *value;
@@ -56,10 +47,6 @@ typedef struct index_entry_full_t{
     char null_byte;
 }index_entry_full_t;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/start
 uint16_t get_flags(uint32_t fsize){
     if (fsize >= 0xfff){
         return 0xfff;
@@ -67,11 +54,6 @@ uint16_t get_flags(uint32_t fsize){
     return (uint16_t) fsize;
 }
 
-<<<<<<< HEAD
-
-int is_executable(const char *file_path) {
-    return access(file_path, X_OK) == 0;
-=======
 int is_executable(const char *path) {
     struct stat file_stat;
 
@@ -83,7 +65,6 @@ int is_executable(const char *path) {
     } else {
         return 0; // Return 0 to indicate not executable
     }
->>>>>>> origin/start
 }
 
 index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
@@ -92,27 +73,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->ctime_seconds = 0;
     index_entry->ctime_nanoseconds = 0;
 
-<<<<<<< HEAD
-
-
-    // if (index_entry_temp->mtime != 0){
-    //     index_entry->mtime_seconds = index_entry_temp->mtime;
-    // }
-
-    struct stat file_stat;
-    // TODO: Should this be recalculated and when???
-
-    if (index_entry_temp->mtime == 0){
-        if (stat(index_entry_temp->fname, &file_stat) == 0) {
-            index_entry->mtime_seconds = (uint32_t)file_stat.st_mtime;
-        } else {
-            // Handle error
-            printf("something wrong with stat");
-        }
-    } else {
-        index_entry->mtime_seconds = index_entry_temp->mtime;
-    }
-=======
     struct stat file_stat;
     // TODO: Should this be recalculated and when???
     // printf("index_entry_temp->mtime %ld\n", index_entry_temp->mtime);
@@ -127,25 +87,11 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     } else {
         index_entry->mtime_seconds = index_entry_temp->mtime;
     }    
->>>>>>> origin/start
 
     index_entry->mtime_nanoseconds = 0;
     index_entry->dev = 0;
     index_entry->ino = 0;
 
-<<<<<<< HEAD
-    
-    index_entry->mode = 0;
-
-
-    // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
-
-    if (!is_executable(index_entry_temp->fname)){
-        // printf("it's executeable\n");
-        index_entry->mode = 0b00000000000000000000000001000000111101101;
-    } else {
-        index_entry->mode = 0b00000000000000000000000001000000110100100;
-=======
     // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (index_entry->mode != 0){
@@ -157,20 +103,12 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
         }
     } else {
         index_entry->mode = 0b00000000000000000000000001000000110100100; //index_entry_temp->mode;
->>>>>>> origin/start
     }
     
     index_entry->uid = 0;
     index_entry->gid = 0;
 
     index_entry->file_size = index_entry_temp->size;
-<<<<<<< HEAD
-    // printf("file size  %u\n", index_entry->file_size);
-
-    // copy the sha1 hash and file_name
-    // index_entry->sha1_hash = malloc(sizeof(char) * HASH_BYTES);
-=======
->>>>>>> origin/start
 
     memcpy(index_entry->sha1_hash, index_entry_temp->sha1, HASH_STRING_LENGTH + 1);
     // printf("sha hash  %s\n", index_entry->sha1_hash);
@@ -178,10 +116,6 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->flags = get_flags(index_entry_temp->fname_length);
     index_entry->file_name = malloc(sizeof(char)*(index_entry_temp->fname_length + 1));
     strcpy(index_entry->file_name, index_entry_temp->fname);
-<<<<<<< HEAD
-    // index_entry->file_name[index_entry_temp->fname_length] = '\0';
-=======
->>>>>>> origin/start
 
     index_entry->null_byte = '\0';
 
@@ -202,11 +136,6 @@ size_t get_padding(index_entry_full_t *index_entry){
     /* Pad such that n_read % 8 = 0 */
     size_t padding = 8 - (n_read % 8); 
 
-<<<<<<< HEAD
-    // printf("your silly padding; %d\n", padding);
-
-=======
->>>>>>> origin/start
     if (padding == 8){
         return 0;
     }
@@ -220,12 +149,9 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
 
     fwrite(&index_entry->ctime_seconds, sizeof(uint32_t), 1, f);
     fwrite(&index_entry->ctime_nanoseconds, sizeof(uint32_t), 1, f);
-<<<<<<< HEAD
-=======
     
     
     // printf("bruh %ld\n\n", index_entry->mtime_seconds);
->>>>>>> origin/start
 
     uint8_t mtime_seconds[4];
     // printf("mtime: %u\n", index_entry->mtime_seconds);
@@ -246,14 +172,7 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
 
     uint8_t file_size[4];
     write_be(index_entry->file_size, file_size, 4);
-<<<<<<< HEAD
-    // read_be(file_size, 4)
     fwrite(&file_size, sizeof(uint32_t), 1, f);
-
-    // fwrite(&index_entry->file_size, sizeof(uint32_t), 1, f);
-=======
-    fwrite(&file_size, sizeof(uint32_t), 1, f);
->>>>>>> origin/start
     
     uint8_t hash_bytes[HASH_BYTES];
     hex_to_hash(index_entry->sha1_hash, hash_bytes);
@@ -267,12 +186,6 @@ void write_index(FILE *f, index_entry_full_t *index_entry){
     // we already are writing the null byte with the file_name i guess
     fwrite(index_entry->file_name, sizeof(char), strlen(index_entry->file_name) + 1, f);
 
-<<<<<<< HEAD
-    // uint16_t null_byte = 0;
-    // fwrite(&null_byte, sizeof(uint16_t), 1, f);
-
-=======
->>>>>>> origin/start
     size_t padding = get_padding(index_entry);
     assert(padding < 8);
 
@@ -298,38 +211,6 @@ index_entry_t *make_index_entry(size_t size, object_hash_t sha1, char *fname, ui
 }
 
 
-<<<<<<< HEAD
-char *get_contents(const char *file_path){
-    FILE *file = fopen(file_path, "rb");
-    if (file == NULL){
-        perror("Could not open file");
-    }
-
-    // Get the size of the file
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char *buffer = malloc(file_size);
-    if (buffer == NULL) {
-        fprintf(stderr, "Failed to allocate memory\n");
-        fclose(file);
-    }
-
-    size_t bytes_read = fread(buffer, 1, file_size, file);
-    if (bytes_read < (size_t) file_size) {
-        fprintf(stderr, "Failed to read file %s\n", file_path);
-        free(buffer);
-        fclose(file);
-    }
-
-    fclose(file);
-
-    return buffer;
-}
-
-=======
->>>>>>> origin/start
 void write_index_header(FILE *f, uint32_t num_entries){
     // for the null character
     fwrite("DIRC", sizeof(char), 4, f);
@@ -343,20 +224,11 @@ void write_index_header(FILE *f, uint32_t num_entries){
     fwrite(&num_entry_bytes, sizeof(uint32_t), 1, f);
 }
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/start
 // what to do with added files that are deleted, 
 void add_files(const char **file_paths, size_t file_count)
 {
     index_file_t *index_file = read_index_file();
 
-<<<<<<< HEAD
-    // printf("before size: %zu", hash_table_size(index_file->entries));
-=======
->>>>>>> origin/start
 
     hash_table_t *index_table = index_file->entries;
     uint32_t index_cnts = hash_table_size(index_table);
@@ -379,10 +251,6 @@ void add_files(const char **file_paths, size_t file_count)
             }
             continue;
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/start
         object_hash_t hash;
         write_object(BLOB, file_contents, strlen(file_contents), hash);
 
@@ -390,45 +258,25 @@ void add_files(const char **file_paths, size_t file_count)
         new_entry->fname = malloc(sizeof(char) * (strlen(file_path) + 1));
         strcpy(new_entry->fname, file_path);
         new_entry->fname_length = strlen(file_path);
-<<<<<<< HEAD
-        new_entry->mtime = 0;
-        memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
-        new_entry->size = strlen(file_contents);
-
-=======
         memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
         new_entry->size = strlen(file_contents);
 
         // needs to be recalculated
 
->>>>>>> origin/start
         // we needa free the previous one or else you get memory leaks
         if (hash_table_contains(index_table, file_path)){
             index_entry_t *prev_entry = hash_table_get(index_table, file_path);
             free_index_entry(prev_entry);
         } else {
             // its a new one
-<<<<<<< HEAD
-=======
             new_entry->mode = 0; 
 
             new_entry->mtime = 0;
->>>>>>> origin/start
             index_cnts++;
         }
         hash_table_add(index_table, file_path, new_entry);
     }
 
-<<<<<<< HEAD
-    // printf("after size: %zu", index_cnts);
-
-    hash_table_sort(index_table);
-
-    char idx_name[] =  ".git/index"; //"temp_idx_file"; //  
-    FILE *new_index_file = fopen(idx_name, "wb");
-
-    write_index_header(new_index_file, index_cnts);
-=======
     hash_table_sort(index_table);
 
     char idx_name[] =  ".git/index"; //"temp_idx_file"; //
@@ -436,7 +284,6 @@ void add_files(const char **file_paths, size_t file_count)
     FILE *new_index_file = fopen(idx_name, "w");
 
     write_index_header(new_index_file, index_cnts); //
->>>>>>> origin/start
 
     list_node_t *curr_node = key_set(index_table);
     while (curr_node != NULL){
@@ -444,29 +291,14 @@ void add_files(const char **file_paths, size_t file_count)
 
         // file is still there
         index_entry_t *idx_entry = hash_table_get(index_table, file_path);
-<<<<<<< HEAD
-
         if (idx_entry != NULL){
             index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
-
-=======
-        if (idx_entry != NULL){
-            index_entry_full_t *full_idx = make_full_index_entry(idx_entry);
->>>>>>> origin/start
             write_index(new_index_file, full_idx);
             free_full_index_entry(full_idx);
         }
         curr_node = curr_node->next;
     }
-<<<<<<< HEAD
-    fclose(new_index_file); 
-
-    // printf("yoooo what is up guys\n");
-    
-    exit(1);
-=======
     fclose(new_index_file);     
     free_index_file(index_file);
     // exit(1);
->>>>>>> origin/start
 }
