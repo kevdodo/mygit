@@ -422,13 +422,14 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
             index_entry_t *idx_entry = hash_table_get(index_table, full_name);
             assert(idx_entry != NULL);
 
-
-            size_t total_size = curr_size + strlen("100644 ") + strlen(dir_file.file_dir_name) + HASH_BYTES + 2;
+            char mode_str[12];  // Large enough to hold a 32-bit integer in octal
+            sprintf(mode_str, "%o", idx_entry->mode);
+            size_t total_size = curr_size + strlen(mode_str) + strlen(dir_file.file_dir_name) + HASH_BYTES + 2;
             contents = realloc(contents, total_size);
             
-            memcpy(contents + curr_size, "100755 ", strlen("100644 "));
-            curr_size += strlen("100644 ");
-            // strcat(contents, "100644 ");
+            
+            memcpy(contents + curr_size, mode_str, strlen(mode_str));
+            curr_size += strlen(mode_str);
             memcpy(contents + curr_size, dir_file.file_dir_name, strlen(dir_file.file_dir_name));
             curr_size += strlen(dir_file.file_dir_name);
             memcpy(contents + curr_size, "\0", 1);
