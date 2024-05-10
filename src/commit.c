@@ -580,8 +580,7 @@ char *make_tree_from_idx(){
 
 }
 
-commit_t *get_head_commit(){
-    bool *detached = malloc(sizeof(bool));
+commit_t *get_head_commit(bool *detached){
     char *head = read_head_file(detached);
 
     // get to the hash of the head
@@ -595,65 +594,76 @@ commit_t *get_head_commit(){
     head_to_hash(head, *detached, hash);
 
     commit_t *head_commit = read_commit(hash);
+    free(hash);
+    free(head);
     return head_commit;
 }
 
-// char* create_commit_message(const char* tree_hash, const char** parent_hashes, const char* commit_message) {
-//     // Calculate the size of the commit message
-//     size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
-//                           strlen(tree_hash) +
-//                           strlen(commit_message) +
-//                           2 * (strlen(get_author_name()) + strlen(get_author_email()) + strlen(get_unix_timestamp()) + strlen(TIMEZONE));
+char* create_commit_message(const char* tree_hash, const char** parent_hashes, const char *author_name, char *author_email, const char* commit_message) {
+    // Calculate the size of the commit message
 
-//     // Add the size of the parent commit hashes
-//     for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
-//         message_size += strlen("parent \n") + HASH_STRING_LENGTH;
-//     }
+    time_t t = time(NULL);
+    struct tm lt = {0};
 
-//     // Allocate memory for the commit message
-//     char* commit_message_str = malloc(message_size + 1);
-//     if (commit_message_str == NULL) {
-//         fprintf(stderr, "Failed to allocate memory for commit message\n");
-//         exit(1);
-//     }
+    localtime_r(&t, &lt);
 
-//     // Start creating the commit message
-//     strcpy(commit_message_str, "tree ");
-//     strcat(commit_message_str, tree_hash);
-//     strcat(commit_message_str, "\n");
+    printf("Offset to GMT is %lds.\n", lt.tm_gmtoff);
+    
+    
+    // size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
+    //                       strlen(tree_hash) +
+    //                       strlen(commit_message) +
+    //                       2 * (strlen(author_name) + strlen(author_email) + strlen(get_unix_timestamp()) + strlen(5));
 
-//     // Add the parent commit hashes
-//     for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
-//         strcat(commit_message_str, "parent ");
-//         strcat(commit_message_str, *parent_hash);
-//         strcat(commit_message_str, "\n");
-//     }
+    // // Add the size of the parent commit hashes
+    // for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
+    //     message_size += strlen("parent \n") + HASH_STRING_LENGTH;
+    // }
 
-//     // Add the author and committer info
-//     strcat(commit_message_str, "author ");
-//     strcat(commit_message_str, get_author_name());
-//     strcat(commit_message_str, " <");
-//     strcat(commit_message_str, get_author_email());
-//     strcat(commit_message_str, "> ");
-//     strcat(commit_message_str, get_unix_timestamp());
-//     strcat(commit_message_str, " ");
-//     strcat(commit_message_str, TIMEZONE);
-//     strcat(commit_message_str, "\ncommitter ");
-//     strcat(commit_message_str, get_author_name());
-//     strcat(commit_message_str, " <");
-//     strcat(commit_message_str, get_author_email());
-//     strcat(commit_message_str, "> ");
-//     strcat(commit_message_str, get_unix_timestamp());
-//     strcat(commit_message_str, " ");
-//     strcat(commit_message_str, TIMEZONE);
-//     strcat(commit_message_str, "\n\n");
+    // // Allocate memory for the commit message
+    // char* commit_message_str = malloc(message_size + 1);
+    // if (commit_message_str == NULL) {
+    //     fprintf(stderr, "Failed to allocate memory for commit message\n");
+    //     exit(1);
+    // }
 
-//     // Add the commit message
-//     strcat(commit_message_str, commit_message);
-//     strcat(commit_message_str, "\n");
+    // // Start creating the commit message
+    // strcpy(commit_message_str, "tree ");
+    // strcat(commit_message_str, tree_hash);
+    // strcat(commit_message_str, "\n");
 
-//     return commit_message_str;
-// }
+    // // Add the parent commit hashes
+    // for (const char** parent_hash = parent_hashes; *parent_hash != NULL; parent_hash++) {
+    //     strcat(commit_message_str, "parent ");
+    //     strcat(commit_message_str, *parent_hash);
+    //     strcat(commit_message_str, "\n");
+    // }
+
+    // // Add the author and committer info
+    // strcat(commit_message_str, "author ");
+    // strcat(commit_message_str, get_author_name());
+    // strcat(commit_message_str, " <");
+    // strcat(commit_message_str, get_author_email());
+    // strcat(commit_message_str, "> ");
+    // strcat(commit_message_str, get_unix_timestamp());
+    // strcat(commit_message_str, " ");
+    // // strcat(commit_message_str, TIMEZONE);
+    // strcat(commit_message_str, "\ncommitter ");
+    // strcat(commit_message_str, get_author_name());
+    // strcat(commit_message_str, " <");
+    // strcat(commit_message_str, get_author_email());
+    // strcat(commit_message_str, "> ");
+    // strcat(commit_message_str, get_unix_timestamp());
+    // strcat(commit_message_str, " ");
+    // // strcat(commit_message_str, TIMEZONE);
+    // strcat(commit_message_str, "\n\n");
+
+    // // Add the commit message
+    // strcat(commit_message_str, commit_message);
+    // strcat(commit_message_str, "\n");
+
+    return NULL; //commit_message_str;
+}
 
 void commit(const char *commit_message) {
 
@@ -661,38 +671,42 @@ void commit(const char *commit_message) {
 
     char *tree_hash = make_tree_from_idx();
 
-    bool *detached = malloc(sizeof(bool));
-    char *head = read_head_file(detached);
+    bool detached;
 
-    commit_t * commit = get_head_commit();
+    commit_t * commit = get_head_commit(&detached);
+    free_commit(commit);
 
-    printf("head : %s\n", head);
+    if (!detached){
+        printf("not detached brodie\n\n");
+        config_t *config = read_global_config();
 
-    if (!*detached){
-        printf("not detached brodie\n");
-        config_t *config = read_config();
-        // config_section_t *user_sec = get_section(config, "user");
-        printf("config count %s\n", config->section_count);
-        for (size_t i =0 ;i < config->section_count; i++){
-            printf("section name %s", config->sections[i].name);
+        for (size_t i =0 ;i < config->section_count; i++){   
+            // printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
+            config_section_t sec = config->sections[i];
+            printf("sec name %s\n", sec.name);
+            
+            for (size_t i =0 ;i < sec.property_count; i++){   
+                printf("key1 %s, val1 %s\n", sec.properties[i].key, sec.properties[i].value);
+            }
         }
-        
-        // config_section_t *config_sec = get_branch_section(config, head);
-        // printf("branch name: %s\n", config_sec->name);
-        // for (size_t i =0 ;i < user_sec->property_count; i++){
-        //     config_property_t prop = user_sec->properties[i];
-        //     printf("prop key: %s\n", prop.key);
-        //     printf("prop value: %s\n", prop.value);
-        // }
+        config_section_t *config_section = get_section(config, "user");
 
+        for (size_t i =0 ;i < config_section->property_count; i++){   
+            printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
+        }
+        printf("\n");
+        free_config(config);
     }
-    free(detached);
-    // for (size_t i=0; i < config->section_count; i++){
-    //     config_section_t sec = config->sections[i];
-    //     printf("name %s\n", sec.name);
-    // }
-    // free(commit);
 
-    // printf("Not implemented.\n");
+
+    time_t t = time(NULL);
+    struct tm lt = {0};
+
+    localtime_r(&t, &lt);
+
+    printf("Offset to GMT is %lds.\n", lt.tm_gmtoff);
+    printf("bruh %ld\n", lt.tm_gmtoff / 60 / 60);
+    free(detached);
+
     exit(1);
 }
