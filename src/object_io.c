@@ -295,21 +295,16 @@ tree_t *read_tree(const object_hash_t hash) {
 }
 
 void free_tree(tree_t *tree) {
-<<<<<<< HEAD
-=======
     if (tree->entries == NULL){
         printf("why the tree null\n");
         free(tree);
         return;
     }
->>>>>>> origin/start
     for (size_t i = 0; i < tree->entry_count; i++) free(tree->entries[i].name);
     free(tree->entries);
     free(tree);
 }
 
-<<<<<<< HEAD
-=======
 void free_tree_entry(tree_entry_t *tree_entry){
     free(tree_entry->name);
     free(tree_entry);
@@ -326,7 +321,6 @@ void free_tree_mine(tree_t *tree) {
     free(tree);
 }
 
->>>>>>> origin/start
 blob_t *read_blob(const object_hash_t hash) {
     blob_t *blob = malloc(sizeof(*blob));
     assert(blob != NULL);

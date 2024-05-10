@@ -34,33 +34,18 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
             strcpy(path, curr_chars);
             strcat(path, entry->name);
             strcat(path, "/");
-<<<<<<< HEAD
-            printf("path: %s\n", path);
-            printf("TREE HASH: %s\n", entry->hash);
-=======
             // printf("path: %s\n", path);
             // printf("TREE HASH: %s\n", entry->hash);
->>>>>>> origin/start
             expand_tree(entry->hash, hash_table, path);
             free(path);
 
         } else {
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/start
             char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
             strcpy(path, curr_chars);
             strcat(path, entry->name);
 
             // printf("final path: %s\n", path);
-<<<<<<< HEAD
-
             // printf("jawn is in the commit %s\n", entry->name);
-
-=======
-            // printf("jawn is in the commit %s\n", entry->name);
->>>>>>> origin/start
             // hash_table_add(hash_table, path, entry->hash);
 
             char *hash_copy = strdup(entry->hash);
@@ -82,19 +67,6 @@ void get_all_files_in_directory_recursively(const char *dir_name, char **files, 
     if (d == NULL) {
         return;
     }
-<<<<<<< HEAD
-
-    char path[1024];
-    while ((dir = readdir(d)) != NULL) {
-        if (dir->d_type == DT_DIR) {
-            if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
-                continue;
-            snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
-            get_all_files_in_directory_recursively(path, files, index);
-        } else {
-            snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
-            files[*index] = strdup(path);
-=======
     char path[1024];
     while ((dir = readdir(d)) != NULL) {
         if (dir->d_type == DT_DIR) {
@@ -112,7 +84,6 @@ void get_all_files_in_directory_recursively(const char *dir_name, char **files, 
         } else {
             snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
             files[*index] = strdup(path+2);
->>>>>>> origin/start
             (*index)++;
         }
     }
@@ -124,10 +95,6 @@ char **get_all_files_in_directory() {
     if (files == NULL) {
         return NULL;
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/start
     int index = 0;
     get_all_files_in_directory_recursively(".", files, &index);
     files[index] = NULL;  // Null-terminate the array
@@ -136,28 +103,15 @@ char **get_all_files_in_directory() {
 }
 
 void status(void) {
-<<<<<<< HEAD
-    printf("Not implemented.\n");
-=======
->>>>>>> origin/start
     bool *detached = malloc(sizeof(bool));
     char *head = read_head_file(detached);
 
     // get to the hash of the head
-<<<<<<< HEAD
-    printf("head: %s\n", head);
-    // const char *PATH = ".git/refs/heads/";
-
-    if (!*detached){
-        printf("not detached brodie\n");
-    }
-=======
     // const char *PATH = ".git/refs/heads/";
 
     // if (!*detached){
     //     printf("not detached brodie\n");
     // }
->>>>>>> origin/start
     char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     head_to_hash(head, *detached, hash);
 
@@ -185,17 +139,10 @@ void status(void) {
         char *hash_commit = (char *) hash_table_get(commit_table, file_name);
         if (hash_commit == NULL) {
             // in the index, not in the commit 
-<<<<<<< HEAD
-            printf("\tadded: %s\n", file_name);
-        } else{
-            // The hashes are different, indicating modified
-            if (strcmp(idx_entry->sha1, (char *) hash_table_get(commit_table, file_name)) != 0){
-=======
             printf("\tnew file: %s\n", file_name);
         } else{
             // The hashes are different, indicating modified
             if (strcmp(idx_entry->sha1, hash_commit) != 0){
->>>>>>> origin/start
                 printf("\tmodified: %s\n", file_name);
             }
             // otherwise they're the same file
@@ -205,34 +152,13 @@ void status(void) {
 
     list_node_t *commit_node = key_set(commit_table);
 
-<<<<<<< HEAD
-    // iterating through the commit file
-=======
     // iterating through the commit file to track delted files
->>>>>>> origin/start
     while (commit_node != NULL){
         char *file_name = commit_node->value;
         // printf("key: %s\n", file_name);
 
         if (!hash_table_contains(idx_file->entries, file_name)){
             // index file doesn't have it, but commit does
-<<<<<<< HEAD
-            printf("\tdeleted: %s", file_name);
-        }
-        commit_node = commit_node->next;
-    }
-
-    printf("Not staged for commit:\n");
-
-    // char **files = get_all_files_in_directory();
-    // for (int i = 0; files[i] != NULL; i++) {
-    //     printf("%s\n", files[i]);
-    // }
-
-    // TODO WHY IS THIS UNNECESSARY???
-    // free_hash_table(commit_table, free);
-    exit(1);
-=======
             printf("\tdeleted: %s\n", file_name);
         }
         commit_node = commit_node->next;
@@ -293,5 +219,4 @@ void status(void) {
     free_hash_table(work_tree, NULL);
     free_hash_table(commit_table, free);
     // exit(1);
->>>>>>> origin/start
 }
