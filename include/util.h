@@ -27,7 +27,10 @@ void make_dirs(char *path);
 void make_parent_dirs(char *path);
 
 size_t get_file_size(FILE *f);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/start
 char *get_file_contents(const char *file_path);
 
 

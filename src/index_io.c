@@ -49,9 +49,14 @@ index_entry_t *read_index_entry(FILE *f, uint32_t version) {
     entry->mtime = read32(f);
     // printf("entry->mtime %u\n", entry->mtime);
 
-    fseek(f, 24, SEEK_CUR);
+    fseek(f, 12, SEEK_CUR);
+    entry->mode = read32(f);
+    // printf("mode: %u\n", entry->mode);
+    
+    fseek(f, 8, SEEK_CUR);
 
     entry->size = read32(f);
+
     // printf("sizesss %u\n", entry->size);
 
 
