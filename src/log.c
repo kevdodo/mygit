@@ -11,6 +11,6 @@
 void mygit_log(const char *ref) {
     (void)ref;
     printf("Not implemented.\n");
-    size_t length; 
-    read_object(ref, COMMIT, length);
+    size_t length = 0; 
+    read_object(ref, COMMIT, &length);
 }

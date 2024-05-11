@@ -336,7 +336,7 @@ bool can_hash(directory_t *dir, hash_table_t *dir_map){
 }
 
 
-void write_tree(directory_t *directory, const hash_table_t * index_table, const hash_table_t *tree_map) {
+void write_tree(directory_t *directory, const hash_table_t * index_table, hash_table_t *tree_map) {
     
     uint8_t *contents = malloc(1);
     size_t curr_size = 0;
@@ -358,8 +358,9 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
 
             char *last_dir = get_last_dir(dir_file.file_dir_name);
 
-            char mode_str[12];  // Large enough to hold a 32-bit integer in octal
-            sprintf(mode_str, "%o", idx_entry->mode);
+            // char mode_str[12];  // Large enough to hold a 32-bit integer in octal
+            // sprintf(mode_str, "%o", idx_entry->mode);
+            //bruh
 
             contents = realloc(contents, curr_size + strlen("40000 ") + strlen(last_dir) + 2 + HASH_BYTES);
             
@@ -429,7 +430,7 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
 
 
 
-void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map, const hash_table_t * index_table, const hash_table_t * tree_map){
+void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map, const hash_table_t * index_table, hash_table_t * tree_map){
 
 
     printf("------------------dir from function-------------------\n\n");
