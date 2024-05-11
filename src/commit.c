@@ -358,6 +358,9 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, const 
 
             char *last_dir = get_last_dir(dir_file.file_dir_name);
 
+            char mode_str[12];  // Large enough to hold a 32-bit integer in octal
+            sprintf(mode_str, "%o", idx_entry->mode);
+
             contents = realloc(contents, curr_size + strlen("40000 ") + strlen(last_dir) + 2 + HASH_BYTES);
             
             memcpy(contents + curr_size, "40000 ", strlen("40000 "));
@@ -687,6 +690,8 @@ void commit(const char *commit_message) {
     
     object_hash_t hash; 
     write_object(COMMIT, msg, strlen(msg), hash);
+
+
     printf("final hash %s", hash);
     free_hash_table(tree_map, free);
     free(msg);

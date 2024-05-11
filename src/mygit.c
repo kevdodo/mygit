@@ -157,12 +157,12 @@ void run_checkout(size_t argc, char *argv[]) {
 }
 
 void run_commit(size_t argc, char *argv[]) {
-    if (argc != 2 || strcmp(argv[0], "-m") != 0) {
-        fprintf(stderr, COMMIT_USAGE_STRING);
-        exit(1);
-    }
+    // if (argc != 2 || strcmp(argv[0], "-m") != 0) {
+    //     fprintf(stderr, COMMIT_USAGE_STRING);
+    //     exit(1);
+    // }
 
-    cd_to_git_dir();
+    // cd_to_git_dir();
     commit(argv[1]);
 }
 
