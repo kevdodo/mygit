@@ -35,7 +35,7 @@ void print_commit(object_hash_t hash) {
         char buff[80];
         // Format the date
         strftime(buff, 80, "%a %b %d %H:%M:%S %Y %z", timeinfo);
-        printf("Date: %s\n", buff);
+        printf("Date: %s\n\n", buff);
 
         printf("%s\n\n", commit->message);
         
