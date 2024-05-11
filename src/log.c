@@ -29,15 +29,8 @@ void print_commit(object_hash_t hash) {
         // Format the date
         strftime(buff, 80, "%a %b %d %H:%M:%S %Y %z", timeinfo);
         printf("Date: %s\n", buff);
-
         printf("%s\n\n", commit->message);
-        
-        if (commit->parents > 0){
-            commit = read_commit(parent_hashes[0]);
-            hash = parent_hashes[0];
-        } else {
-            commit = NULL;
-        }
+        commit = read_commit(parent_hashes[0]);
     }
 }
 
@@ -55,9 +48,6 @@ void mygit_log(const char *ref) {
             printf("No commits");
             exit(1);
         }
-        object_hash_t hash;
-        head_to_hash(head, detached, hash);
-        print_commit(hash);
     } else {
         object_hash_t hash;
         bool found = get_branch_ref(ref, hash);
