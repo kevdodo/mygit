@@ -66,6 +66,13 @@ void write_object(
     object_hash_t hash
 );
 
+void get_object_hash(
+    object_type_t type,
+    const void *contents,
+    size_t length,
+    object_hash_t hash
+);
+
 void free_tree_entry(tree_entry_t *tree_entry);
 void free_tree_mine(tree_t *tree);
 

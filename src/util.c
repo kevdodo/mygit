@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 uint8_t from_octal(char c) {
     if (!('0' <= c && c <= '7')) {

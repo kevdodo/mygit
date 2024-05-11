@@ -631,8 +631,6 @@ void commit(const char *commit_message) {
     bool detached;    
     char *head = read_head_file(&detached);
 
-    // get to the hash of the head
-    // printf("head: %s\n", head);
 
     char *commit_hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     bool found = head_to_hash(head, detached, commit_hash);
@@ -649,7 +647,7 @@ void commit(const char *commit_message) {
     parent_hashes[1] = NULL;
 
     char * msg = create_commit_message(tree_hash, commit_message, parent_hashes);
-    
+    printf("commit message:\n%s\n", msg);
     object_hash_t hash; 
     write_object(COMMIT, msg, strlen(msg), hash);
 
