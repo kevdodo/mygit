@@ -29,8 +29,13 @@ void print_commit(object_hash_t hash) {
         // Format the date
         strftime(buff, 80, "%a %b %d %H:%M:%S %Y %z", timeinfo);
         printf("Date: %s\n", buff);
+        printf("parent hash: %s\n", parent_hashes[0]);
+
         printf("%s\n\n", commit->message);
+
         commit = read_commit(parent_hashes[0]);
+        hash = parent_hashes[0];
+
     }
 }
 
