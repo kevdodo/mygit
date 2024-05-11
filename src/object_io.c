@@ -187,7 +187,7 @@ commit_t *read_commit(const object_hash_t hash) {
         length -= HASH_STRING_LENGTH + 1;
         assert(line[-1] == '\n');
     }
-    commit->parent_hashes = malloc(sizeof(object_hash_t[commit->parents]));
+    commit->parent_hashes = malloc(sizeof(object_hash_t[commit->parents+1]) );
     assert(commit->parent_hashes != NULL);
     for (size_t i = 0; i < commit->parents; i++) {
         parent_line += strlen(PARENT_LINE);

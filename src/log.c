@@ -12,6 +12,7 @@
 
 #include "config_io.h"
 
+
 void print_commit(object_hash_t hash) {
     commit_t *commit = read_commit(hash);
 
@@ -21,7 +22,7 @@ void print_commit(object_hash_t hash) {
         
         if (commit->parents > 1) {
             printf("Merge: ");
-            for (int i = 0; i < commit->parents; i++) {
+            for (size_t i = 0; i < commit->parents; i++) {
                 printf("%s ", parent_hashes[i]);
             }
             printf("\n");
@@ -39,31 +40,36 @@ void print_commit(object_hash_t hash) {
 
         printf("%s\n\n", commit->message);
         
+        // Ensure hash is an object_hash_t type
+        object_hash_t hash;
+
         if (commit->parents > 0){
-            commit = read_commit(parent_hashes[0]);
-            hash = parent_hashes[0];
+            object_hash_t temp_hash;
+            memcpy(&temp_hash, &(commit->parent_hashes[0]), sizeof(object_hash_t));
+            free_commit(commit);
+            
+
+            commit = read_commit(temp_hash);
+            memcpy(&hash, &temp_hash, sizeof(object_hash_t));
         } else {
+            free_commit(commit);
             commit = NULL;
         }
     }
 }
 
 void mygit_log(const char *ref) {
-    char *commit_hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
 
     if (ref == NULL){
         bool detached;
         char *head = read_head_file(&detached);
 
-        bool found = head_to_hash(head, detached, commit_hash);
+        object_hash_t hash;
+        bool found = head_to_hash(head, detached, hash);
         if (!found){
-            free(commit_hash);
-            commit_hash = NULL;
             printf("No commits");
             exit(1);
         }
-        object_hash_t hash;
-        head_to_hash(head, detached, hash);
         print_commit(hash);
     } else {
         object_hash_t hash;
@@ -74,6 +80,4 @@ void mygit_log(const char *ref) {
         }
         print_commit(hash);
     }
-
-
 }
