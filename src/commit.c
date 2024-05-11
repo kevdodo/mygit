@@ -700,6 +700,5 @@ void commit(const char *commit_message) {
         set_branch_ref(head, hash);
     }
     free(head);
-
     free(parent_hashes);
 }
