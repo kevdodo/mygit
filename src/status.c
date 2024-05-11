@@ -26,7 +26,7 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
     // TODO: make not recursive cuz maybe they have a stack overflow
     tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
 
-    for (int i = 0; i < tree->entry_count; i++) {
+    for (size_t i = 0; i < tree->entry_count; i++) {
         tree_entry_t *entry = &tree->entries[i];
         if (entry->mode == MODE_DIRECTORY){
             // it's another tree object

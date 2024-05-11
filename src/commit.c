@@ -92,11 +92,11 @@ tree_t *make_empty_tree(){
 }
 
 void add_to_tree(tree_t *tree, tree_entry_t *tree_entry){
-    printf("tree count %lu\n\n", tree->entry_count);
+    // printf("tree count %lu\n\n", tree->entry_count);
     tree->entries = realloc(tree->entries, (tree->entry_count + 1) * sizeof(tree_entry_t));
     if (tree->entries == NULL) {
         // Handle error
-        fprintf(stderr, "Failed to allocate memory.\n");
+        // fprintf(stderr, "Failed to allocate memory.\n");
         return;
     }
     tree->entries[tree->entry_count] = *tree_entry;
@@ -205,10 +205,6 @@ void add_to_directory_map(index_entry_t *index_entry, hash_table_t *directory_ma
                 char* prev_dir_copy = strdup(prev_dir);
                 char* dir_copy = strdup(curr_directory);
 
-                
-                printf("prev ddddddddddddir: %s\n", prev_dir);
-                printf("curr ddddddddddddir: %s\n", curr_directory);
-                printf("next one %s\n", file_split[i+1]);
                 assert(hash_table_contains(directory_map, prev_dir_copy));
 
                 directory_t *prev_directory = hash_table_get(directory_map, prev_dir_copy);
@@ -227,39 +223,9 @@ void add_to_directory_map(index_entry_t *index_entry, hash_table_t *directory_ma
     free(file_split);
     // free(file_path_copy);
     free(curr_directory);
-    // while (file != NULL) {
-    //     char *next_part = strtok(NULL, "/");
-    //     if (next_part == NULL){
-    //         printf("Directory: %s\n", curr_directory);
-    //         printf("curr part: %s\n", file);
-    //         if (hash_table_contains(directory_map, curr_directory)){
-    //             directory_t *directory = hash_table_get(directory_map, curr_directory);
-    //             char* part2 = strdup(file);
-
-    //             add_to_directory(directory, part2, false);
-    //         } else {
-    //             char* dir_copy = strdup(curr_directory);
-    //             directory_t *directory = make_directory(dir_copy);
-    //             char * bruh = strdup(file);
-    //             add_to_directory(directory, bruh, false);
-    //             hash_table_add(directory_map, dir_copy, directory);
-    //             free(dir_copy);
-    //         }
-    //         break;
-    //     }
-    //     curr_directory = realloc(curr_directory, strlen(curr_directory) + strlen(file) + 2);
-    //     strcat(curr_directory, file);  
-    //     printf("Directory: %s\n", curr_directory);
-    //     strcat(curr_directory, "/");
-    //     file = next_part;
-    //     next_part = strtok(NULL, "/");
-
-    // }
-
 }
 
 char *get_last_dir(char *file_dir_name){
-    // printf("\tdirectory: %s\n", dir_file.file_dir_name);
 
     char * full_name = strdup(file_dir_name);     
     char ** full_name_splitted= split_path_into_directories(full_name);
@@ -268,18 +234,12 @@ char *get_last_dir(char *file_dir_name){
     while (full_name_splitted[count] != NULL) {
         count++;
     }
-    // printf("count: %d", count)
     char *last_dir;
     if (count != 0){
         last_dir = strdup(full_name_splitted[count-1]);
     } else {
         last_dir = strdup(full_name);
     }
-    // printf("\t\tlast_dir: %s\n\n", last_dir);
-
-    // for (size_t i=0; full_name_splitted[i] != NULL; i++){
-    //     free(full_name_splitted[i]);
-    // }
     free(full_name_splitted);
     free(full_name);
     return last_dir;
@@ -703,8 +663,6 @@ void commit(const char *commit_message) {
 
     char *tree_hash = make_tree_from_idx(tree_map);
     printf("tree hash %s\n", tree_hash);
-
-
     bool detached;    
     char *head = read_head_file(&detached);
 
@@ -718,8 +676,7 @@ void commit(const char *commit_message) {
         commit_hash = NULL;
     }
 
-    free(head);
-    printf("commit hash %s\n", commit_hash);
+    // printf("commit hash %s\n", commit_hash);
 
     // make multiple parent hashes
     char **parent_hashes = malloc(sizeof(char *) * 2);
@@ -730,14 +687,19 @@ void commit(const char *commit_message) {
     
     object_hash_t hash; 
     write_object(COMMIT, msg, strlen(msg), hash);
-
-    printf("hash %s\n", hash);
-
+    printf("final hash %s", hash);
     free_hash_table(tree_map, free);
     free(msg);
     if (commit_hash != NULL){
-        set_branch_ref(head, hash);
         free(commit_hash);
     }
+
+    if (detached){
+        write_head_file(hash, detached);
+    } else {
+        set_branch_ref(head, hash);
+    }
+    free(head);
+
     free(parent_hashes);
 }

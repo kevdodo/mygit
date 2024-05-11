@@ -76,6 +76,7 @@ FILE *open_branch_ref(const char *branch, char *mode) {
     strcpy(filename, BRANCH_REFS_DIR);
     strcat(filename, branch);
     if (mode[0] == 'w') make_parent_dirs(filename);
+    printf("file name: %s\n", filename);
     return fopen(filename, mode);
 }
 
@@ -100,6 +101,7 @@ bool get_branch_ref(const char *branch, object_hash_t hash) {
     return read_hash(open_branch_ref(branch, "r"), hash);
 }
 void set_branch_ref(const char *branch, const object_hash_t hash) {
+    printf("branch %s\n", branch);
     FILE *file = open_branch_ref(branch, "w");
     if (file == NULL) {
         fprintf(stderr, "Failed to write branch: %s\n", branch);
