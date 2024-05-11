@@ -55,11 +55,6 @@ void add_to_directory(directory_t *directory, char * file_name, bool dir){
     directory->num_files++;
 }
 
-// void free_directory_file(directory_file_t *directory_file){
-//     free(directory_file->file_dir_name);
-//     free(directory_file);
-// }
-
 void free_directory(directory_t *directory){
 
     directory_file_t *directory_files = directory->directory_files;
@@ -268,25 +263,6 @@ void debug_map(const hash_table_t *dir_map){
 
     printf("--------------------   end of debug    ----------------\n\n\n");
 
-    // head2 = key_set(dir_map);
-
-    // while (head2 != NULL) {
-    //     char *file_path = head2->value;
-    //     directory_t *dir = hash_table_get(dir_map, file_path);
-    //     printf("dir name: %s-------------\n", dir->name);
-    //     for (size_t i=0; i < dir->num_files; i++){
-    //         directory_file_t dir_file = dir->directory_files[i];
-    //         if (dir_file.is_directory){
-    //             printf("\tdirectory: %s\n", dir_file.file_dir_name);
-
-    //             get_last_dir(dir_file.file_dir_name);
-    //         } else {
-    //             printf("\tnot a directory: %s\n", dir_file.file_dir_name);
-    //         }
-    //     }
-    //     printf("\n");
-    //     head2 = head2->next;
-    // }
 }
 
 
@@ -313,15 +289,12 @@ bool can_hash(directory_t *dir, hash_table_t *dir_map){
         if (dir_file.is_directory){
             char *name_w_slash;
             if (dir_file.file_dir_name[strlen(dir_file.file_dir_name)-1] != '/'){
-                printf("bruhhhh\n");
-                printf("   %c ???????", dir_file.file_dir_name[strlen(dir_file.file_dir_name)-1]);
                 name_w_slash = add_a_stupid_slash(dir_file.file_dir_name);
             } else {
                 name_w_slash = strdup(dir_file.file_dir_name);
             }
             // char * name_w_slash = add_a_stupid_slash(dir_file.file_dir_name);
             
-            printf("name_w_slash: %s\n", name_w_slash);
             directory_t * the_dir = hash_table_get(dir_map, name_w_slash);
             assert(the_dir != NULL);
             free(name_w_slash);
@@ -340,20 +313,16 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, hash_t
     
     uint8_t *contents = malloc(1);
     size_t curr_size = 0;
-    printf("im hereee: %s\n", directory->name);
 
     // *contents = '\0';
     for (size_t i=0; i < directory->num_files; i ++){
         directory_file_t dir_file = directory->directory_files[i];
-        printf("dir nameeee: %s\n", dir_file.file_dir_name);
 
         if (dir_file.is_directory){
-            printf("YUPPPP: %s\n", dir_file.file_dir_name);
 
             assert(hash_table_contains(tree_map, dir_file.file_dir_name));
 
             void *tree_hash = hash_table_get(tree_map, dir_file.file_dir_name);
-            printf("tree hash: %s\n", (char *) tree_hash);
             // printf("tree hash len: %s\n", strlen(tree_hash));
 
             char *last_dir = get_last_dir(dir_file.file_dir_name);
@@ -421,7 +390,6 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, hash_t
     strcpy(hash_brodie, hash);
 
     hash_table_add(tree_map, directory->name, hash_brodie);
-    printf("hash %s\n", (char *)hash);
     free(contents);
 }
 
@@ -433,13 +401,10 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, hash_t
 void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map, const hash_table_t * index_table, hash_table_t * tree_map){
 
 
-    printf("------------------dir from function-------------------\n\n");
-    printf("-----------name %s---------------\n", curr_root_directory->name);
 
     if (can_hash(curr_root_directory, dir_map) ){
         char *dir_name = get_last_dir(curr_root_directory->name);
 
-        printf("i can be hashed %s\n", dir_name);
         // hash the stuff and return remember to write name of the tree not the
         // name of the 
         write_tree(curr_root_directory, index_table, tree_map);
@@ -463,7 +428,6 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
                 name_w_slash = strdup(dir_file.file_dir_name);
             }
 
-            printf("naem w slash %s\n", name_w_slash);
 
             assert(hash_table_contains(dir_map, name_w_slash));
 
@@ -490,7 +454,6 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
     write_tree(curr_root_directory, index_table, tree_map);
     free(dir_name);
     curr_root_directory->completed = true;
-    printf("------------------end of function-------------------\n");
 }
 
 char *make_tree_from_idx(hash_table_t *tree_map){
@@ -534,7 +497,6 @@ char *make_tree_from_idx(hash_table_t *tree_map){
 
     char *final_hash = hash_table_get(tree_map, "");
 
-    printf("final hash %s", final_hash);
 
     free_hash_table(dir_map, (free_func_t) free_directory);
 
@@ -548,7 +510,6 @@ commit_t *get_head_commit(bool *detached){
     char *head = read_head_file(detached);
 
     // get to the hash of the head
-    printf("head: %s\n", head);
     // const char *PATH = ".git/refs/heads/";
 
     if (!*detached){
@@ -592,9 +553,9 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
 
     config_section_t *config_section = get_section(config, "user");
 
-    for (size_t i =0 ;i < config_section->property_count; i++){   
-        printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
-    }
+    // for (size_t i =0 ;i < config_section->property_count; i++){   
+    //     printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
+    // }
 
     char *author_email = config_section->properties[0].value;
     char *author_name = config_section->properties[1].value;
@@ -602,14 +563,14 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     size_t count = 0;
     size_t parent_len = 0;
     for (size_t i =0 ; parent_hashes[i] != NULL; i++){  
-        printf("parent_hash %s\n", parent_hashes[i]); 
+        // printf("parent_hash %s\n", parent_hashes[i]); 
         parent_len += strlen(parent_hashes[i]);
         count++;
     }
     char* author_date_unix = get_unix_timestamp_and_timezone();
     char* committer_date_unix = get_unix_timestamp_and_timezone();
 
-    printf("author date unix %s\n", author_date_unix);
+    // printf("author date unix %s\n", author_date_unix);
 
     size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
                       strlen(tree_hash) + parent_len + count *strlen("parent ") + 
@@ -654,7 +615,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     free(author_date_unix);
     free(committer_date_unix);
 
-    printf("commit message:\n\n\n%s\n", commit_message_str);
+    // printf("commit message:\n\n\n%s\n", commit_message_str);
     free_config(config);
 
     return commit_message_str;
@@ -666,12 +627,12 @@ void commit(const char *commit_message) {
     hash_table_t *tree_map = hash_table_init();
 
     char *tree_hash = make_tree_from_idx(tree_map);
-    printf("tree hash %s\n", tree_hash);
+    // printf("tree hash %s\n", tree_hash);
     bool detached;    
     char *head = read_head_file(&detached);
 
     // get to the hash of the head
-    printf("head: %s\n", head);
+    // printf("head: %s\n", head);
 
     char *commit_hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     bool found = head_to_hash(head, detached, commit_hash);
@@ -693,7 +654,7 @@ void commit(const char *commit_message) {
     write_object(COMMIT, msg, strlen(msg), hash);
 
 
-    printf("final hash %s", hash);
+    // printf("final hash %s", hash);
     free_hash_table(tree_map, free);
     free(msg);
     if (commit_hash != NULL){
