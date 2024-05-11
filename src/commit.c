@@ -646,10 +646,10 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     strcat(commit_message_str, author_email);
     strcat(commit_message_str, "> ");
     strcat(commit_message_str, committer_date_unix);
-    strcat(commit_message_str, "\n");
+    strcat(commit_message_str, "\n\n");
 
     strcat(commit_message_str, commit_message);
-    strcat(commit_message_str, "\n\n");
+    strcat(commit_message_str, "\n");
 
     free(author_date_unix);
     free(committer_date_unix);
