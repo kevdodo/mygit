@@ -10,23 +10,53 @@
 #include <stdio.h>
 #include "commit.h"
 
-void print_commit(commit_t *commit) {
-    // printf("commit %s\n", );
-    // printf("Merge:");
-    // for (int i = 0; commit->parents[i] !=NULL; i++) {
-    //     printf(" %s", oid_to_hex(commit->parents[i]));
-    // }
-    // printf("\n");
-    // printf("Author: %s <%s>\n", commit->author.name, commit->author.email);
+#include "config_io.h"
 
-    // char date_str[30];
-    // strftime(date_str, sizeof(date_str), "%a %b %d %H:%M:%S %Y %z", localtime(&commit->author.when.time));
-    // printf("Date: %s\n", date_str);
+void print_commit(object_hash_t hash) {
+    commit_t *commit = read_commit(hash);
 
-    // printf("\n%s\n\n", commit->message);
+    while (commit != NULL){
+        object_hash_t *parent_hashes = commit->parent_hashes;
+        printf("commit %s\n", hash);
+
+        printf("Author: %s \n", commit->author);
+
+        // Convert the time_t object to a struct tm object
+        struct tm *timeinfo = localtime(&(commit->author_time));
+
+        // Create a buffer to hold the formatted date
+        char buff[80];
+        // Format the date
+        strftime(buff, 80, "%a %b %d %H:%M:%S %Y %z", timeinfo);
+        printf("Date: %s\n", buff);
+        printf("%s\n\n", commit->message);
+        commit = read_commit(parent_hashes[0]);
+    }
 }
 
-
 void mygit_log(const char *ref) {
+    char *commit_hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
+
+    if (ref == NULL){
+        bool detached;
+        char *head = read_head_file(&detached);
+
+        bool found = head_to_hash(head, detached, commit_hash);
+        if (!found){
+            free(commit_hash);
+            commit_hash = NULL;
+            printf("No commits");
+            exit(1);
+        }
+    } else {
+        object_hash_t hash;
+        bool found = get_branch_ref(ref, hash);
+        if (!found){
+            printf("Not a valid hash");
+            exit(1);
+        }
+        print_commit(hash);
+    }
+
 
 }
