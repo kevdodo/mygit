@@ -693,7 +693,6 @@ void commit(const char *commit_message) {
     if (commit_hash != NULL){
         free(commit_hash);
     }
-
     if (detached){
         write_head_file(hash, detached);
     } else {
