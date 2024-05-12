@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "checkout.h"
 #include "ref_io.h"
 #include "object_io.h"
@@ -34,38 +36,40 @@ char *get_head_commit_hash(){
     return commit_hash;
 }
 
-void expand_tree2(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
-    // TODO: make not recursive cuz maybe they have a stack overflow
-    tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
 
-    for (size_t i = 0; i < tree->entry_count; i++) {
-        tree_entry_t *entry = &tree->entries[i];
-        if (entry->mode == MODE_DIRECTORY){
-            // it's another tree object
-            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 2));
-            strcpy(path, curr_chars);
-            strcat(path, entry->name);
-            strcat(path, "/");
-            // printf("path: %s\n", path);
-            // printf("TREE HASH: %s\n", entry->hash);
-            expand_tree(entry->hash, hash_table, path);
-            free(path);
+hash_table_t *get_curr_table(){    
+    char *curr_head_commit = get_head_commit_hash();
 
-        } else {
-            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
-            strcpy(path, curr_chars);
-            strcat(path, entry->name);
+    if (curr_head_commit == NULL){
+        printf("head commit isn't real\n");
+        exit(1);
+    }
 
-            char *hash_copy = strdup(entry->hash);
-            if (hash_copy == NULL) {
-                // Handle error
-            } else {
-                hash_table_add(hash_table, path, hash_copy);
-            }
-            free(path);
+    commit_t *commit = read_commit(curr_head_commit);
+
+    hash_table_t *curr_hash_table = hash_table_init();
+
+    expand_tree(commit->tree_hash, curr_hash_table, "");
+
+    free(curr_head_commit);
+    free_commit(commit);
+    return curr_hash_table;
+}
+
+bool is_valid_commit_hash(const char *hash) {
+    // Check if the hash is 40 characters long
+    if (strlen(hash) != 40) {
+        return false;
+    }
+
+    // Check if all characters are hexadecimal
+    for (int i = 0; i < 40; i++) {
+        if (!isxdigit(hash[i])) {
+            return false;
         }
     }
-    free_tree(tree);
+
+    return true;
 }
 
 void checkout(const char *checkout_name, bool make_branch) {
@@ -83,7 +87,7 @@ void checkout(const char *checkout_name, bool make_branch) {
 
         set_branch_ref(checkout_name, head_commit_hash);
 
-        bool detached;    
+        bool detached;
         char *head = read_head_file(&detached);
 
         write_head_file(checkout_name, detached);
@@ -92,37 +96,64 @@ void checkout(const char *checkout_name, bool make_branch) {
 
         free(head_commit_hash);
     } else {
-
-        bool detached;    
-        char *head = read_head_file(&detached);
-
-        write_head_file(checkout_name, detached);
+        // Getting current commit hash_table: 
 
         char *head_commit = get_head_commit_hash();
-
+        
         if (head_commit == NULL){
             printf("head commit isn't real\n");
             exit(1);
         }
+        
+        hash_table_t *curr_commit_table = get_curr_table();
 
-        commit_t *commit = read_commit(head_commit);
-
-        hash_table_t *hash_table = hash_table_init();
-
-        expand_tree(commit->tree_hash, hash_table, "");
-
-        index_file_t *idx_file = read_index_file();
-
-        list_node_t *curr_node = key_set(idx_file->entries);
-
-        // iterating through the index file
-        printf("Staged for commit:\n");
-
-        while (curr_node != NULL){
-            char *file_name = curr_node->value;
-            index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
-            curr_node = curr_node->next;
-
+        object_hash_t hash;
+        if (!get_branch_ref(checkout_name, hash)){
+            printf("Not a branch name\n");
+            exit(1);
         }
+
+        if (is_valid_commit_hash(checkout_name)) {
+            // If name_or_hash is a valid commit hash, checkout to that commit
+            write_head_file(checkout_name, true);
+        } else {
+            // Otherwise, assume name_or_hash is a branch name and checkout to that branch
+            write_head_file(checkout_name, false);
+        }
+        
+        hash_table_t *new_commit_table = get_curr_table();
+
+
+
+        list_node_t *new_commit_node = key_set(new_commit_table);
+
+        while (new_commit_node != NULL){
+            char *file_name = new_commit_node->value;
+            char *new_hash = hash_table_get(new_commit_table, file_name);
+            char *curr_hash = hash_table_get(curr_commit_table, file_name);
+            printf("curr_file_name: %s\n", file_name);
+
+            if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
+                blob_t *blob = read_blob(new_hash);
+                if (blob == NULL) {
+                    printf("Failed to open object: %s\n", new_hash);
+                    exit(1);
+                }
+                printf("blob contents: \n\n %s", blob->contents);
+                // Write to the file or do something else with it here
+                free_blob(blob);
+            }
+            new_commit_node = new_commit_node->next;
+        }
+        free_hash_table(curr_commit_table, free);
+        free_hash_table(new_commit_table, free);
+        free(head_commit);
+        printf("checkout completed\n");
+
+
+        // hash_table_t *new_commit_table = hash_table_init();
+
+        // expand_tree(head_commit, new_commit_table, "");
+
     }
 }
