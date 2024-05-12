@@ -170,11 +170,6 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
             char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
             strcpy(path, curr_chars);
             strcat(path, entry->name);
-
-            // printf("final path: %s\n", path);
-            // printf("jawn is in the commit %s\n", entry->name);
-            // hash_table_add(hash_table, path, entry->hash);
-
             char *hash_copy = strdup(entry->hash);
             if (hash_copy == NULL) {
                 // Handle error
