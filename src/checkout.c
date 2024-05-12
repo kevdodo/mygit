@@ -6,6 +6,9 @@
 #include "util.h"
 #include "constants.h"
 #include "index_io.h"
+#include "status.h"
+
+#include "hash_table.h"
 
 struct list_node {
    list_node_t *next;
@@ -29,6 +32,40 @@ char *get_head_commit_hash(){
     }
     free(head);
     return commit_hash;
+}
+
+void expand_tree2(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
+    // TODO: make not recursive cuz maybe they have a stack overflow
+    tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
+
+    for (size_t i = 0; i < tree->entry_count; i++) {
+        tree_entry_t *entry = &tree->entries[i];
+        if (entry->mode == MODE_DIRECTORY){
+            // it's another tree object
+            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 2));
+            strcpy(path, curr_chars);
+            strcat(path, entry->name);
+            strcat(path, "/");
+            // printf("path: %s\n", path);
+            // printf("TREE HASH: %s\n", entry->hash);
+            expand_tree(entry->hash, hash_table, path);
+            free(path);
+
+        } else {
+            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
+            strcpy(path, curr_chars);
+            strcat(path, entry->name);
+
+            char *hash_copy = strdup(entry->hash);
+            if (hash_copy == NULL) {
+                // Handle error
+            } else {
+                hash_table_add(hash_table, path, hash_copy);
+            }
+            free(path);
+        }
+    }
+    free_tree(tree);
 }
 
 void checkout(const char *checkout_name, bool make_branch) {
@@ -60,37 +97,32 @@ void checkout(const char *checkout_name, bool make_branch) {
         char *head = read_head_file(&detached);
 
         write_head_file(checkout_name, detached);
-        // if (update_head_to_ref_or_commit(checkout_name) != 0) {
-        //     fprintf(stderr, "Failed to update HEAD to ref or commit: %s\n", checkout_name);
-        //     exit(1);
-        // }
 
+        char *head_commit = get_head_commit_hash();
+
+        if (head_commit == NULL){
+            printf("head commit isn't real\n");
+            exit(1);
+        }
+
+        commit_t *commit = read_commit(head_commit);
+
+        hash_table_t *hash_table = hash_table_init();
+
+        expand_tree(commit->tree_hash, hash_table, "");
 
         index_file_t *idx_file = read_index_file();
 
         list_node_t *curr_node = key_set(idx_file->entries);
 
         // iterating through the index file
-
         printf("Staged for commit:\n");
 
         while (curr_node != NULL){
             char *file_name = curr_node->value;
             index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
-            }
             curr_node = curr_node->next;
+
         }
-
-    //     // Update the work tree and index
-    //     if (update_worktree_and_index() != 0) {
-    //         fprintf(stderr, "Failed to update work tree and index\n");
-    //         exit(1);
-    //     }
-    // }
-
-    // // Check for unstaged modifications that are identical in the old HEAD and the new HEAD
-    // if (has_unstaged_modifications()) {
-    //     fprintf(stderr, "There are unstaged modifications. Please commit or stash them before you switch branches.\n");
-    //     exit(1);
     }
 }

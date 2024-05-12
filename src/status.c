@@ -22,46 +22,6 @@ struct linked_list {
 };
 
 
-void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
-    // TODO: make not recursive cuz maybe they have a stack overflow
-    tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
-
-    //lalallalalla
-
-    for (size_t i = 0; i < tree->entry_count; i++) {
-        tree_entry_t *entry = &tree->entries[i];
-        if (entry->mode == MODE_DIRECTORY){
-            // it's another tree object
-            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 2));
-            strcpy(path, curr_chars);
-            strcat(path, entry->name);
-            strcat(path, "/");
-            // printf("path: %s\n", path);
-            // printf("TREE HASH: %s\n", entry->hash);
-            expand_tree(entry->hash, hash_table, path);
-            free(path);
-
-        } else {
-            char *path = malloc(sizeof(char) * (strlen(entry->name) + strlen(curr_chars) + 1));
-            strcpy(path, curr_chars);
-            strcat(path, entry->name);
-
-            // printf("final path: %s\n", path);
-            // printf("jawn is in the commit %s\n", entry->name);
-            // hash_table_add(hash_table, path, entry->hash);
-
-            char *hash_copy = strdup(entry->hash);
-            if (hash_copy == NULL) {
-                // Handle error
-            } else {
-                hash_table_add(hash_table, path, hash_copy);
-            }
-            free(path);
-        }
-    }
-    free_tree(tree);
-}
-
 void get_all_files_in_directory_recursively(const char *dir_name, char **files, int *index) {
     DIR *d;
     struct dirent *dir;
