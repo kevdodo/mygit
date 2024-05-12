@@ -127,38 +127,44 @@ void checkout(const char *checkout_name, bool make_branch) {
 
         list_node_t *new_commit_node = key_set(new_commit_table);
 
-        // iterating through the index file
-
-        printf("Staged for commit:\n");
-
         while (new_commit_node != NULL){
             char *file_name = new_commit_node->value;
-            printf("file name: %s\n", file_name);
             char *new_hash = hash_table_get(new_commit_table, file_name);
             char *curr_hash = hash_table_get(curr_commit_table, file_name);
-
+            printf("curr_file_name: %s\n", file_name);
+            // the files are different
             if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
-                FILE *file = open_object(new_hash, "w");
-                if (file == NULL) {
-                    fprintf(stderr, "Failed to open object: %s\n", new_hash);
+                printf("new hash: %s\n\n\n", new_hash);
+
+                object_type_t obj_type;
+                size_t length;
+                char *blob = read_object(new_hash, &obj_type, &length);
+                if (blob == NULL) {
+                    printf("Failed to open object: %s\n", new_hash);
                     exit(1);
                 }
-                // Write to the file or do something else with it here
+
+                // Open the file in write mode
+                FILE *file = fopen(file_name, "w");
+                if (file == NULL) {
+                    printf("Failed to open file: %s\n", file_name);
+                    exit(1);
+                }
+
+                // Write the blob contents to the file
+                fwrite(blob, sizeof(char), length, file);
+
+                // Close the file
                 fclose(file);
+
+                free(blob);
             }
+
             new_commit_node = new_commit_node->next;
         }
-
-
         free_hash_table(curr_commit_table, free);
         free_hash_table(new_commit_table, free);
         free(head_commit);
-
-
-
-        // hash_table_t *new_commit_table = hash_table_init();
-
-        // expand_tree(head_commit, new_commit_table, "");
-
+        printf("checkout completed\n");
     }
 }
