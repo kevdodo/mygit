@@ -132,14 +132,16 @@ void checkout(const char *checkout_name, bool make_branch) {
             char *new_hash = hash_table_get(new_commit_table, file_name);
             char *curr_hash = hash_table_get(curr_commit_table, file_name);
             printf("curr_file_name: %s\n", file_name);
-
+            // the files are different
             if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
+                printf("new hash: %s\n", new_hash);
+
                 blob_t *blob = read_blob(new_hash);
                 if (blob == NULL) {
                     printf("Failed to open object: %s\n", new_hash);
                     exit(1);
                 }
-                printf("blob contents: \n\n %s", blob->contents);
+                // printf("blob contents: \n\n %s", blob->contents);
                 // Write to the file or do something else with it here
                 free_blob(blob);
             }
@@ -149,11 +151,5 @@ void checkout(const char *checkout_name, bool make_branch) {
         free_hash_table(new_commit_table, free);
         free(head_commit);
         printf("checkout completed\n");
-
-
-        // hash_table_t *new_commit_table = hash_table_init();
-
-        // expand_tree(head_commit, new_commit_table, "");
-
     }
 }

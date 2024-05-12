@@ -326,6 +326,7 @@ blob_t *read_blob(const object_hash_t hash) {
     assert(blob != NULL);
     object_type_t type;
     blob->contents = read_object(hash, &type, &blob->length);
+
     assert(type == BLOB);
     return blob;
 }
