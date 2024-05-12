@@ -26,6 +26,8 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
     // TODO: make not recursive cuz maybe they have a stack overflow
     tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
 
+    //lalallalalla
+
     for (size_t i = 0; i < tree->entry_count; i++) {
         tree_entry_t *entry = &tree->entries[i];
         if (entry->mode == MODE_DIRECTORY){
@@ -129,7 +131,6 @@ void status(void) {
         expand_tree(tree_hash, commit_table, "");
     }
 
-// // Read index file
         index_file_t *idx_file = read_index_file();
 
         list_node_t *curr_node = key_set(idx_file->entries);

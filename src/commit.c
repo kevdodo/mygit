@@ -98,27 +98,6 @@ void add_to_tree(tree_t *tree, tree_entry_t *tree_entry){
     tree->entry_count++;
 }
 
-
-// void add_tree(tree_t *tree, char*last_dir, index_entry_t *index_entry){
-//     for (size_t i = 0; i < tree->entry_count; i++) {
-//         if (strcmp(tree->entries[i].name, last_dir) == 0) {
-//             // Found a match
-//             printf("Found a match: %s\n", tree->entries[i].name);
-//             return;
-//         }
-//     }
-//     // No match found, add to the tree
-//     printf("No match found for: %s\n", last_dir);
-
-//     // add_to_tree(tree, )
-// }
-//     typedef struct {
-//     file_mode_t mode;
-//     char *name; // file or directory name
-//     object_hash_t hash; // blob (for files) or tree (for directories)
-// } tree_entry_t;
-
-
 char **split_path_into_directories(char *path) {
     // Count the number of directories in the path
     int count = 0;
@@ -509,9 +488,6 @@ char *make_tree_from_idx(hash_table_t *tree_map){
 commit_t *get_head_commit(bool *detached){
     char *head = read_head_file(detached);
 
-    // get to the hash of the head
-    // const char *PATH = ".git/refs/heads/";
-
     if (!*detached){
         printf("not detached brodie\n");
     }
@@ -552,10 +528,6 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     config_t *config = read_global_config();
 
     config_section_t *config_section = get_section(config, "user");
-
-    // for (size_t i =0 ;i < config_section->property_count; i++){   
-    //     printf("key %s, val %s\n", config_section->properties[i].key, config_section->properties[i].value);
-    // }
 
     char *author_email = config_section->properties[0].value;
     char *author_name = config_section->properties[1].value;
