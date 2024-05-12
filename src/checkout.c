@@ -134,19 +134,35 @@ void checkout(const char *checkout_name, bool make_branch) {
             printf("curr_file_name: %s\n", file_name);
             // the files are different
             if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
-                printf("new hash: %s\n", new_hash);
+                printf("new hash: %s\n\n\n", new_hash);
 
-                blob_t *blob = read_blob(new_hash);
+                object_type_t obj_type;
+                size_t length;
+                char *blob = read_object(new_hash, &obj_type, &length);
                 if (blob == NULL) {
                     printf("Failed to open object: %s\n", new_hash);
                     exit(1);
                 }
-                // printf("blob contents: \n\n %s", blob->contents);
-                // Write to the file or do something else with it here
-                free_blob(blob);
+
+                // Open the file in write mode
+                FILE *file = fopen(file_name, "w");
+                if (file == NULL) {
+                    printf("Failed to open file: %s\n", file_name);
+                    exit(1);
+                }
+
+                // Write the blob contents to the file
+                fwrite(blob, sizeof(char), length, file);
+
+                // Close the file
+                fclose(file);
+
+                free(blob);
             }
             new_commit_node = new_commit_node->next;
         }
+
+        // delete files if they don't exist
         free_hash_table(curr_commit_table, free);
         free_hash_table(new_commit_table, free);
         free(head_commit);
