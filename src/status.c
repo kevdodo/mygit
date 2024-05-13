@@ -22,7 +22,7 @@ struct linked_list {
 };
 
 
-void get_all_files_in_directory_recursively(const char *dir_name, char **files, int *index) {
+void get_all_files_in_directory_recursively(const char *dir_name, char **files, size_t array_size, int *index) {
     DIR *d;
     struct dirent *dir;
     d = opendir(dir_name);
@@ -46,11 +46,24 @@ void get_all_files_in_directory_recursively(const char *dir_name, char **files, 
             // if (starts_with(path, "./out") == 1) {
             //     continue;
             // }
-            get_all_files_in_directory_recursively(path, files, index);
+            get_all_files_in_directory_recursively(path, files, array_size, index);
         } else {
+            // When you add a file path to the files array
             snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
             files[*index] = strdup(path+2);
             (*index)++;
+
+            // Check if the array needs to be resized
+            if (*index >= array_size) {
+                // Double the size of the array
+                array_size *= 2;
+                files = realloc(files, array_size * sizeof(char *));
+                if (files == NULL) {
+                    // Handle the error
+                    fprintf(stderr, "Failed to allocate memory\n");
+                    exit(1);
+                }
+            }
         }
     }
     closedir(d);
@@ -62,7 +75,7 @@ char **get_all_files_in_directory() {
         return NULL;
     }
     int index = 0;
-    get_all_files_in_directory_recursively(".", files, &index);
+    get_all_files_in_directory_recursively(".", files, 1024, &index);
     files[index] = NULL;  // Null-terminate the array
 
     return files;
@@ -140,7 +153,6 @@ void status(void) {
     printf("Staged for commit:\n");
     print_staged_for_commit(idx_file, commit_table);
 
-    
     char **files = get_all_files_in_directory();
 
     hash_table_t *work_tree = hash_table_init();
@@ -186,7 +198,6 @@ void status(void) {
             printf("\t%s\n", file_path);
         }
     }
-
     // TODO WHY IS THIS UNNECESSARY???
     free_commit(head_commit);
     free(detached);

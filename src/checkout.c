@@ -82,7 +82,6 @@ bool check_local_change(char *file_name, index_entry_t *idx_entry){
             // mtime of the file is the same as idx_entry->mtime
         } else {
             // mtime of the file is different from idx_entry->mtime
-            printf("you have local modifications");
             return true;
         }
     } else {
