@@ -218,7 +218,6 @@ void *read_pkt_line(transport_t *transport, size_t *length) {
         fprintf(stderr, "Failed to read pkt-len\n");
         assert(false);
     }
-
     *length = 0;
     for (size_t i = 0; i < PKT_HEX_LENGTH; i++) {
         *length = *length << 4 | from_hex(hex_length[i]);
@@ -243,13 +242,13 @@ void *read_pkt_line(transport_t *transport, size_t *length) {
 }
 
 char *read_pkt_line_string(transport_t *transport) {
-    size_t length;
-    char *line = read_pkt_line(transport, &length);
+    size_t *length = malloc(sizeof(size_t));
+    char *line = read_pkt_line(transport, length);
     if (line == NULL) return NULL;
 
     // Replace newline with a null terminator
-    assert(line[length - 1] == '\n');
-    line[length - 1] = '\0';
+    assert(line[*length - 1] == '\n');
+    line[*length - 1] = '\0';
     return line;
 }
 
@@ -290,7 +289,6 @@ void receive_refs(transport_t *transport, ref_receiver_t receiver, void *aux) {
     printf("yuhhh\n");
 
     while ((line = read_pkt_line_string(transport)) != NULL) {
-        printf("yuhhh2\n");
         // We ignore the list of capabilities after the first ref name
         char *hash_end = strchr(line, ' ');
         if (!hash_end) {

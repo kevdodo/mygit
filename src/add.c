@@ -92,11 +92,10 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->dev = 0;
     index_entry->ino = 0;
 
-    // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (index_entry->mode != 0){
         if (is_executable(index_entry_temp->fname)){
-            index_entry->mode = 0b00000000000000000000000001000000110100100;
+            index_entry->mode = 0b00000000000000000000000001000000111101101;
            // 0b00000000000000000000000001000000111101101 //0b00000000000000000000000001000000110100100;//
         } else {
             index_entry->mode = 0b00000000000000000000000001000000110100100;
@@ -273,7 +272,6 @@ void add_files(const char **file_paths, size_t file_count)
         } else {
             // its a new one
             new_entry->mode = 0; 
-
             new_entry->mtime = 0;
             index_cnts++;
         }

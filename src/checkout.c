@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "index_io.h"
 #include "status.h"
+#include <sys/stat.h>
 
 #include "hash_table.h"
 
@@ -107,6 +108,33 @@ void checkout(const char *checkout_name, bool make_branch) {
     }
     
     hash_table_t *curr_commit_table = get_curr_table();
+
+
+    index_file_t *idx_file = read_index_file();
+    list_node_t *temp_commit_node = key_set(curr_commit_table);
+
+    while (curr_commit_table){
+        char *file_name = temp_commit_node->value;
+        index_entry_t *idx_entry = hash_table_get(curr_commit_table, file_name);
+        
+        struct stat file_stat;
+        if (stat(file_name, &file_stat) == 0) {
+            time_t file_mtime = file_stat.st_mtime;
+            if (file_mtime == idx_entry->mtime) {
+                // mtime of the file is the same as idx_entry->mtime
+            } else {
+                // mtime of the file is different from idx_entry->mtime
+                printf("you have staged modifications");
+                exit(1);
+            }
+        } else {
+            // handle error from stat, file might not exist which is ok
+        }
+
+        temp_commit_node = temp_commit_node->next;
+    }
+
+
 
     object_hash_t hash;
     if (!get_branch_ref(checkout_name, hash)){

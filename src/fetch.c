@@ -12,8 +12,6 @@
 char *get_url(config_section_t *remote) {
     for (size_t i = 0; i < remote->property_count; i++) {
         config_property_t property = remote->properties[i];
-        printf("Property name: %s\n", property.key);
-
         if (strcmp(property.key, "url") == 0) {
             char *url = malloc(strlen(property.value) + 1);
             if (url == NULL) {
@@ -24,7 +22,6 @@ char *get_url(config_section_t *remote) {
             return url;
         }
     }
-
     return NULL;
 }
 
@@ -34,16 +31,7 @@ void ermm(char *ref, object_hash_t hash, void *aux){
 }
 
 void fetch_remote(const char *remote_name, config_section_t *remote) {
-    (void)remote_name;
-    (void)remote;
-    printf("Not implemented.\n");
     char *url = get_url(remote);
-    if (url != NULL) {
-        size_t len = strlen(url);
-        if (len > 0 && url[len - 1] == '\n') {
-            url[len - 1] = '\0';
-        }
-    }
     printf("url: %s\n", url);
 
 
@@ -51,12 +39,6 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
     receive_refs(transport, ermm, NULL);
 
     close_transport(transport);
-    
-    // object_hash_t hash;
-    // char ref[2];
-    // get_remote_ref(remote_name, ref, hash);
-    
-    
     
     free(url);
     // exit(1);
