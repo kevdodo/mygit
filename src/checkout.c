@@ -228,7 +228,6 @@ void checkout(const char *checkout_name, bool make_branch) {
         curr_commit_keys = curr_commit_keys->next;
     }
 
-    // lalalallalalla
 
     // update the index file
     add_files(changed_files, changed_files_count);
