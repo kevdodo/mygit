@@ -34,7 +34,6 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
     char *url = get_url(remote);
     printf("url: %s\n", url);
 
-
     transport_t * transport = open_transport(FETCH, url);
     receive_refs(transport, ermm, NULL);
 
@@ -68,4 +67,6 @@ void fetch_all(void) {
         }
     }
     free_config(config);
+
+    ////jjjjjjjjjj
 }
