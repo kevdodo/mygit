@@ -15,6 +15,8 @@ void set_branch_ref(const char *branch, const object_hash_t hash);
 bool get_remote_ref(const char *remote, const char *ref, object_hash_t hash);
 void set_remote_ref(const char *remote, const char *ref, const object_hash_t hash);
 
+bool branch_exists(const char *branch_name);
+
 linked_list_t *list_branch_refs(void);
 
 #endif // #ifndef REF_IO_H

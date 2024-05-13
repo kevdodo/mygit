@@ -88,6 +88,8 @@ bool read_hash(FILE *file, object_hash_t hash) {
     fclose(file);
     return true;
 }
+
+
 void write_hash(FILE *file, const object_hash_t hash) {
     size_t written = fwrite(hash, sizeof(char), HASH_STRING_LENGTH, file);
     assert(written == HASH_STRING_LENGTH);
@@ -144,4 +146,18 @@ linked_list_t *list_branch_refs(void) {
     }
     closedir(refs_dir);
     return refs;
+}
+
+
+bool branch_exists(const char *branch_name) {
+    char filename[strlen(BRANCH_REFS_DIR) + strlen(branch_name) + 1];
+    strcpy(filename, BRANCH_REFS_DIR);
+    strcat(filename, branch_name);
+
+    FILE *file = fopen(filename, "r");
+    if (file != NULL) {
+        fclose(file);
+        return true;
+    }
+    return false;
 }

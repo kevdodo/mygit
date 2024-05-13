@@ -150,7 +150,7 @@ char *get_file_contents(const char *file_path) {
 void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars){
     // TODO: make not recursive cuz maybe they have a stack overflow
     tree_t *tree = read_tree(tree_hash);  // Call the read_tree function
-
+    // printf("uhhhh\n");
     //lalallalalla
 
     for (size_t i = 0; i < tree->entry_count; i++) {
@@ -181,3 +181,6 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
     }
     free_tree(tree);
 }
+
+
+    

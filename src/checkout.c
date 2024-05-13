@@ -42,6 +42,7 @@ char *get_head_commit_hash(){
 
 hash_table_t *get_curr_table(){    
     char *curr_head_commit = get_head_commit_hash();
+    printf("yoooooo\n");
 
     if (curr_head_commit == NULL){
         printf("head commit isn't real\n");
@@ -103,6 +104,18 @@ void checkout(const char *checkout_name, bool make_branch) {
             printf("head commit isn't real\n");
             return;
         }
+        bool detached;    
+        char *curr_head = read_head_file(&detached);
+
+        if (strcmp(curr_head, checkout_name) == 0){
+            printf("Already on %s\n", checkout_name);
+            return;
+        }
+
+        if (branch_exists(checkout_name)){
+            printf("Branch \"%s\" exists\n", checkout_name);
+            return;
+        }
 
         set_branch_ref(checkout_name, head_commit_hash);
 
@@ -120,7 +133,6 @@ void checkout(const char *checkout_name, bool make_branch) {
     char *curr_head = read_head_file(&detached);
 
     char *head_commit = get_head_commit_hash();
-    printf("here?\n");
     
     if (head_commit == NULL){
         printf("Current head isn't real\n");
@@ -128,17 +140,15 @@ void checkout(const char *checkout_name, bool make_branch) {
     }
     
     hash_table_t *curr_commit_table = get_curr_table();
-    printf("hmm???\n");
 
 
     index_file_t *idx_file = read_index_file();
     list_node_t *temp_commit_node = key_set(curr_commit_table);
     object_hash_t hash;
     if (!get_branch_ref(checkout_name, hash)){
-        printf("Not a branch name\n");
+        printf("Not a branch name \n");
         return;
     }
-    printf("don't maek it here\n");
 
     if (is_valid_commit_hash(checkout_name)) {
         // If name_or_hash is a valid commit hash, checkout to that commit
@@ -146,8 +156,8 @@ void checkout(const char *checkout_name, bool make_branch) {
     } else {
         // Otherwise, assume name_or_hash is a branch name and checkout to that branch
         write_head_file(checkout_name, false);
-        //
     }
+    
     hash_table_t *new_commit_table = get_curr_table();
 
     list_node_t *new_commit_node = key_set(new_commit_table);
@@ -156,11 +166,9 @@ void checkout(const char *checkout_name, bool make_branch) {
         char *file_name = new_commit_node->value;
         char *new_hash = hash_table_get(new_commit_table, file_name);
         char *curr_hash = hash_table_get(curr_commit_table, file_name);
-        printf("curr_file_name: %s\n", file_name);
         // the files are different
         if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
             index_entry_t * idx_entry = hash_table_get(idx_file->entries, file_name); 
-            printf("new hash: %s\n\n\n", new_hash);
 
             if (access(file_name, F_OK) != -1){
                 bool local_change = check_local_change(file_name, idx_entry);
