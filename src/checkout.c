@@ -253,11 +253,12 @@
 #include "ref_io.h"
 #include "object_io.h"
 #include "index_io.h"
+// const char BRANCH_REFS_DIR[] = ".git/refs/heads/";
 
 
 bool create_branch(const char *filename, const char *contents) {
     // Calculate the total length of the file path
-    size_t path_length = strlen(BRANCH_REFS_DIR) + strlen(filename) + 2; // +1 for the null terminator
+    size_t path_length = strlen(".git/refs/heads/") + strlen(filename) + 2; // +1 for the null terminator
     
     // Allocate memory for the full file path
     char *full_path = (char *)malloc(path_length);
@@ -267,9 +268,9 @@ bool create_branch(const char *filename, const char *contents) {
     }
     
     // Concatenate the directory path and filename
-    snprintf(full_path, path_length, "%s%s", BRANCH_REFS_DIR, filename);
+    snprintf(full_path, path_length, "%s%s", ".git/refs/heads/", filename);
     
-    if (file_exists(full_path)==1){
+    if (access(full_path) !=1){
         printf("fatal: A branch named '%s' already exists.\n", filename);
         free(full_path);
         return 0;
