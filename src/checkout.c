@@ -10,6 +10,7 @@
 #include "index_io.h"
 #include "status.h"
 #include <sys/stat.h>
+#include "add.h"
 
 #include "hash_table.h"
 
@@ -73,12 +74,29 @@ bool is_valid_commit_hash(const char *hash) {
     return true;
 }
 
+bool check_local_change(char *file_name, index_entry_t *idx_entry){
+    struct stat file_stat;
+    if (stat(file_name, &file_stat) == 0) {
+        time_t file_mtime = file_stat.st_mtime;
+        if (file_mtime == idx_entry->mtime) {
+            // mtime of the file is the same as idx_entry->mtime
+        } else {
+            // mtime of the file is different from idx_entry->mtime
+            printf("you have local modifications");
+            return true;
+        }
+    } else {
+        // handle error from stat, file might not exist which is ok
+    }
+    return false;
+}
+
+
 void checkout(const char *checkout_name, bool make_branch) {
     if (make_branch) {
         // Create a new branch pointing to the current value of HEAD
         char *head_commit_hash = get_head_commit_hash();
 
-        // printf("head commit: %s\n", head_commit_hash);
         printf("checkout name: %s\n", checkout_name);
 
         if (head_commit_hash == NULL){
@@ -98,7 +116,11 @@ void checkout(const char *checkout_name, bool make_branch) {
         free(head_commit_hash);
         return;
     } 
-    // Getting current commit hash_table: 
+
+
+    
+    bool detached;    
+    char *curr_head = read_head_file(&detached);
 
     char *head_commit = get_head_commit_hash();
     
@@ -112,30 +134,6 @@ void checkout(const char *checkout_name, bool make_branch) {
 
     index_file_t *idx_file = read_index_file();
     list_node_t *temp_commit_node = key_set(curr_commit_table);
-
-    while (curr_commit_table){
-        char *file_name = temp_commit_node->value;
-        index_entry_t *idx_entry = hash_table_get(curr_commit_table, file_name);
-        
-        struct stat file_stat;
-        if (stat(file_name, &file_stat) == 0) {
-            time_t file_mtime = file_stat.st_mtime;
-            if (file_mtime == idx_entry->mtime) {
-                // mtime of the file is the same as idx_entry->mtime
-            } else {
-                // mtime of the file is different from idx_entry->mtime
-                printf("you have staged modifications");
-                exit(1);
-            }
-        } else {
-            // handle error from stat, file might not exist which is ok
-        }
-
-        temp_commit_node = temp_commit_node->next;
-    }
-
-
-
     object_hash_t hash;
     if (!get_branch_ref(checkout_name, hash)){
         printf("Not a branch name\n");
@@ -161,7 +159,21 @@ void checkout(const char *checkout_name, bool make_branch) {
         printf("curr_file_name: %s\n", file_name);
         // the files are different
         if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
+            index_entry_t * idx_entry = hash_table_get(idx_file->entries, file_name); 
             printf("new hash: %s\n\n\n", new_hash);
+
+            bool local_change = check_local_change(file_name, idx_entry);
+            if (local_change){
+                printf("%s has unstaged changes\n", file_name);
+                write_head_file(curr_head, detached);
+                exit(1);
+            }
+
+            if (strcmp(curr_hash, idx_entry->sha1)){
+                printf("%s has uncomomited changes\n", file_name);
+                write_head_file(curr_head, detached);
+                exit(1);
+            }
 
             object_type_t obj_type;
             size_t length;

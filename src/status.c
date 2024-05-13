@@ -40,8 +40,12 @@ void get_all_files_in_directory_recursively(const char *dir_name, char **files, 
             if (starts_with(path, "./.git") == 1) {
                 continue;
             }
-            // printf("path %s\n", path);
-
+            // if (starts_with(path, "./bin") == 1) {
+            //     continue;
+            // }
+            // if (starts_with(path, "./out") == 1) {
+            //     continue;
+            // }
             get_all_files_in_directory_recursively(path, files, index);
         } else {
             snprintf(path, sizeof(path), "%s/%s", dir_name, dir->d_name);
@@ -64,6 +68,43 @@ char **get_all_files_in_directory() {
     return files;
 }
 
+void print_staged_for_commit(index_file_t *idx_file, hash_table_t *commit_table){
+
+    list_node_t *curr_node = key_set(idx_file->entries);
+
+    while (curr_node != NULL){
+        char *file_name = curr_node->value;
+        index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
+
+        char *hash_commit = (char *) hash_table_get(commit_table, file_name);
+        if (hash_commit == NULL) {
+            // in the index, not in the commit 
+            printf("\tnew file: %s\n", file_name);
+        } else{
+            // The hashes are different, indicating modified
+            if (strcmp(idx_entry->sha1, hash_commit) != 0){
+                printf("\tmodified: %s\n", file_name);
+            }
+            // otherwise they're the same file
+        }
+        curr_node = curr_node->next;
+    }
+
+    list_node_t *commit_node = key_set(commit_table);
+
+    // iterating through the commit file to track delted files
+    while (commit_node != NULL){
+        char *file_name = commit_node->value;
+
+        if (!hash_table_contains(idx_file->entries, file_name)){
+            // index file doesn't have it, but commit does
+            printf("\tdeleted: %s\n", file_name);
+        }
+        commit_node = commit_node->next;
+    }
+}
+
+
 void status(void) {
     bool *detached = malloc(sizeof(bool));
     char *head = read_head_file(detached);
@@ -77,11 +118,10 @@ void status(void) {
     char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     bool found = head_to_hash(head, *detached, hash);
     hash_table_t *commit_table = hash_table_init();
-
     if (!found){
         free(hash);
+        printf("couldn't find head!!!\n");
         // todo: worry about the memory leaks
-
     } else {
         commit_t *head_commit = read_commit(hash);
         object_hash_t tree_hash;
@@ -91,44 +131,12 @@ void status(void) {
         expand_tree(tree_hash, commit_table, "");
     }
 
-        index_file_t *idx_file = read_index_file();
 
-        list_node_t *curr_node = key_set(idx_file->entries);
+    index_file_t *idx_file = read_index_file();
 
-        // iterating through the index file
+    printf("Staged for commit:\n");
+    print_staged_for_commit(idx_file, commit_table);
 
-        printf("Staged for commit:\n");
-
-        while (curr_node != NULL){
-            char *file_name = curr_node->value;
-            index_entry_t *idx_entry = hash_table_get(idx_file->entries, file_name);
-
-            char *hash_commit = (char *) hash_table_get(commit_table, file_name);
-            if (hash_commit == NULL) {
-                // in the index, not in the commit 
-                printf("\tnew file: %s\n", file_name);
-            } else{
-                // The hashes are different, indicating modified
-                if (strcmp(idx_entry->sha1, hash_commit) != 0){
-                    printf("\tmodified: %s\n", file_name);
-                }
-                // otherwise they're the same file
-            }
-            curr_node = curr_node->next;
-        }
-
-        list_node_t *commit_node = key_set(commit_table);
-
-        // iterating through the commit file to track delted files
-        while (commit_node != NULL){
-            char *file_name = commit_node->value;
-
-            if (!hash_table_contains(idx_file->entries, file_name)){
-                // index file doesn't have it, but commit does
-                printf("\tdeleted: %s\n", file_name);
-            }
-            commit_node = commit_node->next;
-        }
     
     char **files = get_all_files_in_directory();
 
