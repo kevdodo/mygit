@@ -152,7 +152,9 @@ void checkout(const char *checkout_name, bool make_branch) {
 
     if (is_valid_commit_hash(checkout_name)) {
         // If name_or_hash is a valid commit hash, checkout to that commit
+        commit_t *commit = read_commit(checkout_name); 
         write_head_file(checkout_name, true);
+        free_commit(commit);
     } else {
         // Otherwise, assume name_or_hash is a branch name and checkout to that branch
         write_head_file(checkout_name, false);
