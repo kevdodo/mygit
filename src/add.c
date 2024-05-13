@@ -98,7 +98,7 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
             index_entry->mode = 0b00000000000000000000000001000000111101101;
            // 0b00000000000000000000000001000000111101101 //0b00000000000000000000000001000000110100100;//
         } else {
-            index_entry->mode = 0b00000000000000000000000001000000110100100;
+            index_entry->mode = 0b00000000000000000000000001000000110100101;
         }
     } else {
         index_entry->mode = 0b00000000000000000000000001000000110100100; //index_entry_temp->mode;
