@@ -11,6 +11,7 @@
 #include "status.h"
 #include <sys/stat.h>
 #include "add.h"
+#include <unistd.h>
 
 #include "hash_table.h"
 
@@ -163,18 +164,21 @@ void checkout(const char *checkout_name, bool make_branch) {
             index_entry_t * idx_entry = hash_table_get(idx_file->entries, file_name); 
             printf("new hash: %s\n\n\n", new_hash);
 
-            bool local_change = check_local_change(file_name, idx_entry);
-            if (local_change){
-                printf("%s has unstaged changes\n", file_name);
-                write_head_file(curr_head, detached);
-                exit(1);
-            }
+            if (access(file_name, F_OK) != -1){
+                bool local_change = check_local_change(file_name, idx_entry);
+                if (local_change){
+                    printf("%s has unstaged changes\n", file_name);
+                    write_head_file(curr_head, detached);
+                    exit(1);
+                }
 
-            if (strcmp(curr_hash, idx_entry->sha1)){
-                printf("%s has uncomomited changes\n", file_name);
-                write_head_file(curr_head, detached);
-                exit(1);
+                if (strcmp(curr_hash, idx_entry->sha1)){
+                    printf("%s has uncomomited changes\n", file_name);
+                    write_head_file(curr_head, detached);
+                    exit(1);
+                }
             }
+            
 
             object_type_t obj_type;
             size_t length;
