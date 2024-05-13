@@ -101,13 +101,10 @@ void checkout(const char *checkout_name, bool make_branch) {
 
         if (head_commit_hash == NULL){
             printf("head commit isn't real\n");
-            exit(1);
+            return;
         }
 
         set_branch_ref(checkout_name, head_commit_hash);
-
-        bool detached;
-        char *head = read_head_file(&detached);
 
         write_head_file(checkout_name, detached);
 
@@ -126,8 +123,8 @@ void checkout(const char *checkout_name, bool make_branch) {
     char *head_commit = get_head_commit_hash();
     
     if (head_commit == NULL){
-        printf("head commit isn't real\n");
-        exit(1);
+        printf("Current head isn't real\n");
+        return; 
     }
     
     hash_table_t *curr_commit_table = get_curr_table();
@@ -138,7 +135,7 @@ void checkout(const char *checkout_name, bool make_branch) {
     object_hash_t hash;
     if (!get_branch_ref(checkout_name, hash)){
         printf("Not a branch name\n");
-        exit(1);
+        return
     }
 
     if (is_valid_commit_hash(checkout_name)) {
