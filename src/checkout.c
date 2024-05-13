@@ -95,14 +95,7 @@ bool check_local_change(char *file_name, index_entry_t *idx_entry){
 void checkout(const char *checkout_name, bool make_branch) {
     if (make_branch) {
         // Create a new branch pointing to the current value of HEAD
-        char *head_commit_hash = get_head_commit_hash();
 
-        printf("checkout name: %s\n", checkout_name);
-
-        if (head_commit_hash == NULL){
-            printf("head commit isn't real\n");
-            return;
-        }
         bool detached;    
         char *curr_head = read_head_file(&detached);
 
@@ -115,15 +108,23 @@ void checkout(const char *checkout_name, bool make_branch) {
             printf("Branch \"%s\" exists\n", checkout_name);
             return;
         }
+        char *head_commit_hash = get_head_commit_hash();
 
-        set_branch_ref(checkout_name, head_commit_hash);
+
+        if (head_commit_hash != NULL){
+            printf("Note that head commit isn't real\n");
+            set_branch_ref(checkout_name, head_commit_hash);
+            return;
+        }
 
         write_head_file(checkout_name, false);
 
-        free(head_commit_hash);
+        // free(head_commit_hash);
         printf("def not here\n");
         return;
     } 
+
+    
 
     char **changed_files = NULL;
     int changed_files_count = 0;
