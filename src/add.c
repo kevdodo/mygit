@@ -92,16 +92,17 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
     index_entry->dev = 0;
     index_entry->ino = 0;
 
+    // printf("aasdfasdf filepath: %s", index_entry_temp->fname);
 
     if (index_entry->mode != 0){
         if (is_executable(index_entry_temp->fname)){
-            index_entry->mode = 0; //0b00000000000000000000000001000000111101101;
+            index_entry->mode = 0b00000000000000000000000001000000111101101;
            // 0b00000000000000000000000001000000111101101 //0b00000000000000000000000001000000110100100;//
         } else {
-            index_entry->mode = 0;// 0b00000000000000000000000001000000110100100;
+            index_entry->mode = 0b00000000000000000000000001000000110100100;
         }
     } else {
-        index_entry->mode =0;// 0b00000000000000000000000001000000110100100; //index_entry_temp->mode;
+        index_entry->mode = index_entry_temp->mode;
     }
     
     index_entry->uid = 0;
