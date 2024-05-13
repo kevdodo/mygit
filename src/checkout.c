@@ -147,6 +147,7 @@ void checkout(const char *checkout_name, bool make_branch) {
     } else {
         // Otherwise, assume name_or_hash is a branch name and checkout to that branch
         write_head_file(checkout_name, false);
+        //
     }
     
     hash_table_t *new_commit_table = get_curr_table();
