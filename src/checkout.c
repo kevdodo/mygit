@@ -42,7 +42,6 @@ char *get_head_commit_hash(){
 
 hash_table_t *get_curr_table(){    
     char *curr_head_commit = get_head_commit_hash();
-    printf("yoooooo\n");
 
     if (curr_head_commit == NULL){
         printf("head commit isn't real\n");
@@ -144,11 +143,7 @@ void checkout(const char *checkout_name, bool make_branch) {
 
     index_file_t *idx_file = read_index_file();
     list_node_t *temp_commit_node = key_set(curr_commit_table);
-    object_hash_t hash;
-    if (!get_branch_ref(checkout_name, hash)){
-        printf("Not a branch name \n");
-        return;
-    }
+
 
     if (is_valid_commit_hash(checkout_name)) {
         // If name_or_hash is a valid commit hash, checkout to that commit
@@ -157,6 +152,11 @@ void checkout(const char *checkout_name, bool make_branch) {
         free_commit(commit);
     } else {
         // Otherwise, assume name_or_hash is a branch name and checkout to that branch
+        object_hash_t hash;
+        if (!get_branch_ref(checkout_name, hash)){
+            printf("Not a branch name \n");
+            return;
+        }
         write_head_file(checkout_name, false);
     }
     
