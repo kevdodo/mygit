@@ -256,5 +256,4 @@ void checkout(const char *checkout_name, bool make_branch) {
     free_hash_table(curr_commit_table, free);
     free_hash_table(new_commit_table, free);
     free(head_commit);
-    printf("checkout completed\n");
 }
