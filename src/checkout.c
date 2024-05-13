@@ -186,6 +186,7 @@ void checkout(const char *checkout_name, bool make_branch) {
                     exit(1);
                 }
             }
+            printf("Writing file: %s\n", file_name);
             
 
             object_type_t obj_type;
