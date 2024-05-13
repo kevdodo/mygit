@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "constants.h"
+#include "hash_table.h"
 
 uint8_t from_octal(char c);
 uint8_t from_decimal(char c);
@@ -28,6 +29,8 @@ void make_parent_dirs(char *path);
 
 size_t get_file_size(FILE *f);
 char *get_file_contents(const char *file_path);
+
+void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars);
 
 
 #endif // #ifndef UTIL_H
