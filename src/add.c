@@ -102,8 +102,8 @@ index_entry_full_t *make_full_index_entry(index_entry_t *index_entry_temp){
             index_entry->mode = 0b00000000000000000000000001000000110100100;
         }
     } else {
-        printf("index_entry_temp->file %s", index_entry_temp->fname);
-        printf("index_entry_temp->mode %o\n", index_entry_temp->mode);
+        // printf("index_entry_temp->file %s", index_entry_temp->fname);
+        // printf("index_entry_temp->mode %o\n", index_entry_temp->mode);
         index_entry->mode = index_entry_temp->mode; // 0b00000000000000000000000001000000110100100
     }
     

@@ -117,7 +117,8 @@ void checkout(const char *checkout_name, bool make_branch) {
         return;
     } 
 
-
+    char **changed_files = NULL;
+    int changed_files_count = 0;
     
     bool detached;    
     char *curr_head = read_head_file(&detached);
@@ -190,6 +191,10 @@ void checkout(const char *checkout_name, bool make_branch) {
                 exit(1);
             }
 
+            changed_files = realloc(changed_files, (changed_files_count + 1) * sizeof(char *));
+            changed_files[changed_files_count] = strdup(file_name);
+            changed_files_count++;
+
             // Write the blob contents to the file
             fwrite(blob, sizeof(char), length, file);
 
@@ -212,6 +217,9 @@ void checkout(const char *checkout_name, bool make_branch) {
         if (new_hash == NULL) {
             if (remove(file_name) == 0) {
                 printf("Deleted file: %s\n", file_name);
+                changed_files = realloc(changed_files, (changed_files_count + 1) * sizeof(char *));
+                changed_files[changed_files_count] = strdup(file_name);
+                changed_files_count++;
             } else {
                 printf("Failed to delete file: %s\n", file_name);
             }
@@ -220,6 +228,18 @@ void checkout(const char *checkout_name, bool make_branch) {
         curr_commit_keys = curr_commit_keys->next;
     }
 
+    // lalalallalalla
+
+    // update the index file
+    add_files(changed_files, changed_files_count);
+
+    for (int i = 0; i < changed_files_count; i++) {
+        free(changed_files[i]);
+    }
+
+    free_index_file(idx_file);
+    free(curr_head);
+    free(changed_files);
     free_hash_table(curr_commit_table, free);
     free_hash_table(new_commit_table, free);
     free(head_commit);

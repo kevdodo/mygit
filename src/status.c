@@ -118,12 +118,15 @@ void status(void) {
     char *hash = malloc(sizeof(char) * (HASH_STRING_LENGTH + 1));
     bool found = head_to_hash(head, *detached, hash);
     hash_table_t *commit_table = hash_table_init();
+    commit_t *head_commit;
+    
     if (!found){
         free(hash);
         printf("couldn't find head!!!\n");
+        exit(1);
         // todo: worry about the memory leaks
     } else {
-        commit_t *head_commit = read_commit(hash);
+        head_commit = read_commit(hash);
         object_hash_t tree_hash;
         memcpy(tree_hash, head_commit->tree_hash, sizeof(object_hash_t));  // Copy the tree_hash
 
@@ -185,10 +188,11 @@ void status(void) {
     }
 
     // TODO WHY IS THIS UNNECESSARY???
+    free_commit(head_commit);
     free(detached);
     free(head);
     free(hash);
     free_index_file(idx_file);
     free_hash_table(work_tree, NULL);
-    // free_hash_table(commit_table, free);
+    free_hash_table(commit_table, free);
 }
