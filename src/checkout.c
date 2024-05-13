@@ -106,9 +106,7 @@ void checkout(const char *checkout_name, bool make_branch) {
 
         set_branch_ref(checkout_name, head_commit_hash);
 
-        write_head_file(checkout_name, detached);
-
-        free(head);
+        write_head_file(checkout_name, false);
 
         free(head_commit_hash);
         return;
@@ -135,7 +133,7 @@ void checkout(const char *checkout_name, bool make_branch) {
     object_hash_t hash;
     if (!get_branch_ref(checkout_name, hash)){
         printf("Not a branch name\n");
-        return
+        return;
     }
 
     if (is_valid_commit_hash(checkout_name)) {
