@@ -67,6 +67,4 @@ void fetch_all(void) {
         }
     }
     free_config(config);
-
-    ////jjjjjjjjjjssssssssss
 }
