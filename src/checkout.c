@@ -109,6 +109,7 @@ void checkout(const char *checkout_name, bool make_branch) {
         write_head_file(checkout_name, false);
 
         free(head_commit_hash);
+        printf("def not here\n");
         return;
     } 
 
@@ -119,6 +120,7 @@ void checkout(const char *checkout_name, bool make_branch) {
     char *curr_head = read_head_file(&detached);
 
     char *head_commit = get_head_commit_hash();
+    printf("here?\n");
     
     if (head_commit == NULL){
         printf("Current head isn't real\n");
@@ -126,6 +128,7 @@ void checkout(const char *checkout_name, bool make_branch) {
     }
     
     hash_table_t *curr_commit_table = get_curr_table();
+    printf("hmm???\n");
 
 
     index_file_t *idx_file = read_index_file();
@@ -135,6 +138,7 @@ void checkout(const char *checkout_name, bool make_branch) {
         printf("Not a branch name\n");
         return;
     }
+    printf("don't maek it here\n");
 
     if (is_valid_commit_hash(checkout_name)) {
         // If name_or_hash is a valid commit hash, checkout to that commit
@@ -144,7 +148,6 @@ void checkout(const char *checkout_name, bool make_branch) {
         write_head_file(checkout_name, false);
         //
     }
-    
     hash_table_t *new_commit_table = get_curr_table();
 
     list_node_t *new_commit_node = key_set(new_commit_table);
