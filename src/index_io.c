@@ -196,6 +196,9 @@ index_file_t *read_index_file() {
 }
 
 void free_index_entry(index_entry_t *entry) {
+    if (entry == NULL){
+        return;
+    }
     free(entry->fname);
     free(entry);
 }
