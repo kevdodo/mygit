@@ -112,15 +112,15 @@ void checkout(const char *checkout_name, bool make_branch) {
 
 
         if (head_commit_hash != NULL){
-            printf("Note that head commit isn't real\n");
             set_branch_ref(checkout_name, head_commit_hash);
-            return;
+        } else {
+            printf("Note that head commit isn't real\n");
         }
+
+        printf("Switched to a new branch '%s'\n", checkout_name);
 
         write_head_file(checkout_name, false);
 
-        // free(head_commit_hash);
-        printf("def not here\n");
         return;
     } 
 
@@ -142,10 +142,6 @@ void checkout(const char *checkout_name, bool make_branch) {
     hash_table_t *curr_commit_table = get_curr_table();
 
 
-    index_file_t *idx_file = read_index_file();
-    list_node_t *temp_commit_node = key_set(curr_commit_table);
-
-
     if (is_valid_commit_hash(checkout_name)) {
         // If name_or_hash is a valid commit hash, checkout to that commit
         commit_t *commit = read_commit(checkout_name); 
@@ -160,6 +156,11 @@ void checkout(const char *checkout_name, bool make_branch) {
         }
         write_head_file(checkout_name, false);
     }
+
+    
+
+
+    index_file_t *idx_file = read_index_file();
     
     hash_table_t *new_commit_table = get_curr_table();
 
@@ -170,7 +171,11 @@ void checkout(const char *checkout_name, bool make_branch) {
         char *new_hash = hash_table_get(new_commit_table, file_name);
         char *curr_hash = hash_table_get(curr_commit_table, file_name);
         // the files are different
+        // printf("file name: %s\n", file_name);
+        // printf("curr_hash: %s\n", curr_hash);
+        // printf("new hash checkout: %s\n", new_hash);
         if (curr_hash == NULL || strcmp(curr_hash, new_hash) != 0){
+            // printf("yuhhhh\n");
             index_entry_t * idx_entry = hash_table_get(idx_file->entries, file_name); 
 
             if (access(file_name, F_OK) != -1){
@@ -187,7 +192,7 @@ void checkout(const char *checkout_name, bool make_branch) {
                     exit(1);
                 }
             }
-            printf("Writing file: %s\n", file_name);
+            // printf("Writing file: %s\n", file_name);
             
 
             object_type_t obj_type;
@@ -242,9 +247,14 @@ void checkout(const char *checkout_name, bool make_branch) {
         curr_commit_keys = curr_commit_keys->next;
     }
 
+    printf("Switched_to branch %s\n", checkout_name);
 
     // update the index file
-    add_files(changed_files, changed_files_count);
+    // printf("List of changed files:\n");
+    // for (int i = 0; i < changed_files_count; i++) {
+    //     printf("%s\n", changed_files[i]);
+    // }    
+    add_files((const char **)changed_files, changed_files_count);
 
     for (int i = 0; i < changed_files_count; i++) {
         free(changed_files[i]);
