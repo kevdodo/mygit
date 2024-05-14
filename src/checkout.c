@@ -100,11 +100,14 @@ void checkout(const char *checkout_name, bool make_branch) {
         char *curr_head = read_head_file(&detached);
 
         if (strcmp(curr_head, checkout_name) == 0){
+            free(curr_head);
+
             printf("Already on %s\n", checkout_name);
             return;
         }
 
         if (branch_exists(checkout_name)){
+            free(curr_head);
             printf("Branch \"%s\" exists\n", checkout_name);
             return;
         }
@@ -116,7 +119,6 @@ void checkout(const char *checkout_name, bool make_branch) {
         } else {
             printf("Note that head commit isn't real\n");
         }
-
         printf("Switched to a new branch '%s'\n", checkout_name);
 
         write_head_file(checkout_name, false);
@@ -137,6 +139,7 @@ void checkout(const char *checkout_name, bool make_branch) {
 
     if (strcmp(curr_head, checkout_name) == 0){
         printf("Already on %s\n", checkout_name);
+        free(curr_head);
         return;
     }
 
