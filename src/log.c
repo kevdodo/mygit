@@ -79,7 +79,7 @@ void mygit_log(const char *ref) {
 
         if (is_valid_commit_hash(ref)) {
             // If name_or_hash is a valid commit hash, checkout to that commit
-            print_commit(ref);
+            print_commit((char *) ref);
         } else {
             printf("fatal: bad object %s", ref);
         }

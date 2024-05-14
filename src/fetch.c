@@ -9,6 +9,15 @@
 #include "transport.h"
 #include "util.h"
 
+struct list_node {
+   list_node_t *next;
+   void *value;
+};
+struct linked_list {
+    list_node_t *head;
+    list_node_t **tail;
+};
+
 char *get_url(config_section_t *remote) {
     for (size_t i = 0; i < remote->property_count; i++) {
         config_property_t property = remote->properties[i];
@@ -28,6 +37,9 @@ char *get_url(config_section_t *remote) {
 void ermm(char *ref, object_hash_t hash, void *aux){
     printf("ref: %s\n", ref);
     printf("hash: %s\n", hash);
+
+    hash_table_t *table = (hash_table_t *)aux;
+    hash_table_add(table, ref, hash);
 }
 
 void fetch_remote(const char *remote_name, config_section_t *remote) {
@@ -35,7 +47,19 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
     printf("url: %s\n", url);
 
     transport_t * transport = open_transport(FETCH, url);
+    hash_table_t *ref_to_hash = hash_table_init(); 
     receive_refs(transport, ermm, NULL);
+    
+    list_node_t *ref_node = key_set(ref_to_hash);
+
+    // iterating through the commit file to track delted files
+    while (ref_node != NULL){
+        char *file_name = ref_node->value;
+        printf("ref name: %s\n", file_name);
+
+        ref_node = ref_node->next;
+    }
+    // send_want(transport, hash)
 
     close_transport(transport);
     

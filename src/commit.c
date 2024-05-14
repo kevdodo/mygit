@@ -601,8 +601,6 @@ void commit(const char *commit_message) {
         commit_hash = NULL;
     }
 
-    // printf("commit hash %s\n", commit_hash);
-
     // make multiple parent hashes
     char **parent_hashes = malloc(sizeof(char *) * 2);
     parent_hashes[0] = commit_hash;
@@ -627,5 +625,4 @@ void commit(const char *commit_message) {
     }
     free(head);
     free(parent_hashes);
-    exit(1);
 }
