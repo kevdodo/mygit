@@ -89,8 +89,8 @@ bool check_local_change(char *file_name, index_entry_t *idx_entry){
             char * contents = get_file_contents(file_name);
             get_object_hash(BLOB, contents, strlen(contents), file_hash);
 
-            printf("file hash: %s", file_hash);
-            printf("sha hash: %s", idx_entry->sha1 );
+            // printf("file hash: %s", file_hash);
+            // printf("sha hash: %s", idx_entry->sha1 );
             free(contents);
             
             return strcmp(idx_entry->sha1, file_hash) != 0;
