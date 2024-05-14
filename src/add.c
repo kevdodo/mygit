@@ -250,7 +250,7 @@ void add_files(const char **file_paths, size_t file_count)
                 hash_table_add(index_table, file_path, NULL);
                 index_cnts--;
             }
-            printf("File has been deleted");
+            printf("File \"%s\"has been deleted\n", file_path);
             continue;
         }
 

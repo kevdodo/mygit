@@ -134,6 +134,12 @@ void checkout(const char *checkout_name, bool make_branch) {
     bool detached;    
     char *curr_head = read_head_file(&detached);
 
+
+    if (strcmp(curr_head, checkout_name) == 0){
+        printf("Already on %s\n", checkout_name);
+        return;
+    }
+
     char *head_commit = get_head_commit_hash();
     
     if (head_commit == NULL){
