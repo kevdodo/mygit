@@ -393,7 +393,6 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
     for (size_t i=0; i < curr_root_directory->num_files; i ++){
         directory_file_t dir_file = curr_root_directory->directory_files[i];
         char *file_name = dir_file.file_dir_name;
-        // printf("file name %s\n", dir_file.file_dir_name);
 
         if (dir_file.is_directory){
             // printf("dir name: %s\n", dir_file.file_dir_name);
@@ -419,8 +418,6 @@ void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map
         } else {
             // it has to be a blob object, make it into the tree entry
             char *full_path = get_full_name(curr_root_directory->name, file_name);
-            // 
-            // printf("full path: %s\n", full_path);
             assert(hash_table_contains(index_table, full_path));
             free(full_path);
         }
@@ -461,16 +458,9 @@ char *make_tree_from_idx(hash_table_t *tree_map){
         char *str = strdup(file_path);
         add_to_directory_map(idx_entry, dir_map);
 
-        // iterate_directories(idx_entry, dir_map);
         current = current->next;
         free(str);
     }
-
-    // debug_map((const hash_table_t *)dir_map);
-
-    // directory_t *dir_bruhh = hash_table_get(dir_map, "src/brodie2/brodie3/");
-
-    // hash_table_t *tree_map = hash_table_init();
 
     directory_traversal(root_dir, dir_map, index_file->entries, tree_map);
 
