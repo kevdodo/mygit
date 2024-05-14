@@ -83,7 +83,13 @@ bool check_local_change(char *file_name, index_entry_t *idx_entry){
             // mtime of the file is the same as idx_entry->mtime
         } else {
             // mtime of the file is different from idx_entry->mtime
-            return true;
+
+            object_hash_t file_hash;
+
+            char * contents = get_file_contents(file_name);
+            get_object_hash(BLOB, contents, strlen(contents), file_hash);
+            
+            return strcmp(idx_entry->sha1, file_hash) == 0;
         }
     } else {
         // handle error from stat, file might not exist which is ok
