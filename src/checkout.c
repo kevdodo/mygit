@@ -162,6 +162,10 @@ void checkout(const char *checkout_name, bool make_branch) {
         // Otherwise, assume name_or_hash is a branch name and checkout to that branch
         object_hash_t hash;
         if (!get_branch_ref(checkout_name, hash)){
+            
+            free_hash_table(curr_commit_table, free);
+            free(head_commit);
+            free(curr_head);
             printf("Not a branch name \n");
             return;
         }
