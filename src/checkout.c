@@ -91,6 +91,7 @@ bool check_local_change(char *file_name, index_entry_t *idx_entry){
 
             printf("file hash: %s", file_hash);
             printf("sha hash: %s", idx_entry->sha1 );
+            free(contents);
             
             return strcmp(idx_entry->sha1, file_hash) != 0;
         }
