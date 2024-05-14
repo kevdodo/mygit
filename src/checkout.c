@@ -120,6 +120,8 @@ void checkout(const char *checkout_name, bool make_branch) {
         printf("Switched to a new branch '%s'\n", checkout_name);
 
         write_head_file(checkout_name, false);
+        free(head_commit_hash);
+        free(curr_head);
 
         return;
     } 
