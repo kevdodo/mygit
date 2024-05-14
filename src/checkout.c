@@ -249,7 +249,7 @@ void checkout(const char *checkout_name, bool make_branch) {
         curr_commit_keys = curr_commit_keys->next;
     }
 
-    printf("Switched_to branch %s\n", checkout_name);
+    printf("Switched to branch %s\n", checkout_name);
 
     // update the index file
     // printf("List of changed files:\n");

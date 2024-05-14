@@ -624,7 +624,7 @@ void commit(const char *commit_message) {
     write_object(COMMIT, msg, strlen(msg), hash);
 
 
-    // printf("final hash %s", hash);
+    printf("commit hash %s\n", hash);
     free_hash_table(tree_map, free);
     free(msg);
     if (commit_hash != NULL){
@@ -637,4 +637,5 @@ void commit(const char *commit_message) {
     }
     free(head);
     free(parent_hashes);
+    exit(1);
 }

@@ -265,7 +265,7 @@ void add_files(const char **file_paths, size_t file_count)
         memcpy(new_entry->sha1, hash, sizeof(object_hash_t));
         new_entry->size = strlen(file_contents);
 
-        // printf("new hash: %s\n", hash);
+        printf("new hash: %s\n", hash);
         // needs to be recalculated
 
         // we needa free the previous one or else you get memory leaks
