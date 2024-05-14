@@ -59,21 +59,6 @@ hash_table_t *get_curr_table(){
     return curr_hash_table;
 }
 
-bool is_valid_commit_hash(const char *hash) {
-    // Check if the hash is 40 characters long
-    if (strlen(hash) != 40) {
-        return false;
-    }
-
-    // Check if all characters are hexadecimal
-    for (int i = 0; i < 40; i++) {
-        if (!isxdigit(hash[i])) {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 bool check_local_change(char *file_name, index_entry_t *idx_entry){
     struct stat file_stat;

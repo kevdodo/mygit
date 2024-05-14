@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include "commit.h"
+#include "util.h"
 
 #include "config_io.h"
 
@@ -40,17 +41,12 @@ void print_commit(object_hash_t hash) {
 
         printf("%s\n\n", commit->message);
         
-        // Ensure hash is an object_hash_t type
-        object_hash_t hash;
-
         if (commit->parents > 0){
-            object_hash_t temp_hash;
-            memcpy(&temp_hash, &(commit->parent_hashes[0]), sizeof(object_hash_t));
-            free_commit(commit);
-            
 
-            commit = read_commit(temp_hash);
-            memcpy(&hash, &temp_hash, sizeof(object_hash_t));
+            memcpy(hash, &(commit->parent_hashes[0]), sizeof(object_hash_t));
+            free_commit(commit);
+
+            commit = read_commit(hash);
         } else {
             free_commit(commit);
             commit = NULL;
@@ -74,10 +70,18 @@ void mygit_log(const char *ref) {
     } else {
         object_hash_t hash;
         bool found = get_branch_ref(ref, hash);
-        if (!found){
-            printf("Not a valid hash");
-            exit(1);
+
+        if (found){
+            print_commit(hash);
+            return;
         }
-        print_commit(hash);
+        // printf("hash!!! %s\n", ref);
+
+        if (is_valid_commit_hash(ref)) {
+            // If name_or_hash is a valid commit hash, checkout to that commit
+            print_commit(ref);
+        } else {
+            printf("fatal: bad object %s", ref);
+        }
     }
 }

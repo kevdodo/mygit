@@ -73,6 +73,8 @@ void get_object_hash(
     object_hash_t hash
 );
 
+void *read_object(const object_hash_t hash, object_type_t *type, size_t *length);
+
 void free_tree_entry(tree_entry_t *tree_entry);
 void free_tree_mine(tree_t *tree);
 

@@ -31,6 +31,6 @@ size_t get_file_size(FILE *f);
 char *get_file_contents(const char *file_path);
 
 void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars);
-
+bool is_valid_commit_hash(const char *hash);
 
 #endif // #ifndef UTIL_H
