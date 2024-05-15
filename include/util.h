@@ -7,6 +7,8 @@
 #include "constants.h"
 #include "hash_table.h"
 
+#include "config_io.h"
+
 uint8_t from_octal(char c);
 uint8_t from_decimal(char c);
 uint8_t from_hex(char c);
@@ -33,4 +35,5 @@ char *get_file_contents(const char *file_path);
 void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_chars);
 bool is_valid_commit_hash(const char *hash);
 
+char *get_url(config_section_t *remote);
 #endif // #ifndef UTIL_H

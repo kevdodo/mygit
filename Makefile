@@ -7,8 +7,8 @@
 #  - All sanitizers MUST be off for the above command
 
 CC = clang
-CFLAGS = -Wall -Wextra -Iinclude -MMD #-g -fsanitize=address,undefined
-LDFLAGS = -lz -lcrypto #-fsanitize=address,undefined
+CFLAGS = -Wall -Wextra -Iinclude -MMD -g -fsanitize=address,undefined
+LDFLAGS = -lz -lcrypto -fsanitize=address,undefined
 
 bin/mygit: out/mygit.o \
 	out/config_io.o out/hash_table.o out/index_io.o out/linked_list.o out/object_io.o out/ref_io.o out/transport.o out/util.o \

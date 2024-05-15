@@ -13,6 +13,9 @@
 #include "hash_table.h"
 #include "util.h"
 
+#include "config_io.h"
+#include <ctype.h>
+
 uint8_t from_octal(char c) {
     if (!('0' <= c && c <= '7')) {
         fprintf(stderr, "Invalid octal character: %c\n", c);
@@ -199,3 +202,19 @@ bool is_valid_commit_hash(const char *hash) {
     return true;
 }
     
+
+char *get_url(config_section_t *remote) {
+    for (size_t i = 0; i < remote->property_count; i++) {
+        config_property_t property = remote->properties[i];
+        if (strcmp(property.key, "url") == 0) {
+            char *url = malloc(strlen(property.value) + 1);
+            if (url == NULL) {
+                fprintf(stderr, "Failed to allocate memory for URL.\n");
+                return NULL;
+            }
+            strcpy(url, property.value);
+            return url;
+        }
+    }
+    return NULL;
+}
