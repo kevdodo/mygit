@@ -29,7 +29,7 @@ void print_commit(object_hash_t hash) {
             printf("\n");
         }
         // REMOVE THIS SPACE????
-        printf("Author: %s \n", commit->author);
+        printf("Author: %s\n", commit->author);
 
         // Convert the time_t object to a struct tm object
         struct tm *timeinfo = localtime(&(commit->author_time));
