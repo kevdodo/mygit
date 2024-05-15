@@ -603,7 +603,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
 }
 
 void commit(const char *commit_message) {
-    exit(1);
+    
     // index_file_t *read_index_file();
     hash_table_t *tree_map = hash_table_init();
 
