@@ -513,14 +513,32 @@ char* get_unix_timestamp_and_timezone() {
 
 char* create_commit_message(const char* tree_hash, const char* commit_message, char **parent_hashes) {
     // Calculate the size of the commit message
-   
-    
     config_t *config = read_global_config();
 
     config_section_t *config_section = get_section(config, "user");
 
-    char *author_email = config_section->properties[0].value;
-    char *author_name = config_section->properties[1].value;
+            
+    char * author_email = NULL; //= config_section->properties[0].value;
+    char * author_name = NULL; //= config_section->properties[1].value;
+
+    for (size_t i=0; i < config_section->property_count; i++){
+        config_property_t property =  config_section->properties[i];
+        printf(" %s \n", config_section->properties[i].value);
+        if (strcmp(property.key, "email") == 0){
+            author_email = config_section->properties[i].value;
+            printf("author email: %s\n", author_email);
+        }
+        if (strcmp(property.key, "name") == 0){
+            author_name = config_section->properties[i].value;
+            printf("author name: %s\n", author_name);
+        }
+    }
+
+    if (author_email == NULL || author_name == NULL){
+        printf("Author or email is not set in config file");
+        exit(1);
+    }
+    
     
     size_t count = 0;
     size_t parent_len = 0;
@@ -529,6 +547,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
         parent_len += strlen(parent_hashes[i]);
         count++;
     }
+    
     char* author_date_unix = get_unix_timestamp_and_timezone();
     char* committer_date_unix = get_unix_timestamp_and_timezone();
 
@@ -537,7 +556,7 @@ char* create_commit_message(const char* tree_hash, const char* commit_message, c
     size_t message_size = strlen("tree \n\nauthor <>  \ncommitter <>  \n\n\n") +
                       strlen(tree_hash) + parent_len + count *strlen("parent ") + 
                       strlen(commit_message) + 
-                      2 * (strlen(author_name) + strlen(author_email) + strlen(author_date_unix) + 5);
+                      2 * (strlen(author_name) + strlen(author_email) + strlen(author_date_unix) + 20);
 
     char *commit_message_str = malloc(sizeof(char) * message_size);
     if (commit_message_str == NULL) {

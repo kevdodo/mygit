@@ -48,18 +48,35 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
 
     transport_t * transport = open_transport(FETCH, url);
     hash_table_t *ref_to_hash = hash_table_init(); 
-    receive_refs(transport, ermm, NULL);
+    receive_refs(transport, ermm, ref_to_hash);
     
     list_node_t *ref_node = key_set(ref_to_hash);
+    printf("remote name: %s\n", remote_name);
 
-    // iterating through the commit file to track delted files
+    // // iterating through the commit file to track delted files
+
+
     while (ref_node != NULL){
-        char *file_name = ref_node->value;
-        printf("ref name: %s\n", file_name);
+        char *ref = ref_node->value;
+        printf("ref name: %s\n", ref);
+
+        object_hash_t hash;
+        bool remote_ref = get_remote_ref(remote_name, ref, hash);
+        if (!remote_ref){
+            printf("Remote Ref : '%s' not found\n", remote_name);
+            exit(1);
+        }
+
+        // char * hash = hash_table_get(ref_to_hash, ref); 
+
+        send_want(transport, hash);
+        finish_wants(transport);
 
         ref_node = ref_node->next;
     }
-    // send_want(transport, hash)
+
+
+    finish_wants(transport);
 
     close_transport(transport);
     

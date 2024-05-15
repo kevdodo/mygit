@@ -28,12 +28,12 @@ void print_commit(object_hash_t hash) {
             }
             printf("\n");
         }
+        // REMOVE THIS SPACE????
         printf("Author: %s \n", commit->author);
 
         // Convert the time_t object to a struct tm object
         struct tm *timeinfo = localtime(&(commit->author_time));
 
-        // Create a buffer to hold the formatted date
         char buff[80];
         // Format the date
         strftime(buff, 80, "%a %b %d %H:%M:%S %Y %z", timeinfo);
