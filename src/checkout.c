@@ -15,14 +15,6 @@
 
 #include "hash_table.h"
 
-struct list_node {
-   list_node_t *next;
-   void *value;
-};
-struct linked_list {
-    list_node_t *head;
-    list_node_t **tail;
-};
 
 char *get_head_commit_hash(){
     bool detached;    

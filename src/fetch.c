@@ -9,14 +9,6 @@
 #include "transport.h"
 #include "util.h"
 
-struct list_node {
-   list_node_t *next;
-   void *value;
-};
-struct linked_list {
-    list_node_t *head;
-    list_node_t **tail;
-};
 
 
 void ermm(char *ref, object_hash_t hash, void *aux){
@@ -30,6 +22,7 @@ void ermm(char *ref, object_hash_t hash, void *aux){
 char ** go_through_local_commits(object_hash_t hash, char * hash_fetched){
     char ** hashes_to_fetch = NULL;
     size_t hashes_cnt = 0;
+    printf("hash fetched: %s\n", hash);
     commit_t *commit = read_commit(hash);
     while (commit != NULL){
         object_hash_t *parent_hashes = commit->parent_hashes;
@@ -71,19 +64,22 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
         char *ref = ref_node->value;
         printf("ref name: %s\n", ref);
 
-        object_hash_t hash;
+        // object_hash_t hash;
+        char * hash_fetched = hash_table_get(ref_to_hash, ref);
+
+        object_hash_t hash; 
+
         bool remote_ref = get_remote_ref(remote_name, ref, hash);
         if (!remote_ref){
             printf("Remote Ref : '%s' not found\n", remote_name);
             exit(1);
         }
-        char * hash_fetched = hash_table_get(ref_to_hash, ref); 
 
-        char **local_commits = go_through_local_commits(hash, hash_fetched);
+        // char **local_commits = go_through_local_commits(hash, hash_fetched);
 
-        for (size_t i=0; local_commits[i] != NULL; i++){
-            printf("local commit hash: %s", local_commits[i]);
-        }
+        // for (size_t i=0; local_commits[i] != NULL; i++){
+        //     printf("local commit hash: %s", local_commits[i]);
+        // }
 
         ref_node = ref_node->next;
     }

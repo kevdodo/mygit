@@ -9,6 +9,16 @@
 
 #include "config_io.h"
 
+struct list_node {
+   list_node_t *next;
+   void *value;
+};
+struct linked_list {
+    list_node_t *head;
+    list_node_t **tail;
+};
+
+
 uint8_t from_octal(char c);
 uint8_t from_decimal(char c);
 uint8_t from_hex(char c);

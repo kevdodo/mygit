@@ -12,14 +12,6 @@
 
 #include "util.h"
 
-struct list_node {
-   list_node_t *next;
-   void *value;
-};
-struct linked_list {
-    list_node_t *head;
-    list_node_t **tail;
-};
 
 
 void get_all_files_in_directory_recursively(const char *dir_name, char **files, size_t array_size, int *index) {

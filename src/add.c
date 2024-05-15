@@ -10,14 +10,14 @@
 #include <unistd.h>
 
 
-struct list_node {
-   list_node_t *next;
-   void *value;
-};
-struct linked_list {
-    list_node_t *head;
-    list_node_t **tail;
-};
+// struct list_node {
+//    list_node_t *next;
+//    void *value;
+// };
+// struct linked_list {
+//     list_node_t *head;
+//     list_node_t **tail;
+// };
 
 
 typedef struct index_header_t{
