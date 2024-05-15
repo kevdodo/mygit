@@ -23,9 +23,10 @@ void print_commit(object_hash_t hash) {
         
         if (commit->parents > 1) {
             printf("Merge: ");
-            for (size_t i = 0; i < commit->parents; i++) {
+            for (size_t i = 0; i < commit->parents-1; i++) {
                 printf("%s ", parent_hashes[i]);
             }
+            printf("%s", parent_hashes[commit->parents-1]);
             printf("\n");
         }
         // REMOVE THIS SPACE????
@@ -80,6 +81,7 @@ void mygit_log(const char *ref) {
         if (is_valid_commit_hash(ref)) {
             // If name_or_hash is a valid commit hash, checkout to that commit
             print_commit((char *) ref);
+            return;
         } else {
             printf("fatal: bad object %s", ref);
         }
