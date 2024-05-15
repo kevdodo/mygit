@@ -96,9 +96,6 @@ _Noreturn void exec_ssh(
     const char *ssh_login,
     const char *project
 ) {
-
-    printf("ermmmmmm\n");
-
     const char *command = direction == FETCH ? FETCH_COMMAND : PUSH_COMMAND;
     // TODO: sanitize project to protect against bash injection?
     char ssh_command[strlen(command) + strlen(project) + strlen(CLOSE_QUOTE) + 1];
@@ -136,10 +133,7 @@ transport_t *open_transport(transport_direction_t direction, char *url) {
     assert(result == 0);
     result = pipe((int *) &write_pipe);
     assert(result == 0);
-    
-    
-    printf("\nurl here %s\n", url);
-    printf("direction : %u\n", direction);
+
     // Fork off a subprocess to run SSH
     pid_t ssh_pid = fork();
     assert(ssh_pid >= 0);
@@ -218,6 +212,7 @@ void *read_pkt_line(transport_t *transport, size_t *length) {
         fprintf(stderr, "Failed to read pkt-len\n");
         assert(false);
     }
+
     *length = 0;
     for (size_t i = 0; i < PKT_HEX_LENGTH; i++) {
         *length = *length << 4 | from_hex(hex_length[i]);
@@ -242,13 +237,13 @@ void *read_pkt_line(transport_t *transport, size_t *length) {
 }
 
 char *read_pkt_line_string(transport_t *transport) {
-    size_t *length = malloc(sizeof(size_t));
-    char *line = read_pkt_line(transport, length);
+    size_t length;
+    char *line = read_pkt_line(transport, &length);
     if (line == NULL) return NULL;
 
     // Replace newline with a null terminator
-    assert(line[*length - 1] == '\n');
-    line[*length - 1] = '\0';
+    assert(line[length - 1] == '\n');
+    line[length - 1] = '\0';
     return line;
 }
 
@@ -286,8 +281,6 @@ void receive_refs(transport_t *transport, ref_receiver_t receiver, void *aux) {
     bool fetch = transport->stage == FETCH_RECEIVING_REFS;
     assert(fetch || transport->stage == PUSH_RECEIVING_REFS);
     char *line;
-    printf("yuhhh\n");
-
     while ((line = read_pkt_line_string(transport)) != NULL) {
         // We ignore the list of capabilities after the first ref name
         char *hash_end = strchr(line, ' ');
