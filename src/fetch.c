@@ -68,7 +68,6 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
         }
 
         // char * hash = hash_table_get(ref_to_hash, ref); 
-
         send_want(transport, hash);
         finish_wants(transport);
 

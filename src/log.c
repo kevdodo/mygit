@@ -29,7 +29,6 @@ void print_commit(object_hash_t hash) {
             printf("%s", parent_hashes[commit->parents-1]);
             printf("\n");
         }
-        // REMOVE THIS SPACE????
         printf("Author: %s\n", commit->author);
 
         // Convert the time_t object to a struct tm object
