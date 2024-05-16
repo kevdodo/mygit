@@ -16,13 +16,50 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("hash: %s\n", hash);
 
     hash_table_t *table = (hash_table_t *)aux;
-    hash_table_add(table, ref, hash);
+    char * branch_name = get_last_dir(ref);
+    hash_table_add(table, branch_name, strdup((char *)hash));
+    // free(ref);
+}
+
+char **get_commit_hashes_to_push(char *hash, char *remote_hash){
+    // printf("hash: %s", hash);
+    commit_t *commit = read_commit(hash);
+    char **hashes = NULL;
+    size_t count = 0;
+
+    while (commit != NULL){
+        object_hash_t *parent_hashes = commit->parent_hashes;
+        printf("commit %s\n", hash);
+        if (commit->parents > 0){
+            // Check if the current hash is the remote hash
+            if (strcmp(hash, remote_hash) == 0) {
+                break;
+            }
+
+            // Add the current hash to the array
+            hashes = realloc(hashes, sizeof(char *) * (count + 1));
+            hashes[count] = strdup(hash);
+            count++;
+
+            memcpy(hash, &(commit->parent_hashes[0]), sizeof(object_hash_t));
+            free_commit(commit);
+
+            commit = read_commit(hash);
+        } else {
+            free_commit(commit);
+            commit = NULL;
+        }
+    }
+
+    // Add a NULL pointer at the end of the array
+    hashes = realloc(hashes, sizeof(char *) * (count + 1));
+    hashes[count] = NULL;
+
+    return hashes;
 }
 
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
-
-
     for (size_t i=0; i < branch_count; i ++){
         char *branch = branch_names[i];  
         char *branch_config = malloc(sizeof(char) * strlen("branch \"") + strlen(branch) + 2);
@@ -34,17 +71,15 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         printf("branch config noooo way: %s\n", branch_config);
         config_t *config = read_config();
 
+
         char *remote;
         // todo: what to do with merge???
         char *merge;
         for (size_t i=0; i < config->section_count; i++){
             config_section_t sec = config->sections[i];
-            printf("sec name: %s\n", sec.name);
             if (strcmp(branch_config, sec.name) == 0){
                 size_t name_len = strlen(sec.name);
                 for (size_t i = 0; i < sec.property_count; i++){
-                    printf("property key : %s\n", sec.properties[i].key);
-                    printf("properties value: %s\n", sec.properties[i].value);
                     if (strcmp(sec.properties[i].key, "remote") == 0 ){
                         remote = sec.properties[i].value;
                     }
@@ -72,7 +107,37 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         list_node_t *ls_node = key_set(ref_to_hash);
 
-        // hash_table_get(ref_receiver_t, )
+        object_hash_t my_remote_hash;
+        bool found = get_remote_ref(remote, branch, my_remote_hash);
+        if (!found){
+            printf("branch %s was not found\n", branch);
+            exit(1);
+        }
+
+        char *remote_hash = hash_table_get(ref_to_hash, branch);
+        printf("remote_hash: %s\n", remote_hash);
+        printf("my hash: %s\n", my_remote_hash);
+
+        if (remote_hash == NULL || strcmp(remote_hash, my_remote_hash) != 0){
+            printf("you gotta fetch first\n");
+            exit(1);
+        }
+        object_hash_t curr_hash;
+        bool found_branch = get_branch_ref(branch, curr_hash);
+        if (!found_branch){
+            printf("branch %s was not found", branch);
+            exit(1);
+        }
+
+        char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
+        for (size_t i=0; hashes_to_push[i] != NULL; i++){
+            printf("hash to push: %s\n", hashes_to_push[i]);
+        }
+
+        // send_update(transport, branch, remote_hash, curr_hash);
+
+        // we can push the branch!!
+
 
 
         // while (ls_node != NULL){
