@@ -179,6 +179,7 @@ transport_t *open_transport(transport_direction_t direction, char *url) {
 }
 
 void close_transport(transport_t *transport) {
+    printf("transport stage :%d\n", transport->stage);
     assert(transport->stage == TRANSPORT_DONE);
     // Close the input to the SSH process, which should cause it to exit
     int result = close(transport->ssh_write_fd);

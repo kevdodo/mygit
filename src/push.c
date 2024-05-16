@@ -16,8 +16,7 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("hash: %s\n", hash);
 
     hash_table_t *table = (hash_table_t *)aux;
-    char * branch_name = get_last_dir(ref);
-    hash_table_add(table, branch_name, strdup((char *)hash));
+    hash_table_add(table, ref, strdup((char *)hash));
     // free(ref);
 }
 
@@ -56,6 +55,13 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     hashes[count] = NULL;
 
     return hashes;
+}
+
+char * make_head_ref(char *branch){
+    char * ref = malloc(sizeof(char) * (strlen("refs/heads/") + strlen(branch) + 1));
+    strcpy(ref, "refs/heads/");
+    strcat(ref, branch);
+    return ref;
 }
 
 
@@ -101,11 +107,11 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         char *url = get_url(remote_sec);
         printf("url: %s\n", url);
 
-        transport_t * transport = open_transport(FETCH, url);
+        transport_t * transport = open_transport(PUSH, url);
         hash_table_t *ref_to_hash = hash_table_init(); 
         receive_refs(transport, ermm2, ref_to_hash);
 
-        list_node_t *ls_node = key_set(ref_to_hash);
+        // list_node_t *ls_node = key_set(ref_to_hash);
 
         object_hash_t my_remote_hash;
         bool found = get_remote_ref(remote, branch, my_remote_hash);
@@ -113,6 +119,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             printf("branch %s was not found\n", branch);
             exit(1);
         }
+        // char * branch_name = get_last_dir(ref);
 
         char *remote_hash = hash_table_get(ref_to_hash, branch);
         printf("remote_hash: %s\n", remote_hash);
@@ -130,11 +137,15 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         }
 
         char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
+        char * old_hash = remote_hash;
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             printf("hash to push: %s\n", hashes_to_push[i]);
+            send_update(transport, ref, old_hash, hashes_to_push[i])
+            old_hash = hashes_to_push[i];
         }
 
         // send_update(transport, branch, remote_hash, curr_hash);
+        finish_updates(transport);
 
         // we can push the branch!!
 
