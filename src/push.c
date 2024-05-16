@@ -60,7 +60,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             printf("failed to push to branch %s, does not exist in config\n", branch);
             exit(1);
         }
-        printf("remote!!!! : %s\n", remote);
+        printf("we need to push to  : %s\n", remote);
 
         config_section_t *remote_sec = get_remote_section(config, remote);
         char *url = get_url(remote_sec);
@@ -72,11 +72,35 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         list_node_t *ls_node = key_set(ref_to_hash);
 
-        while (ls_node != NULL){
-            char *ref = ls_node->value;
-            printf("ref: %s", ref);
-            ls_node = ls_node->next;
-        }
+        // hash_table_get(ref_receiver_t, )
+
+
+        // while (ls_node != NULL){
+        //     char *ref = ls_node->value;
+        //     printf("ref here: %s\n", ref);
+        //     // TODO: what to do with the head ref prbably update it huh
+        //     if (strcmp("HEAD", ref) == 0){
+        //         ls_node = ls_node->next;
+        //         continue;
+        //     }
+
+        //     char * branch_name = get_last_dir(ref);
+        //     printf("%s\n", bruh);
+
+        //     object_hash_t myhash;
+        //     bool got_ref = get_remote_ref(remote, bruh, myhash);
+        //     if (!got_ref){
+        //         printf("what\n");
+        //         exit(1);
+        //     }
+            
+        //     printf("myhash: %s\n", myhash);
+
+        //     // compare myhash with the remote hash to see if we need to do a git fetch/pull
+        //     // if (strcmp(myhash, ))
+
+        //     ls_node = ls_node->next;
+        // }
 
         // send_update(transport, NULL, )
         close_transport(transport);

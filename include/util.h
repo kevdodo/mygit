@@ -46,4 +46,6 @@ void expand_tree(object_hash_t tree_hash, hash_table_t* hash_table, char *curr_c
 bool is_valid_commit_hash(const char *hash);
 
 char *get_url(config_section_t *remote);
+char *get_last_dir(char *file_dir_name);
+
 #endif // #ifndef UTIL_H

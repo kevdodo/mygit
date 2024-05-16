@@ -88,34 +88,7 @@ void add_to_tree(tree_t *tree, tree_entry_t *tree_entry){
     tree->entry_count++;
 }
 
-char **split_path_into_directories(char *path) {
-    // Count the number of directories in the path
-    int count = 0;
-    for (int i = 0; path[i]; i++) {
-        if (path[i] == '/') {
-            count++;
-        }
-    }
 
-    // Allocate memory for the array of directory names
-    char **directories = malloc((count + 2) * sizeof(char *));
-    if (directories == NULL) {
-        fprintf(stderr, "Failed to allocate memory.\n");
-        return NULL;
-    }
-
-    // Split the path into directory names
-    int index = 0;
-    char *token = strtok(path, "/");
-    while (token != NULL) {
-        directories[index] = token;
-        token = strtok(NULL, "/");
-        index++;
-    }
-    directories[index] = NULL;  // Null-terminate the array
-
-    return directories;
-}
 
 
 
@@ -189,25 +162,7 @@ void add_to_directory_map(index_entry_t *index_entry, hash_table_t *directory_ma
     free(curr_directory);
 }
 
-char *get_last_dir(char *file_dir_name){
 
-    char * full_name = strdup(file_dir_name);     
-    char ** full_name_splitted= split_path_into_directories(full_name);
-    int count = 0;
-
-    while (full_name_splitted[count] != NULL) {
-        count++;
-    }
-    char *last_dir;
-    if (count != 0){
-        last_dir = strdup(full_name_splitted[count-1]);
-    } else {
-        last_dir = strdup(full_name);
-    }
-    free(full_name_splitted);
-    free(full_name);
-    return last_dir;
-}
 
 void debug_map(const hash_table_t *dir_map){
     list_node_t *head2 = key_set(dir_map);
