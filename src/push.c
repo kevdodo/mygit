@@ -16,13 +16,20 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("ref received: %s\n", ref);
     printf("hash: %s\n", hash);
 
-    char **refs = split_path_into_directories(ref);
+    char **refs = split_path_into_directories(strdup(ref));
     printf("chopped %s\n", refs[1]);
     if (strcmp(refs[1], "heads") == 0){
         printf("yuhhh\n");
         hash_table_t *table = (hash_table_t *)aux;
-        hash_table_add(table, strdup(ref), strdup((char *)hash));    
-    }    
+        hash_table_add(table, ref, strdup((char *)hash));    
+    }
+    // hash_table_t *table = (hash_table_t *)aux;
+    // hash_table_add(table, ref, strdup((char *)hash));
+
+    // for (size_t i=0; refs[i] != NULL; i++){
+    //     free(refs[i]);
+    // }
+    free(refs);
 }
 
 char **get_commit_hashes_to_push(char *hash, char *remote_hash){

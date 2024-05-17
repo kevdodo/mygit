@@ -125,6 +125,7 @@ bool get_remote_ref(const char *remote, const char *ref, object_hash_t hash) {
 }
 
 void set_remote_ref(const char *remote, const char *ref, const object_hash_t hash) {
+    printf("ref getting set: %s\n", ref);
     FILE *file = open_remote_ref(remote, ref, "w");
     if (file == NULL) {
         fprintf(stderr, "Failed to write ref %s on remote %s\n", ref, remote);
