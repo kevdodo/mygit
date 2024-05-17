@@ -252,6 +252,8 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         close_transport(transport);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
 
+        
+
         curr_remote = curr_remote->next;
         free(url);
     }
