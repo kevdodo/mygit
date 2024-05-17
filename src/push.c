@@ -198,12 +198,12 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
 
         // TODO: Handle deleting the ref
-        char *old_hash = remote_hash;
-        for (size_t i=0; hashes_to_push[i] != NULL; i++){
-            printf("hash to push: %s\n", hashes_to_push[i]);
-            send_update(transport, ref, remote_hash, curr_hash);
-            old_hash = hashes_to_push[i];
-        }
+        // char *old_hash = remote_hash;
+        // for (size_t i=0; hashes_to_push[i] != NULL; i++){
+        //     printf("hash to push: %s\n", hashes_to_push[i]);
+        //     old_hash = hashes_to_push[i];
+        // }
+        send_update(transport, ref, remote_hash, curr_hash);
 
         // send one update for each branch
         printf("curr hash update %s\n", curr_hash);
