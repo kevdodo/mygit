@@ -212,7 +212,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 void receive_updated_refs(char *ref, void *aux){
     printf("ref: '%s' successfully received\n", ref);
     linked_list_t *ll = (linked_list_t *) aux;
-    list_push_back(ll, ref);
+    list_push_back(ll, strdup(ref));
 }
 
 
@@ -295,6 +295,8 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         set_remote_branch_success(successful_refs, remote);
 
         close_transport(transport);
+
+        free_linked_list(successful_refs, free);
 
 
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
