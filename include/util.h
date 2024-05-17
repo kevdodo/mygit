@@ -47,5 +47,7 @@ bool is_valid_commit_hash(const char *hash);
 
 char *get_url(config_section_t *remote);
 char *get_last_dir(char *file_dir_name);
+char **split_path_into_directories(char *path);
+
 
 #endif // #ifndef UTIL_H
