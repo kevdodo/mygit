@@ -188,9 +188,6 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             exit(1);
         }
 
-
-
-
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
@@ -208,6 +205,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         // }
 
         // send one update for each branch
+        printf("curr hash update %s\n", curr_hash);
         send_update(transport, ref, remote_hash, curr_hash);
 
 
@@ -263,7 +261,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
             printf("Branch: %s was not found\n", branch);
             exit(1);
         }
-        
+
         printf("curr hash: %s\n", curr_hash);
         set_remote_ref(remote, branch, curr_hash);
         good_refs = good_refs->next;
