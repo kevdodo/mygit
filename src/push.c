@@ -337,6 +337,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             // Create a new config with the added section
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
 
+
             write_config(new_config);
 
             // Free the old config and set the new one as the current config
