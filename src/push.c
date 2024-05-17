@@ -31,8 +31,6 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
 }
 
 char **get_commit_hashes_to_push(char *hash, char *remote_hash){
-    // printf("hash: %s", hash);
-
     commit_t *commit = read_commit(hash);
     char **hashes = malloc(sizeof(char *));
     hashes[0] = strdup(hash);
@@ -185,7 +183,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
 
-        if (remote_hash == NULL || strcmp(remote_hash, my_remote_hash) != 0){
+        if (my_remote_hash != "" && (remote_hash == NULL || strcmp(remote_hash, my_remote_hash) != 0) ){
             printf("you gotta fetch first\n");
             exit(1);
         }
@@ -224,7 +222,7 @@ void receive_updated_refs(char *ref, void *aux){
     list_push_back(ll, strdup(ref));
 }
 
-
+// maps the branches to it's hashes
 hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
     list_node_t *curr_branch = branches->head;
 
