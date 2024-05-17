@@ -13,13 +13,11 @@
 
 
 void ermm2(char *ref, object_hash_t hash, void *aux){
-    printf("ref received: %s\n", ref);
-    printf("hash: %s\n", hash);
+    // printf("ref received: %s\n", ref);
+    // printf("hash: %s\n", hash);
 
     char **refs = split_path_into_directories(strdup(ref));
-    printf("chopped %s\n", refs[1]);
     if (strcmp(refs[1], "heads") == 0){
-        printf("yuhhh\n");
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
     }
@@ -176,7 +174,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         object_hash_t my_remote_hash;
         bool found = get_remote_ref(remote, branch_name, my_remote_hash);
         if (!found){
-            printf("branch %s was not found\n", branch_name);
+            printf("branch %s remote was not found\n", branch_name);
             exit(1);
         }
 
@@ -345,14 +343,15 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             }
 
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
-
             write_config(new_config);
+
+            set_remote_ref(set_remote, branch_name, "");
+
 
             // Free the old config and set the new one as the current config
             free_config(config);
             config = new_config;
         }
-        return;
     }
 
     if (branch_count == 0 && branch_names == NULL){
@@ -390,8 +389,6 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         start_pack(transport, num_objects);
         push_pack(hash_set, transport);
         finish_pack(transport);
-
-        // hash_table_t * table = get_remote_hash_refs(remote, branch_list);
 
         linked_list_t *successful_refs = init_linked_list();
 
