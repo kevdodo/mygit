@@ -116,7 +116,6 @@ FILE *open_remote_ref(const char *remote, const char *ref, char *mode) {
     strcat(filename, remote);
     strcat(filename, "/");
     strcat(filename, ref);
-    printf("filename aaaa %s\n", filename);
     if (mode[0] == 'w') make_parent_dirs(filename);
     return fopen(filename, mode);
 }
