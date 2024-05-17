@@ -24,8 +24,9 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
 char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     // printf("hash: %s", hash);
     commit_t *commit = read_commit(hash);
-    char **hashes = NULL;
-    size_t count = 0;
+    char **hashes = malloc(sizeof(char *));
+    hashes[0] = strdup(hash);
+    size_t count = 1;
 
     while (commit != NULL){
         object_hash_t *parent_hashes = commit->parent_hashes;
@@ -252,7 +253,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         close_transport(transport);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
 
-        
+
 
         curr_remote = curr_remote->next;
         free(url);
