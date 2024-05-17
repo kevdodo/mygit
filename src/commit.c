@@ -324,8 +324,6 @@ void write_tree(directory_t *directory, const hash_table_t * index_table, hash_t
 
 void directory_traversal(directory_t *curr_root_directory, hash_table_t *dir_map, const hash_table_t * index_table, hash_table_t * tree_map){
 
-
-
     if (can_hash(curr_root_directory, dir_map) ){
         char *dir_name = get_last_dir(curr_root_directory->name);
 

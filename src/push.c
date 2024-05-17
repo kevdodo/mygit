@@ -12,7 +12,7 @@
 #include "util.h"
 
 void ermm2(char *ref, object_hash_t hash, void *aux){
-    printf("ref: %s\n", ref);
+    printf("ref received: %s\n", ref);
     printf("hash: %s\n", hash);
 
     hash_table_t *table = (hash_table_t *)aux;
@@ -127,6 +127,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             printf("branch %s was not found\n", branch);
             exit(1);
         }
+        printf("branch: %s\n", branch);
         // char * branch_name = get_last_dir(ref);
 
         char *remote_hash = hash_table_get(ref_to_hash, branch);
