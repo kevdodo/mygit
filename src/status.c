@@ -46,7 +46,7 @@ void get_all_files_in_directory_recursively(const char *dir_name, char **files, 
             (*index)++;
 
             // Check if the array needs to be resized
-            if (*index >= array_size) {
+            if ((size_t) *index >= array_size) {
                 // Double the size of the array
                 array_size *= 2;
                 files = realloc(files, array_size * sizeof(char *));

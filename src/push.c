@@ -64,6 +64,14 @@ char * make_head_ref(char *branch){
     return ref;
 }
 
+void send_updates_for_commit(char *commit_hash){
+
+}
+            // char *blob = read_object(new_hash, &obj_type, &length);
+            // if (blob == NULL) {
+            //     printf("Failed to open object: %s\n", new_hash);
+            //     exit(1);
+            // }
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
     for (size_t i=0; i < branch_count; i ++){
@@ -140,7 +148,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         char * old_hash = remote_hash;
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             printf("hash to push: %s\n", hashes_to_push[i]);
-            send_update(transport, ref, old_hash, hashes_to_push[i])
+            // send_update(transport, ref, old_hash, hashes_to_push[i])
             old_hash = hashes_to_push[i];
         }
 
