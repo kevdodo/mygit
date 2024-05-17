@@ -187,6 +187,8 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             printf("you gotta fetch first\n");
             exit(1);
         }
+
+
         
 
         object_hash_t curr_hash;
