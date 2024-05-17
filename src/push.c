@@ -335,7 +335,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
     if (set_remote != NULL){
 
         if (get_remote_section(config, set_remote) == NULL){
-            printf("error: src refspec %s does not match any", set);
+            printf("error: src refspec %s does not match any\n", set_remote);
         }
         for (size_t i=0; i < branch_count; i++){
             char *branch_name = branch_names[i];
