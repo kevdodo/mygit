@@ -239,7 +239,7 @@ hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
         if (!found_branch){
             printf("COuld not find branch\n");
         }
-        hash_table_add(remote_hash_refs, strdup(branch_name), strdup(hash));
+        hash_table_add(remote_hash_refs, branch_name, strdup(hash));
         curr_branch = curr_branch->next;
     }
     return remote_hash_refs;
@@ -257,24 +257,105 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
         if (!found_branch){
             printf("Branch: %s was not found\n", branch);
             exit(1);
-
-            
         }
-        printf("branch hash: %s\n", curr_hash);
         set_remote_ref(remote, branch, curr_hash);
         good_refs = good_refs->next;
         free(branch);
     }
 }
 
+char **get_all_branches(size_t *branch_count, linked_list_t* branches) {
+    // Allocate memory for the branch_names array
+    char **branch_names = malloc((*branch_count) * sizeof(char *));
+    if (branch_names == NULL) {
+        fprintf(stderr, "Failed to allocate memory.\n");
+        return NULL;
+    }
+
+    // Reset branch pointer to the head of the list
+    list_node_t *branch = branches->head;
+
+    // Fill the branch_names array
+    int i = 0;
+    while (branch != NULL){
+        branch_names[i] = strdup(branch->value);
+        branch = branch->next;
+        i++;
+    }
+
+    free_linked_list(branches, free);
+
+    return branch_names;
+}
+
+config_t *copy_config_and_add_section(const config_t *old_config, const char *branch_name, const char *remote_value) {
+    // Allocate memory for the new config
+    config_t *new_config = malloc(sizeof(config_t) + (old_config->section_count + 1) * sizeof(config_section_t));
+    if (new_config == NULL) {
+        fprintf(stderr, "Failed to allocate memory.\n");
+        return NULL;
+    }
+
+    // Copy the sections from the old config to the new one
+    memcpy(new_config->sections, old_config->sections, old_config->section_count * sizeof(config_section_t));
+
+    // Increase the section count
+    new_config->section_count = old_config->section_count + 1;
+
+    // Initialize the new section
+    config_section_t *new_section = &new_config->sections[new_config->section_count - 1];
+
+    char section_name[1000];
+    snprintf(section_name, sizeof(section_name), "branch \"%s\"", branch_name);
+
+    new_section->name = strdup(section_name);
+    new_section->property_count = 2;
+    new_section->properties = malloc(new_section->property_count * sizeof(config_property_t));
+
+    // Initialize the "remote" property
+    new_section->properties[0].key = strdup("remote");
+    new_section->properties[0].value = strdup(remote_value);
+
+    // Initialize the "merge" property
+    
+    new_section->properties[1].key = strdup("merge");
+
+    // Create the "merge" value
+    char merge[1000];
+    snprintf(merge, sizeof(merge), "refs/heads/%s", branch_name);
+    new_section->properties[1].value = strdup(merge);
+
+    return new_config;
+}
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
+    config_t *config = read_config();
 
-    if (branch_count == 0 && branch_names == NULL){
-        printf("Not implemented \n");
+    if (set_remote != NULL){
+        for (size_t i=0; i < branch_count; i++){
+            char *branch_name = branch_names[i];
+            // Create a new config with the added section
+            config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
+
+            write_config(new_config);
+
+            // Free the old config and set the new one as the current config
+            config = new_config;
+        }
         return;
     }
-    config_t *config = read_config();
+
+    if (branch_count == 0 && branch_names == NULL){
+        linked_list_t * branches = list_branch_refs();
+        list_node_t *branch = branches->head;
+
+        while (branch != NULL){
+            branch = branch->next;
+            (branch_count)++;
+        }
+        branch_names = get_all_branches(&branch_count, branches);
+    }
+    
     // hash table from remotes to its corresponding branches
     hash_table_t * remote_table = get_remotes(branch_count, branch_names, config);
     list_node_t *curr_remote = key_set(remote_table);
@@ -300,7 +381,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         push_pack(hash_set, transport);
         finish_pack(transport);
 
-        hash_table_t * table = get_remote_hash_refs(remote, branch_list);
+        // hash_table_t * table = get_remote_hash_refs(remote, branch_list);
 
         linked_list_t *successful_refs = init_linked_list();
 
@@ -312,10 +393,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         free_linked_list(successful_refs, free);
 
-
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
-
-
         curr_remote = curr_remote->next;
         free(url);
     }
