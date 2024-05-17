@@ -340,9 +340,9 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
 
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
-    config_t *config = read_config();
 
     if (set_remote != NULL){
+        config_t *config = read_config();
         if (get_remote_section(config, set_remote) == NULL){
             printf("error: src refspec %s does not match any\n", set_remote);
         }
@@ -359,7 +359,6 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
             // Free the old config and set the new one as the current config
             free_config(config);
-            config = new_config;
         }
     }
 
@@ -373,6 +372,8 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         }
         branch_names = get_all_branches(&branch_count, branches);
     }
+
+    config_t *config = read_config();
     
     // hash table from remotes to its corresponding branches
     hash_table_t * remote_table = get_remotes(branch_count, branch_names, config);
