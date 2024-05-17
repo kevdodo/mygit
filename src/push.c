@@ -382,6 +382,10 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         char * remote = curr_remote->value;
 
         config_section_t *remote_sec = get_remote_section(config, remote);
+        if (remote_sec == NULL){
+            printf("config couldn't find thee remote\n");
+            exit(1);
+        }
         char *url = get_url(remote_sec);
         printf("url: %s\n", url);
         transport_t * transport = open_transport(PUSH, url);
