@@ -241,6 +241,8 @@ hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
     return remote_hash_refs;
 }
 
+
+
 void set_remote_branch_success(linked_list_t *successful_branches, char *remote){
     list_node_t * good_refs = successful_branches->head;
     while (good_refs != NULL){
