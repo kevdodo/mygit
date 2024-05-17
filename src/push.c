@@ -238,6 +238,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
     list_node_t * good_refs = successful_branches->head;
     while (good_refs != NULL){
         char * ref = good_refs->value;
+        printf("ref success: %s\n", ref);
         char * branch = get_last_dir(ref);
         printf("branch: %s\n", branch);
         object_hash_t curr_hash;
