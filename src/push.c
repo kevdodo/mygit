@@ -11,6 +11,7 @@
 #include "transport.h"
 #include "util.h"
 
+
 void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("ref received: %s\n", ref);
     printf("hash: %s\n", hash);
@@ -57,21 +58,39 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     return hashes;
 }
 
-char * make_head_ref(char *branch){
+char * make_head_ref_from_branch(char *branch){
     char * ref = malloc(sizeof(char) * (strlen("refs/heads/") + strlen(branch) + 1));
     strcpy(ref, "refs/heads/");
     strcat(ref, branch);
     return ref;
 }
 
-void send_updates_for_commit(char *commit_hash){
+void send_tree(char *tree_hash, transport_t *transport){
+    tree_t *tree = read_tree(tree_hash);
+    for (size_t i=0; i < tree->entry_count; i ++){
+        tree_entry_t tree_entry = tree->entries[i];
 
+        object_type_t obj_type;
+        size_t length;
+        char *contents = read_object(tree_entry.hash, &obj_type, &length);
+        if (contents == NULL) {
+            printf("Failed to open object: %s\n", tree_entry.hash);
+            exit(1);
+        }
+        printf("contents: \n %s\n", contents);
+        // send_pack_object(transport, obj_type, contents, strlen(contents));
+        if (tree_entry.mode == MODE_DIRECTORY){
+            send_tree(tree_entry.hash, transport);
+        }
+    }
 }
-            // char *blob = read_object(new_hash, &obj_type, &length);
-            // if (blob == NULL) {
-            //     printf("Failed to open object: %s\n", new_hash);
-            //     exit(1);
-            // }
+
+void send_updates_for_commit(char *commit_hash, transport_t *transport){
+    commit_t *commit = read_commit(commit_hash);
+    char * tree_hash = commit->tree_hash;
+    send_tree(tree_hash, transport);
+}
+
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
     for (size_t i=0; i < branch_count; i ++){
@@ -129,8 +148,9 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         }
         printf("branch: %s\n", branch);
         // char * branch_name = get_last_dir(ref);
+        char *ref = make_head_ref_from_branch(branch);
 
-        char *remote_hash = hash_table_get(ref_to_hash, branch);
+        char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
 
@@ -149,16 +169,22 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         char * old_hash = remote_hash;
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             printf("hash to push: %s\n", hashes_to_push[i]);
-            // send_update(transport, ref, old_hash, hashes_to_push[i])
+            send_update(transport, ref, old_hash, hashes_to_push[i]);
+            // size_t object_count;
+            // // send_pack_object(transport, )
+            send_updates_for_commit(hashes_to_push[i], transport);
+
             old_hash = hashes_to_push[i];
         }
 
-        // send_update(transport, branch, remote_hash, curr_hash);
         finish_updates(transport);
 
+        // start sending over the pack file 
+        // start_pack(transport, object_count);
+
+
+
         // we can push the branch!!
-
-
 
         // while (ls_node != NULL){
         //     char *ref = ls_node->value;
