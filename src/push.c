@@ -16,8 +16,13 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("ref received: %s\n", ref);
     printf("hash: %s\n", hash);
 
-    hash_table_t *table = (hash_table_t *)aux;
-    hash_table_add(table, ref, strdup((char *)hash));
+    char **refs = split_path_into_directories(ref);
+    if (strcmp(refs[1], "head") == 0){
+        hash_table_t *table = (hash_table_t *)aux;
+        hash_table_add(table, ref, strdup((char *)hash));    
+    }
+
+    
     // free(ref);
 }
 
