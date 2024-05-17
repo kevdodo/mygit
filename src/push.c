@@ -17,13 +17,12 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     printf("hash: %s\n", hash);
 
     char **refs = split_path_into_directories(ref);
-    if (strcmp(refs[1], "head") == 0){
+    printf("chopped %s\n", refs[1]);
+    if (strcmp(refs[1], "heads") == 0){
+        printf("yuhhh\n");
         hash_table_t *table = (hash_table_t *)aux;
-        hash_table_add(table, ref, strdup((char *)hash));    
-    }
-
-    
-    // free(ref);
+        hash_table_add(table, strdup(ref), strdup((char *)hash));    
+    }    
 }
 
 char **get_commit_hashes_to_push(char *hash, char *remote_hash){
@@ -176,7 +175,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
         printf("branch: %s\n", branch_name);
         char *ref = make_head_ref_from_branch(branch_name);
-
+        printf("whaaaaa %s\n", ref);
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
