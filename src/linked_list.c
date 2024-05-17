@@ -32,6 +32,19 @@ void free_linked_list(linked_list_t *list, free_func_t freer) {
     free(list);
 }
 
+void free_linked_list_char(linked_list_t *list) {
+    for (list_node_t *node = list_head(list), *next; node != NULL; node = next) {
+        // if (freer != NULL) freer(node_value(node));
+        // node value here should be a char *
+
+        free(node_value(node));
+
+        next = node_next(node);
+        free(node);
+    }
+    free(list);
+}
+
 void *list_pop_front(linked_list_t *list) {
     list_node_t *head = list->head;
     if (head == NULL) return NULL;

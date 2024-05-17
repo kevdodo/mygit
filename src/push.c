@@ -41,7 +41,9 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
             hashes[count] = strdup(hash);
             count++;
 
-            memcpy(hash, &(commit->parent_hashes[0]), sizeof(object_hash_t));
+            memcpy(hash, &(parent_hashes[0]), sizeof(object_hash_t));
+
+            printf("hash to push: %s\n", hash);
             free_commit(commit);
 
             commit = read_commit(hash);
@@ -65,29 +67,31 @@ char * make_head_ref_from_branch(char *branch){
     return ref;
 }
 
-void add_hash_list_tree(char *tree_hash, transport_t *transport,  linked_list_t*  hash_list){
+void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* hash_list){
     tree_t *tree = read_tree(tree_hash);
-    list_push_back(hash_list, tree_hash);
     for (size_t i=0; i < tree->entry_count; i++){
         tree_entry_t tree_entry = tree->entries[i];
+        hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
         if (tree_entry.mode == MODE_DIRECTORY){
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
-        } else {
-            list_push_back(hash_list, strdup(tree_entry.hash)) ;
         }
     }
+    free_tree(tree);
 }
 
-char **add_hash_list(char *commit_hash, transport_t *transport, linked_list_t* hash_list){
+void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_table_t* hash_set){
     // assert(obj_type == COMMIT);
 
-    list_push_back(hash_list, commit_hash);
+    hash_table_add(hash_set, strdup(commit_hash), "yoooo");
     // send_pack_object(transport, obj_type, contents, strlen(contents));
 
     commit_t *commit = read_commit(commit_hash);
 
-    char * tree_hash = commit->tree_hash;
-    add_hash_list_tree(tree_hash, transport, hash_list);
+    char * tree_hash = strdup(commit->tree_hash);
+    hash_table_add(hash_set, strdup(tree_hash), "yoooo");
+
+    add_hash_list_tree(tree_hash, transport, hash_set);
+    free_commit(commit);
 }
 
 char *get_branch_config(char *branch){
@@ -136,11 +140,28 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
     return remote_table;
 }
 
-// Returns the hash table of objects that we need to push
-hash_table_t *push_branches(linked_list_t *branch_list, char *remote, hash_table_t * ref_to_hash, transport_t *transport){
-    list_node_t *branch = branch_list->head;
+void push_pack(hash_table_t *hash_set, transport_t *transport){
+    // iterate over the hash_set push the objects
 
-    // hash_table_
+    list_node_t *hash_node = key_set(hash_set);
+
+    while (hash_node != NULL){
+        char *hash = hash_node->value;
+        object_type_t type;
+        size_t length;
+        uint8_t *contents = read_object(hash, &type, &length);
+
+        send_pack_object(transport, type, contents, length);
+        
+        hash_node = hash_node->next;
+    }
+}
+
+// Returns the hash table of objects that we need to push
+hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote, hash_table_t * ref_to_hash, transport_t *transport){
+    list_node_t *branch = branch_list->head;
+    hash_table_t *hash_set = hash_table_init();
+
     while (branch != NULL){
         char * branch_name = branch->value;
         object_hash_t my_remote_hash;
@@ -177,18 +198,29 @@ hash_table_t *push_branches(linked_list_t *branch_list, char *remote, hash_table
             send_update(transport, ref, old_hash, hashes_to_push[i]);
             old_hash = hashes_to_push[i];
         }
-        // make the big table to push the pack_file
-        linked_list_t *hash_list = init_linked_list();
 
+        finish_updates(transport);
+
+        // TODO: Not efficient think of a better way????
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
-            send_updates_for_commit(hashes_to_push[i], transport, hash_list);
-            old_hash = hashes_to_push[i];
+            add_hashes_and_content(hashes_to_push[i], transport, hash_set);
         }
         branch = branch->next;
     }
+    return hash_set;
 }
 
+void receive_updated_refs(char *ref, void *aux){
+    printf("ref: '%s' successfully received\n", ref);
+}
+
+
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
+
+    if (branch_count == 0 && branch_names == NULL){
+        printf("Not implemented \n");
+        return;
+    }
     config_t *config = read_config();
     // hash table from remotes to its corresponding branches
     hash_table_t * remote_table = get_remotes(branch_count, branch_names, config);
@@ -206,17 +238,26 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         linked_list_t *branch_list = hash_table_get(remote_table, remote);
         assert(branch_list != NULL);
-        push_branches(branch_list, remote, ref_to_hash, transport);
+        
+        hash_table_t *hash_set = push_branches_for_remote(branch_list, remote, ref_to_hash, transport);
+        
+        size_t num_objects = hash_table_size(hash_set);
+
+        start_pack(transport, num_objects);
+        push_pack(hash_set, transport);
+        finish_pack(transport);
+
+        check_updates(transport, receive_updated_refs, branch_list);
+
+        close_transport(transport);
+        // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
 
         curr_remote = curr_remote->next;
         free(url);
     }
+
     free_config(config);
-    free_hash_table(remote_table, free);
+    free_hash_table(remote_table, (free_func_t) free_linked_list_char);
 }
     
-    // list_node_t *ref_node = key_set(ref_to_hash);
-
-
-    // finish_wants(transport);
 

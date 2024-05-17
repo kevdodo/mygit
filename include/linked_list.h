@@ -15,6 +15,7 @@ void list_push_back(linked_list_t *, void *value);
 typedef int (*compare_func_t)(void *, void *);
 void list_sort(linked_list_t *, compare_func_t cmp);
 
+void free_linked_list_char(linked_list_t *list);
 // List traversal functions
 
 list_node_t *list_head(const linked_list_t *);
