@@ -23,6 +23,7 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
 
 char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     // printf("hash: %s", hash);
+
     commit_t *commit = read_commit(hash);
     char **hashes = malloc(sizeof(char *));
     hashes[0] = strdup(hash);
@@ -33,7 +34,7 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
         printf("commit %s\n", hash);
         if (commit->parents > 0){
             // Check if the current hash is the remote hash
-            if (strcmp(hash, remote_hash) == 0) {
+            if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
                 break;
             }
 
@@ -60,7 +61,7 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     return hashes;
 }
 
-char * make_head_ref_from_branch(char *branch){
+char *make_head_ref_from_branch(char *branch){
     char * ref = malloc(sizeof(char) * (strlen("refs/heads/") + strlen(branch) + 1));
     strcpy(ref, "refs/heads/");
     strcat(ref, branch);
@@ -175,10 +176,11 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
 
-        if (remote_hash == NULL || strcmp(remote_hash, my_remote_hash) != 0){
+        if (remote_hash != NULL || strcmp(remote_hash, my_remote_hash) != 0){
             printf("you gotta fetch first\n");
             exit(1);
         }
+        
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
@@ -248,9 +250,9 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         push_pack(hash_set, transport);
         finish_pack(transport);
 
-        hash_table_t * table = get_remote_hash_refs(remote, branch_list);
+        // hash_table_t * table = get_remote_hash_refs(remote, branch_list);
 
-        check_updates(transport, receive_updated_refs, );
+        check_updates(transport, receive_updated_refs, NULL);
 
         close_transport(transport);
 
