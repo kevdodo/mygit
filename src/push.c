@@ -176,13 +176,10 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
 
-        if (remote_hash != NULL || strcmp(remote_hash, my_remote_hash) != 0){
+        if (remote_hash == NULL || strcmp(remote_hash, my_remote_hash) != 0){
             printf("you gotta fetch first\n");
             exit(1);
         }
-
-
-        
 
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
@@ -214,10 +211,45 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
 void receive_updated_refs(char *ref, void *aux){
     printf("ref: '%s' successfully received\n", ref);
+    linked_list_t *ll = (linked_list_t *) aux;
+    list_push_back(ll, ref);
 }
 
-hash_table_t *get_remote_hash_refs(char *remotes){
 
+hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
+    list_node_t *curr_branch = branches->head;
+
+    hash_table_t *remote_hash_refs = hash_table_init();
+    while (curr_branch != NULL){
+        char *branch_name = curr_branch->value;
+        
+        object_hash_t hash;
+        bool found_branch = get_branch_ref(branch_name, hash);
+        if (!found_branch){
+            printf("COuld not find branch\n");
+        }
+        hash_table_add(remote_hash_refs, strdup(branch_name), strdup(hash));
+        curr_branch = curr_branch->next;
+    }
+    return remote_hash_refs;
+}
+
+void set_remote_branch_success(linked_list_t *successful_branches, char *remote){
+    list_node_t * good_refs = successful_branches->head;
+    while (good_refs != NULL){
+        char * ref = good_refs->value;
+        char * branch = get_last_dir(ref);
+        printf("branch: %s\n", branch);
+        object_hash_t curr_hash;
+        bool found_branch = get_branch_ref(branch, curr_hash);
+        if (!found_branch){
+            printf("Branch: %s was not found\n", branch);
+            exit(1);
+        }
+        set_remote_ref(remote, ref, curr_hash);
+        good_refs = good_refs->next;
+        free(branch);
+    }
 }
 
 
@@ -253,9 +285,13 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         push_pack(hash_set, transport);
         finish_pack(transport);
 
-        // hash_table_t * table = get_remote_hash_refs(remote, branch_list);
+        hash_table_t * table = get_remote_hash_refs(remote, branch_list);
 
-        check_updates(transport, receive_updated_refs, NULL);
+        linked_list_t *successful_refs = init_linked_list();
+
+        check_updates(transport, receive_updated_refs, successful_refs);
+
+        set_remote_branch_success(successful_refs, remote);
 
         close_transport(transport);
 
