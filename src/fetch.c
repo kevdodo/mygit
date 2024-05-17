@@ -64,9 +64,6 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
         char *ref = ref_node->value;
         printf("ref name: %s\n", ref);
 
-        // object_hash_t hash;
-        char * hash_fetched = hash_table_get(ref_to_hash, ref);
-
         object_hash_t hash; 
 
         bool remote_ref = get_remote_ref(remote_name, ref, hash);

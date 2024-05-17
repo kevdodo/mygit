@@ -44,7 +44,6 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
 
             memcpy(hash, &(parent_hashes[0]), sizeof(object_hash_t));
 
-            printf("hash to push: %s\n", hash);
             free_commit(commit);
 
             commit = read_commit(hash);
@@ -81,10 +80,8 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
 }
 
 void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_table_t* hash_set){
-    // assert(obj_type == COMMIT);
 
     hash_table_add(hash_set, strdup(commit_hash), "yoooo");
-    // send_pack_object(transport, obj_type, contents, strlen(contents));
 
     commit_t *commit = read_commit(commit_hash);
 
@@ -127,7 +124,6 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
     hash_table_t *remote_table = hash_table_init();
     for (size_t i = 0; i < branch_count; i++){
         char *branch_name = branch_names[i];
-        printf("branch name herrrr %s\n", branch_name);
         char *remote = get_remote(config, branch_name);
         linked_list_t *pushes = hash_table_get(remote_table, remote);
         if (pushes == NULL){
@@ -215,6 +211,10 @@ void receive_updated_refs(char *ref, void *aux){
     printf("ref: '%s' successfully received\n", ref);
 }
 
+hash_table_t *get_remote_hash_refs(char *remotes){
+
+}
+
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
 
@@ -248,11 +248,14 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         push_pack(hash_set, transport);
         finish_pack(transport);
 
-        check_updates(transport, receive_updated_refs, branch_list);
+        hash_table_t * table = get_remote_hash_refs(remote, branch_list);
+
+        check_updates(transport, receive_updated_refs, );
 
         close_transport(transport);
-        // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
 
+
+        // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
 
 
         curr_remote = curr_remote->next;
