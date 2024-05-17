@@ -26,7 +26,7 @@ typedef struct {
 
 config_t *read_config(void);
 config_t *read_global_config(void);
-void write_config(const config_t *);
+void write_config(const config_t *);    
 void free_config(config_t *);
 
 config_section_t *get_section(const config_t *, const char *name);

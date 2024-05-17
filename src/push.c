@@ -65,97 +65,93 @@ char * make_head_ref_from_branch(char *branch){
     return ref;
 }
 
-void send_tree(char *tree_hash, transport_t *transport){
+void add_hash_list_tree(char *tree_hash, transport_t *transport,  linked_list_t*  hash_list){
     tree_t *tree = read_tree(tree_hash);
-    for (size_t i=0; i < tree->entry_count; i ++){
+    list_push_back(hash_list, tree_hash);
+    for (size_t i=0; i < tree->entry_count; i++){
         tree_entry_t tree_entry = tree->entries[i];
-
-        object_type_t obj_type;
-        size_t length;
-        char *contents = read_object(tree_entry.hash, &obj_type, &length);
-        if (contents == NULL) {
-            printf("Failed to open object: %s\n", tree_entry.hash);
-            exit(1);
-        }
-        printf("filename: %s\n\n", tree_entry.name);
-        printf("contents: \n %s\n", contents);
-        send_pack_object(transport, obj_type, contents, strlen(contents));
         if (tree_entry.mode == MODE_DIRECTORY){
-            send_tree(tree_entry.hash, transport);
+            add_hash_list_tree(tree_entry.hash, transport, hash_list);
+        } else {
+            list_push_back(hash_list, strdup(tree_entry.hash)) ;
         }
     }
 }
 
-void send_updates_for_commit(char *commit_hash, transport_t *transport){
-    object_type_t obj_type;
-    size_t length;
-    char *contents = read_object(commit_hash, &obj_type, &length);
-    assert(obj_type == COMMIT);
+char **add_hash_list(char *commit_hash, transport_t *transport, linked_list_t* hash_list){
+    // assert(obj_type == COMMIT);
 
-    send_pack_object(transport, obj_type, contents, strlen(contents));
+    list_push_back(hash_list, commit_hash);
+    // send_pack_object(transport, obj_type, contents, strlen(contents));
 
     commit_t *commit = read_commit(commit_hash);
 
     char * tree_hash = commit->tree_hash;
-    send_tree(tree_hash, transport);
+    add_hash_list_tree(tree_hash, transport, hash_list);
 }
 
+char *get_branch_config(char *branch){
+    char *branch_config = malloc(sizeof(char) * strlen("branch \"") + strlen(branch) + 2);
+    strcpy(branch_config, "branch \"");
+    strcat(branch_config, branch);
+    strcat(branch_config, "\"");
+    return branch_config;
+}
 
-void push(size_t branch_count, const char **branch_names, const char *set_remote) {
-    for (size_t i=0; i < branch_count; i ++){
-        char *branch = branch_names[i];  
-        char *branch_config = malloc(sizeof(char) * strlen("branch \"") + strlen(branch) + 2);
-        strcpy(branch_config, "branch \"");
+char *get_remote(config_t *config, char * branch){
+    
+    config_section_t * branch_sec = get_branch_section(config, branch);
+    if (branch_sec == NULL){
+        printf("branch %s doesn't have a config section\n", branch);
+        exit(1);
+    }
+    // TODO: "If a branch is new, it may not have a config section yet;"
 
-        strcat(branch_config, branch);
-        strcat(branch_config, "\"");
+    char *remote = get_property_value(branch_sec, "remote");
+    char *merge = get_property_value(branch_sec, "merge");
+    if (remote == NULL){
+        printf("failed to push to branch %s, does not exist in config\n", branch);
+        exit(1);
+    }
+    printf("we need to push to  : %s\n", remote);
+    return remote;
+}
 
-        printf("branch config noooo way: %s\n", branch_config);
-        config_t *config = read_config();
-
-
-        char *remote;
-        // todo: what to do with merge???
-        char *merge;
-        for (size_t i=0; i < config->section_count; i++){
-            config_section_t sec = config->sections[i];
-            if (strcmp(branch_config, sec.name) == 0){
-                for (size_t i = 0; i < sec.property_count; i++){
-                    if (strcmp(sec.properties[i].key, "remote") == 0 ){
-                        remote = sec.properties[i].value;
-                    }
-                    if (strcmp(sec.properties[i].key, "merge") == 0 ){
-                        merge = sec.properties[i].value;
-                    }
-                }
-            }
+// get the remotes and the branches that correspond to that remote
+hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_t * config){
+    hash_table_t *remote_table = hash_table_init();
+    for (size_t i = 0; i < branch_count; i++){
+        char *branch_name = branch_names[i];
+        printf("branch name herrrr %s\n", branch_name);
+        char *remote = get_remote(config, branch_name);
+        linked_list_t *pushes = hash_table_get(remote_table, remote);
+        if (pushes == NULL){
+            linked_list_t* ll = init_linked_list();
+            list_push_back(ll, strdup(branch_name));
+            hash_table_add(remote_table, remote, ll);
+        } else {
+            list_push_back(pushes, strdup(branch_name));
         }
-        
-        // TODO: "If a branch is new, it may not have a config section yet;"
-        if (remote == NULL){
-            printf("failed to push to branch %s, does not exist in config\n", branch);
-            exit(1);
-        }
-        printf("we need to push to  : %s\n", remote);
+    }
+    return remote_table;
+}
 
-        config_section_t *remote_sec = get_remote_section(config, remote);
-        char *url = get_url(remote_sec);
-        printf("url: %s\n", url);
+// Returns the hash table of objects that we need to push
+hash_table_t *push_branches(linked_list_t *branch_list, char *remote, hash_table_t * ref_to_hash, transport_t *transport){
+    list_node_t *branch = branch_list->head;
 
-        transport_t * transport = open_transport(PUSH, url);
-        hash_table_t *ref_to_hash = hash_table_init(); 
-        receive_refs(transport, ermm2, ref_to_hash);
-
+    // hash_table_
+    while (branch != NULL){
+        char * branch_name = branch->value;
         object_hash_t my_remote_hash;
-        bool found = get_remote_ref(remote, branch, my_remote_hash);
+        bool found = get_remote_ref(remote, branch_name, my_remote_hash);
         if (!found){
-            printf("branch %s was not found\n", branch);
+            printf("branch %s was not found\n", branch_name);
             exit(1);
         }
 
-        printf("branch: %s\n", branch);
-        // char * branch_name = get_last_dir(ref);
-        char *ref = make_head_ref_from_branch(branch);
+        printf("branch: %s\n", branch_name);
+        char *ref = make_head_ref_from_branch(branch_name);
 
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
@@ -166,82 +162,61 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             exit(1);
         }
         object_hash_t curr_hash;
-        bool found_branch = get_branch_ref(branch, curr_hash);
+        bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
-            printf("branch %s was not found", branch);
+            printf("Branch: %s was not found\n", branch_name);
             exit(1);
         }
 
         char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
 
         // TODO: Handle deleting the ref
-        char * old_hash = remote_hash;
+        char *old_hash = remote_hash;
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             printf("hash to push: %s\n", hashes_to_push[i]);
             send_update(transport, ref, old_hash, hashes_to_push[i]);
             old_hash = hashes_to_push[i];
         }
-
-        
+        // make the big table to push the pack_file
+        linked_list_t *hash_list = init_linked_list();
 
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
-            send_updates_for_commit(hashes_to_push[i], transport);
+            send_updates_for_commit(hashes_to_push[i], transport, hash_list);
             old_hash = hashes_to_push[i];
         }
+        branch = branch->next;
+    }
+}
 
+void push(size_t branch_count, const char **branch_names, const char *set_remote) {
+    config_t *config = read_config();
+    // hash table from remotes to its corresponding branches
+    hash_table_t * remote_table = get_remotes(branch_count, branch_names, config);
+    list_node_t *curr_remote = key_set(remote_table);
 
+    while (curr_remote != NULL){
+        char * remote = curr_remote->value;
 
-        finish_updates(transport);
+        config_section_t *remote_sec = get_remote_section(config, remote);
+        char *url = get_url(remote_sec);
+        printf("url: %s\n", url);
+        transport_t * transport = open_transport(PUSH, url);
+        hash_table_t *ref_to_hash = hash_table_init(); 
+        receive_refs(transport, ermm2, ref_to_hash);
 
-        // start sending over the pack file 
-        // start_pack(transport, object_count);
+        linked_list_t *branch_list = hash_table_get(remote_table, remote);
+        assert(branch_list != NULL);
+        push_branches(branch_list, remote, ref_to_hash, transport);
 
-
-
-        // we can push the branch!!
-
-        // while (ls_node != NULL){
-        //     char *ref = ls_node->value;
-        //     printf("ref here: %s\n", ref);
-        //     // TODO: what to do with the head ref prbably update it huh
-        //     if (strcmp("HEAD", ref) == 0){
-        //         ls_node = ls_node->next;
-        //         continue;
-        //     }
-
-        //     char * branch_name = get_last_dir(ref);
-        //     printf("%s\n", bruh);
-
-        //     object_hash_t myhash;
-        //     bool got_ref = get_remote_ref(remote, bruh, myhash);
-        //     if (!got_ref){
-        //         printf("what\n");
-        //         exit(1);
-        //     }
-            
-        //     printf("myhash: %s\n", myhash);
-
-        //     // compare myhash with the remote hash to see if we need to do a git fetch/pull
-        //     // if (strcmp(myhash, ))
-
-        //     ls_node = ls_node->next;
-        // }
-
-        // send_update(transport, NULL, )
-        close_transport(transport);
-        // free(url);
-
-
-        
-        free_config(config);
-        free(branch_config);
+        curr_remote = curr_remote->next;
         free(url);
     }
+    free_config(config);
+    free_hash_table(remote_table, free);
+}
     
     // list_node_t *ref_node = key_set(ref_to_hash);
 
 
     // finish_wants(transport);
 
-    
-}
