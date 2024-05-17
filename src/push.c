@@ -247,6 +247,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
             printf("Branch: %s was not found\n", branch);
             exit(1);
         }
+        printf("branch hash: %s\n", curr_hash);
         set_remote_ref(remote, ref, curr_hash);
         good_refs = good_refs->next;
         free(branch);
