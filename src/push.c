@@ -195,6 +195,8 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             exit(1);
         }
 
+        char *curr_hash_copy = strdup(curr_hash);
+
         char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
 
         // TODO: Handle deleting the ref
@@ -203,10 +205,13 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         //     printf("hash to push: %s\n", hashes_to_push[i]);
         //     old_hash = hashes_to_push[i];
         // }
-        send_update(transport, ref, remote_hash, curr_hash);
+
+        printf("curr hash update %s\n", curr_hash_copy);
+
+        send_update(transport, ref, remote_hash, curr_hash_copy);
+        free(curr_hash_copy);
 
         // send one update for each branch
-        printf("curr hash update %s\n", curr_hash);
 
 
 
