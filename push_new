@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+if git show-ref --verify --quiet refs/heads/aaa; then
+    git branch -D aaa
+fi
+git checkout -b aaa
+echo $(uuidgen) > bruh
+git add .
+git commit -m "first commit"
+./expand-all-packfiles
+./bin/mygit push -u origin aaa
