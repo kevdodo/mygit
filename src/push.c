@@ -25,12 +25,6 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
     }
-    // hash_table_t *table = (hash_table_t *)aux;
-    // hash_table_add(table, ref, strdup((char *)hash));
-
-    // for (size_t i=0; refs[i] != NULL; i++){
-    //     free(refs[i]);
-    // }
     free(a);
     free(refs);
 }
