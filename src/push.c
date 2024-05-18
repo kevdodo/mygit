@@ -345,13 +345,14 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
     // Create the "merge" value
     char merge[1000];
     snprintf(merge, sizeof(merge), "refs/heads/%s", branch_name);
-    new_section->properties[1].value = strdup("a");//strdup(merge);
+    new_section->properties[1].value = strdup(merge);
 
     return new_config;
 }
 
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
+    free("bruh");
     if (set_remote != NULL){
         printf("yuh\n");
         config_t *config = read_config();
