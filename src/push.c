@@ -106,7 +106,7 @@ char *get_remote(config_t *config, char * branch){
 
     config_section_t * branch_sec = get_branch_section(config, branch);
     if (branch_sec == NULL){
-        printf("branch %s doesn't have a config section\n", branch);
+        printf("fatal: The current branch '%s' has no upstream branch.\n", branch);
         exit(1);
     }
     // TODO: "If a branch is new, it may not have a config section yet;"
@@ -199,6 +199,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         }
 
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
+            set_remote_ref(remote, ref, curr_hash);;
             printf("Already up to date\n");       
         } else {
             char *curr_hash_copy = strdup(curr_hash);            
