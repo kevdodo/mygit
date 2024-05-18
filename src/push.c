@@ -39,11 +39,11 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
     printf("hash %s\n", hash);
     commit_t *commit = read_commit(hash);
     if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
-        // free_commit(commit);
+        free_commit(commit);
         return;
     }
     if (hash_table_contains(hash_table, hash)){
-        // free_commit(commit);
+        free_commit(commit);
         return;
     }
     hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
