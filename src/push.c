@@ -360,7 +360,9 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         for (size_t i=0; i < branch_count; i++){
             char *branch_name = branch_names[i];
             // Create a new config with the added section
-            if (get_branch_section(config, branch_name) != NULL){
+            config_section_t *conf_sec =  get_branch_section(config, branch_name);
+            printf("conf sec name: %s\n", conf_sec->name);
+            if (conf_sec != NULL){
                 continue;
             }
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
