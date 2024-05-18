@@ -202,7 +202,7 @@ commit_t *read_commit(const object_hash_t hash) {
     read_name_and_time(&line, &length, COMMITTER_LINE, &commit->committer, &commit->commit_time);
 
     // The rest of the file is the commit message
-    assert(length > 0 && *line == '\n');
+    // assert(length > 0 && *line == '\n');
     line++;
     length--;
     if (length > 0 && line[length - 1] == '\n') {

@@ -35,43 +35,30 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     free(refs);
 }
 
-char **get_commit_hashes_to_push(char *hash, char *remote_hash){
+void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remote_hash){
+    printf("hash %s\n", hash);
     commit_t *commit = read_commit(hash);
-    char **hashes = malloc(sizeof(char *));
-    hashes[0] = strdup(hash);
-    size_t count = 1;
+    if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
+        return;
+    }
+    if (hash_table_contains(hash_table, hash)){
+        return;
+    }
+    hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
 
     // needs to work with merge thingies
-    while (commit != NULL){
-        object_hash_t *parent_hashes = commit->parent_hashes;
-        printf("commit %s\n", hash);
-        if (commit->parents > 0){
-            // Check if the current hash is the remote hash
-            if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
-                break;
-            }
-
-            // Add the current hash to the array
-            hashes = realloc(hashes, sizeof(char *) * (count + 1));
-            hashes[count] = strdup(hash);
-            count++;
-
-            memcpy(hash, &(parent_hashes[0]), sizeof(object_hash_t));
-
-            free_commit(commit);
-
-            commit = read_commit(hash);
-        } else {
-            free_commit(commit);
-            commit = NULL;
+    printf("commit %s\n", hash);
+    if (commit->parents > 0){
+        // Check if the current hash is the remote hash
+        for (size_t i=0; i < commit->parents; i++){
+            char * parent_hash = commit->parent_hashes[i];
+            get_commit_hashes_to_push(hash_table, parent_hash, remote_hash);
         }
+        // Add the current hash to the array
     }
+    
+    free_commit(commit);
 
-    // Add a NULL pointer at the end of the array
-    hashes = realloc(hashes, sizeof(char *) * (count + 1));
-    hashes[count] = NULL;
-
-    return hashes;
 }
 
 char *make_head_ref_from_branch(char *branch){
@@ -221,7 +208,9 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         } else {
             char *curr_hash_copy = strdup(curr_hash);
 
-            char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
+            
+            hash_table_t *hashes_to_push = hash_table_init();
+            get_commit_hashes_to_push(hashes_to_push, curr_hash, remote_hash);
 
             printf("curr hash update %s\n", curr_hash_copy);
 
@@ -230,10 +219,16 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
             // send one update for each branch
             
-            // TODO: Not efficient think of a better way????
-            for (size_t i=0; hashes_to_push[i] != NULL; i++){
-                add_hashes_and_content(hashes_to_push[i], transport, hash_set);
+            list_node_t *hash_to_push = key_set(hashes_to_push);
+            while (hash_to_push != NULL){
+                char * commit_hash = hash_to_push->value;
+                add_hashes_and_content(commit_hash, transport, hash_set);
+
+                hash_to_push = hash_to_push->next;
             }
+            // TODO: Not efficient think of a better way????
+            // for (size_t i=0; hashes_to_push[i] != NULL; i++){
+            // }
         }
         free(ref);
         branch = branch->next;
