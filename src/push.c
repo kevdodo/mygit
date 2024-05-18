@@ -353,7 +353,6 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
     if (set_remote != NULL){
-        printf("yuh\n");
         config_t *config = read_config();
         if (get_remote_section(config, set_remote) == NULL){
             printf("error: src refspec %s does not match any\n", set_remote);
@@ -365,16 +364,12 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             printf("branch name: %s\n", branch_name);
 
             config_section_t *config_sec = get_branch_section(config, branch_name);
-            // if (config_sec != NULL){
-            //     printf("????\n");
-            //     set_property_value(config_sec, "remote", set_remote);
-            //     write_config(config);
-            //     // while (true){
-            //     //     printf("yooooo what is up guys \n");
-            //     // }
-            //     continue;
-            // } else{
-
+            if (config_sec != NULL){
+                printf("????\n");
+                set_property_value(config_sec, "remote", set_remote);
+                write_config(config);
+                continue;
+            } else{
                 config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
                 write_config(new_config);
 
@@ -383,7 +378,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 // Free the old config and set the new one as the current config
                 free_config(config);
                 config = new_config;
-            // }
+            }
         }
         // free_config(config);
     }
