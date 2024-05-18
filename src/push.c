@@ -85,7 +85,6 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
         // if (strcmp("104e6a4a7a0872bd86e1ecfd8a44835f221a638a", tree_entry.hash) == 0){
         //     printf("WE GOT EM : %s\n", tree_entry.name);
         // }
-
         if (tree_entry.mode == MODE_DIRECTORY || tree_entry.mode == MODE_EXECUTABLE || tree_entry.mode == MODE_FILE || tree_entry.mode == MODE_SYMLINK){
             hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
         }
