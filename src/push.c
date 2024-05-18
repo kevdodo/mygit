@@ -197,8 +197,6 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             }
         }
 
-        
-
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
@@ -411,6 +409,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         start_pack(transport, num_objects);
         push_pack(hash_set, transport);
+        
         finish_pack(transport);
 
         linked_list_t *successful_refs = init_linked_list();
