@@ -197,6 +197,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             }
         }
 
+
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
@@ -204,10 +205,11 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             exit(1);
         }
 
-        char *curr_hash_copy = strdup(curr_hash);
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
-            return NULL;
+            printf("Already up to date\n");
+            // return NULL;
         }
+        char *curr_hash_copy = strdup(curr_hash);
 
         char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
 
@@ -222,6 +224,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             add_hashes_and_content(hashes_to_push[i], transport, hash_set);
         }
+        free(ref);
         branch = branch->next;
     }
     finish_updates(transport);
@@ -420,6 +423,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         close_transport(transport);
 
         free_linked_list(successful_refs, free);
+        free_hash_table(hash_set, NULL);
 
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
         curr_remote = curr_remote->next;
