@@ -188,8 +188,11 @@ void status(void) {
     
     if (!found){
         free(hash);
-        printf("couldn't find head!!!\n");
-        exit(1);
+        // printf("couldn't find head!!!\n");
+        // exit(1);
+        while (true){
+            printf("hiiii\n")
+        }
         // todo: worry about the memory leaks
     } else {
         head_commit = read_commit(hash);
