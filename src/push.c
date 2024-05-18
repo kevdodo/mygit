@@ -39,15 +39,15 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
     printf("hash %s\n", hash);
     commit_t *commit = read_commit(hash);
     if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
-        free_commit(commit);
+        // free_commit(commit);
         return;
     }
     if (hash_table_contains(hash_table, hash)){
-        free_commit(commit);
+        // free_commit(commit);
         return;
     }
     hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
-    
+
 
     // needs to work with merge thingies
     printf("commit %s\n", hash);
@@ -227,7 +227,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
                 hash_to_push = hash_to_push->next;
             }
-            free_hash_table(hashes_to_push, NULL);
+            // free_hash_table(hashes_to_push, NULL);
             // TODO: Not efficient think of a better way????
             // for (size_t i=0; hashes_to_push[i] != NULL; i++){
             // }
@@ -381,7 +381,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             free_config(config);
             config = new_config;
         }
-        free_config(config);
+        // free_config(config);
     }
 
     if (branch_count == 0 && branch_names == NULL){
