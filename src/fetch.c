@@ -52,6 +52,8 @@ void fetch_remote(const char *remote_name, config_section_t *remote) {
 
     while (true){
         printf("yooooo what is up guys \n");
+
+        
     }
     // char *url = get_url(remote);
     // printf("url: %s\n", url);
