@@ -82,12 +82,10 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
     tree_t *tree = read_tree(tree_hash);
     for (size_t i=0; i < tree->entry_count; i++){
         tree_entry_t tree_entry = tree->entries[i];
-        // if (strcmp("104e6a4a7a0872bd86e1ecfd8a44835f221a638a", tree_entry.hash) == 0){
-        //     printf("WE GOT EM : %s\n", tree_entry.name);
-        // }
-        if (tree_entry.mode == MODE_DIRECTORY || tree_entry.mode == MODE_EXECUTABLE || tree_entry.mode == MODE_FILE || tree_entry.mode == MODE_SYMLINK){
-            hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
+        if (strcmp("104e6a4a7a0872bd86e1ecfd8a44835f221a638a", tree_entry.hash) == 0){
+            printf("WE GOT EM : %s\n", tree_entry.name);
         }
+        hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
         if (tree_entry.mode == MODE_DIRECTORY){
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
         }
@@ -360,9 +358,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         for (size_t i=0; i < branch_count; i++){
             char *branch_name = branch_names[i];
             // Create a new config with the added section
-            config_section_t *conf_sec =  get_branch_section(config, branch_name);
-            printf("conf sec name: %s\n", conf_sec->name);
-            if (conf_sec != NULL){
+            if (get_branch_section(config, branch_name) != NULL){
                 continue;
             }
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
