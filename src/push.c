@@ -182,7 +182,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
-        if (my_remote_hash == "" && remote_hash == NULL){
+        if (strcmp(my_remote_hash,  "") == 0 && remote_hash == NULL){
 
         } else {
             if (my_remote_hash != NULL && (strcmp(remote_hash, my_remote_hash) != 0) ){
