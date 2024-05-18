@@ -187,7 +187,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         if (strcmp(my_remote_hash, ZERO_HASH) == 0 && remote_hash == NULL){
             printf("lets gooooo\n");
         } else {
-            if (my_remote_hash != NULL && (strcmp(remote_hash, my_remote_hash) != 0) ){
+            if ((strcmp(remote_hash, my_remote_hash) != 0) ){
                 printf("you gotta fetch first\n");
                 exit(1);
             }
