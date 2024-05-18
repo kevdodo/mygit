@@ -206,9 +206,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
             printf("Already up to date\n");       
         } else {
-            char *curr_hash_copy = strdup(curr_hash);
-
-            
+            char *curr_hash_copy = strdup(curr_hash);            
             hash_table_t *hashes_to_push = hash_table_init();
             get_commit_hashes_to_push(hashes_to_push, curr_hash, remote_hash);
 
@@ -226,6 +224,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
                 hash_to_push = hash_to_push->next;
             }
+            free_hash_table(hashes_to_push, NULL);
             // TODO: Not efficient think of a better way????
             // for (size_t i=0; hashes_to_push[i] != NULL; i++){
             // }
@@ -377,7 +376,9 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
             // Free the old config and set the new one as the current config
             free_config(config);
+            config = new_config;
         }
+        free_config(config);
     }
 
     if (branch_count == 0 && branch_names == NULL){
