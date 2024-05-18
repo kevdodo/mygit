@@ -227,7 +227,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
                 hash_to_push = hash_to_push->next;
             }
-            // free_hash_table(hashes_to_push, NULL);
+            free_hash_table(hashes_to_push, NULL);
             // TODO: Not efficient think of a better way????
             // for (size_t i=0; hashes_to_push[i] != NULL; i++){
             // }
