@@ -43,6 +43,8 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
     hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
 
 
+
+
     // needs to work with merge thingies
     printf("commit %s\n", hash);
     if (commit->parents > 0){
