@@ -10,4 +10,4 @@ echo $(uuidgen) > bruh
 git add .
 git commit -m "first commit"
 ./expand-all-packfiles
-./bin/mygit push -u origin aaa
+./bin/mygit push -u zadie aaa
