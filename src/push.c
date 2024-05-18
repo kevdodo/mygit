@@ -173,7 +173,6 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         bool found = get_remote_ref(remote, branch_name, my_remote_hash);
         if (!found){
             printf("branch %s remote was not found\n", branch_name);
-            // exit(1);
             set_remote_ref(remote, branch_name, ZERO_HASH);
         }
 
@@ -408,6 +407,8 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         config_section_t *remote_sec = get_remote_section(config, remote);
         if (remote_sec == NULL){
             printf("config couldn't find thee remote\n");
+            while (true){
+            }
             exit(1);
         }
         char *url = get_url(remote_sec);
