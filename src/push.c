@@ -165,10 +165,12 @@ void push_pack(hash_table_t *hash_set, transport_t *transport){
         size_t length;
         uint8_t *contents = read_object(hash, &type, &length);
 
-        printf("contents %s\n", contents);
+        // printf("contents %s\n", contents);
+        if (contents != NULL){
+            send_pack_object(transport, type, contents, length);
+            free(contents);
+        }
 
-        send_pack_object(transport, type, contents, length);
-        free(contents);
         
         hash_node = hash_node->next;
     }
