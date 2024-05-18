@@ -98,12 +98,12 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
 
 void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_table_t* hash_set){
 
-    hash_table_add(hash_set, strdup(commit_hash), "yoooo");
+    hash_table_add(hash_set, commit_hash, "yoooo");
 
     commit_t *commit = read_commit(commit_hash);
 
-    char * tree_hash = strdup(commit->tree_hash);
-    hash_table_add(hash_set, strdup(tree_hash), "yoooo");
+    char * tree_hash = commit->tree_hash;
+    hash_table_add(hash_set, tree_hash, "yoooo");
 
     add_hash_list_tree(tree_hash, transport, hash_set);
     free_commit(commit);
