@@ -11,6 +11,8 @@
 #include "transport.h"
 #include "util.h"
 
+// char *ZERO_HASH = "0000000000000000000000000000000000000000";
+
 
 void ermm2(char *ref, object_hash_t hash, void *aux){
     // printf("ref received: %s\n", ref);
@@ -182,8 +184,8 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
-        if (strcmp(my_remote_hash,  "") == 0 && remote_hash == NULL){
-
+        if (strcmp(my_remote_hash, ZERO_HASH) == 0 && remote_hash == NULL){
+            printf("lets gooooo\n");
         } else {
             if (my_remote_hash != NULL && (strcmp(remote_hash, my_remote_hash) != 0) ){
                 printf("you gotta fetch first\n");
@@ -360,14 +362,10 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
             write_config(new_config);
 
-            object_hash_t zero_hash;
-            memset(zero_hash, '\0', sizeof(object_hash_t));
-
-            set_remote_ref(set_remote, branch_name, zero_hash);
+            set_remote_ref(set_remote, branch_name, ZERO_HASH);
 
             // Free the old config and set the new one as the current config
             free_config(config);
-            return;
         }
     }
 

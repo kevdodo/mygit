@@ -191,5 +191,6 @@ void finish_pack(transport_t *);
 typedef void (*updated_ref_receiver_t)(char *ref, void *aux);
 
 void check_updates(transport_t *, updated_ref_receiver_t receiver, void *aux);
+extern const object_hash_t ZERO_HASH;
 
 #endif // #ifndef TRANSPORT_H
