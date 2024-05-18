@@ -185,15 +185,18 @@ void status(void) {
     bool found = head_to_hash(head, *detached, hash);
     hash_table_t *commit_table = hash_table_init();
     commit_t *head_commit;
+
+    bool has_head = true;
     
     if (!found){
-        free(hash);
+        // free(hash);
         // printf("couldn't find head!!!\n");
         // exit(1);
-        while (true){
-            printf("hiiii\n");
-        }
+        // while (true){
+        //     printf("hiiii\n");
+        // }
         // todo: worry about the memory leaks
+        has_head = false;
     } else {
         head_commit = read_commit(hash);
         object_hash_t tree_hash;
@@ -226,7 +229,9 @@ void status(void) {
         }
     }
     // TODO WHY IS THIS UNNECESSARY???
-    free_commit(head_commit);
+    if (has_head){
+        free_commit(head_commit);
+    }
     free(detached);
     free(head);
     free(hash);
