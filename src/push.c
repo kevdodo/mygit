@@ -199,7 +199,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         }
 
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
-            set_remote_ref(remote, ref, curr_hash);
+            set_remote_ref(remote, branch_name, curr_hash);
             printf("Already up to date\n");       
         } else {
             char *curr_hash_copy = strdup(curr_hash);            
