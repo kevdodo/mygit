@@ -103,7 +103,7 @@ char *get_branch_config(char *branch){
 }
 
 char *get_remote(config_t *config, char * branch){
-    
+
     config_section_t * branch_sec = get_branch_section(config, branch);
     if (branch_sec == NULL){
         printf("branch %s doesn't have a config section\n", branch);
@@ -352,7 +352,9 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
 
 
 void push(size_t branch_count, const char **branch_names, const char *set_remote) {
-
+    while (true){
+        printf("yooooo what is up guys \n");
+    }
     if (set_remote != NULL){
         printf("yuh\n");
         config_t *config = read_config();
