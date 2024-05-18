@@ -361,7 +361,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
             write_config(new_config);
 
             object_hash_t zero_hash;
-            memset(zero_hash, 0, sizeof(object_hash_t));
+            memset(zero_hash, '\0', sizeof(object_hash_t));
 
             set_remote_ref(set_remote, branch_name, zero_hash);
 
