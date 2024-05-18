@@ -388,7 +388,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 config = new_config;
             }
         }
-        free_config(config);
+        // free_config(config);
     }
 
     if (branch_count == 0 && branch_names == NULL){
