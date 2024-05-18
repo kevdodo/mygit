@@ -119,12 +119,10 @@ char *get_remote(config_t *config, char * branch){
     // TODO: "If a branch is new, it may not have a config section yet;"
 
     char *remote = get_property_value(branch_sec, "remote");
-    char *merge = get_property_value(branch_sec, "merge");
     if (remote == NULL){
         printf("failed to push to branch %s, does not exist in config\n", branch);
         exit(1);
     }
-    printf("we need to push to  : %s\n", remote);
     return remote;
 }
 
@@ -176,6 +174,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
     while (branch != NULL){
         char * branch_name = branch->value;
         object_hash_t my_remote_hash;
+        memcpy(my_remote_hash, ZERO_HASH, sizeof(my_remote_hash));
         bool found = get_remote_ref(remote, branch_name, my_remote_hash);
         if (!found){
             printf("branch %s remote was not found\n", branch_name);
@@ -253,23 +252,23 @@ void receive_updated_refs(char *ref, void *aux){
 }
 
 // maps the branches to it's hashes
-hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
-    list_node_t *curr_branch = branches->head;
+// hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
+//     list_node_t *curr_branch = branches->head;
 
-    hash_table_t *remote_hash_refs = hash_table_init();
-    while (curr_branch != NULL){
-        char *branch_name = curr_branch->value;
+//     hash_table_t *remote_hash_refs = hash_table_init();
+//     while (curr_branch != NULL){
+//         char *branch_name = curr_branch->value;
         
-        object_hash_t hash;
-        bool found_branch = get_branch_ref(branch_name, hash);
-        if (!found_branch){
-            printf("COuld not find branch\n");
-        }
-        hash_table_add(remote_hash_refs, branch_name, strdup(hash));
-        curr_branch = curr_branch->next;
-    }
-    return remote_hash_refs;
-}
+//         object_hash_t hash;
+//         bool found_branch = get_branch_ref(branch_name, hash);
+//         if (!found_branch){
+//             printf("COuld not find branch\n");
+//         }
+//         hash_table_add(remote_hash_refs, branch_name, strdup(hash));
+//         curr_branch = curr_branch->next;
+//     }
+//     return remote_hash_refs;
+// }
 
 
 
@@ -378,17 +377,18 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 set_property_value(config_sec, "remote", set_remote);
                 write_config(config);
                 continue;
+            } else{
+                config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
+                write_config(new_config);
+
+                set_remote_ref(set_remote, branch_name, ZERO_HASH);
+
+                // Free the old config and set the new one as the current config
+                free_config(config);
+                config = new_config;
             }
-            config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
-            write_config(new_config);
-
-            set_remote_ref(set_remote, branch_name, ZERO_HASH);
-
-            // Free the old config and set the new one as the current config
-            free_config(config);
-            config = new_config;
         }
-        // free_config(config);
+        free_config(config);
     }
 
     if (branch_count == 0 && branch_names == NULL){
