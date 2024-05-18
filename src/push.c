@@ -205,7 +205,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         }
 
         char *curr_hash_copy = strdup(curr_hash);
-        if (strcmp(curr_hash, remote_hash) == 0){
+        if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
             return NULL;
         }
 
@@ -402,25 +402,25 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         hash_table_t *hash_set = push_branches_for_remote(branch_list, remote, ref_to_hash, transport);
         if (hash_set == NULL){
             close_transport(transport);
-        } else {
-            size_t num_objects = hash_table_size(hash_set);
-
-            start_pack(transport, num_objects);
-            push_pack(hash_set, transport);
-
-            finish_pack(transport);
-
-            linked_list_t *successful_refs = init_linked_list();
-
-            check_updates(transport, receive_updated_refs, successful_refs);
-
-            set_remote_branch_success(successful_refs, remote);
-
-            close_transport(transport);
-
-            free_linked_list(successful_refs, free);
         }
         
+        size_t num_objects = hash_table_size(hash_set);
+
+        start_pack(transport, num_objects);
+        push_pack(hash_set, transport);
+
+        finish_pack(transport);
+
+        linked_list_t *successful_refs = init_linked_list();
+
+        check_updates(transport, receive_updated_refs, successful_refs);
+
+        set_remote_branch_success(successful_refs, remote);
+
+        close_transport(transport);
+
+        free_linked_list(successful_refs, free);
+
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
         curr_remote = curr_remote->next;
         free(url);
