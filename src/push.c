@@ -38,6 +38,7 @@ char **get_commit_hashes_to_push(char *hash, char *remote_hash){
     hashes[0] = strdup(hash);
     size_t count = 1;
 
+    // needs to work with merge thingies
     while (commit != NULL){
         object_hash_t *parent_hashes = commit->parent_hashes;
         printf("commit %s\n", hash);
@@ -81,6 +82,9 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
     tree_t *tree = read_tree(tree_hash);
     for (size_t i=0; i < tree->entry_count; i++){
         tree_entry_t tree_entry = tree->entries[i];
+        if (strcmp("104e6a4a7a0872bd86e1ecfd8a44835f221a638a", tree_entry.hash) == 0){
+            printf("WE GOT EM : %s\n", tree_entry.name);
+        }
         hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
         if (tree_entry.mode == MODE_DIRECTORY){
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
@@ -208,10 +212,10 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
         // TODO: Handle deleting the ref
         // char *old_hash = remote_hash;
-        for (size_t i=0; hashes_to_push[i] != NULL; i++){
-            printf("hash to push: %s\n", hashes_to_push[i]);
-            // old_hash = hashes_to_push[i];
-        }
+        // for (size_t i=0; hashes_to_push[i] != NULL; i++){
+        //     printf("hash to push: %s\n", hashes_to_push[i]);
+        //     old_hash = hashes_to_push[i];
+        // }
 
         printf("curr hash update %s\n", curr_hash_copy);
 
