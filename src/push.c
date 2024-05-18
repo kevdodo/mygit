@@ -51,7 +51,6 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
             char * parent_hash = commit->parent_hashes[i];
             get_commit_hashes_to_push(hash_table, parent_hash, remote_hash);
         }
-        // Add the current hash to the array
     }
     
     free_commit(commit);

@@ -49,44 +49,48 @@ char ** go_through_local_commits(object_hash_t hash, char * hash_fetched){
 }
 
 void fetch_remote(const char *remote_name, config_section_t *remote) {
-    char *url = get_url(remote);
-    printf("url: %s\n", url);
 
-    transport_t * transport = open_transport(FETCH, url);
-    hash_table_t *ref_to_hash = hash_table_init(); 
-    receive_refs(transport, ermm, ref_to_hash);
-    
-    list_node_t *ref_node = key_set(ref_to_hash);
-    printf("remote name: %s\n", remote_name);
-
-
-    while (ref_node != NULL){
-        char *ref = ref_node->value;
-        printf("ref name: %s\n", ref);
-
-        object_hash_t hash; 
-
-        bool remote_ref = get_remote_ref(remote_name, ref, hash);
-        if (!remote_ref){
-            printf("Remote Ref : '%s' not found\n", remote_name);
-            exit(1);
-        }
-
-        // char **local_commits = go_through_local_commits(hash, hash_fetched);
-
-        // for (size_t i=0; local_commits[i] != NULL; i++){
-        //     printf("local commit hash: %s", local_commits[i]);
-        // }
-
-        ref_node = ref_node->next;
+    while (true){
+        printf("yooooo what is up guys \n");
     }
+    // char *url = get_url(remote);
+    // printf("url: %s\n", url);
 
-
-    finish_wants(transport);
-
-    close_transport(transport);
+    // transport_t * transport = open_transport(FETCH, url);
+    // hash_table_t *ref_to_hash = hash_table_init(); 
+    // receive_refs(transport, ermm, ref_to_hash);
     
-    free(url);
+    // list_node_t *ref_node = key_set(ref_to_hash);
+    // printf("remote name: %s\n", remote_name);
+
+
+    // while (ref_node != NULL){
+    //     char *ref = ref_node->value;
+    //     printf("ref name: %s\n", ref);
+
+    //     object_hash_t hash; 
+
+    //     bool remote_ref = get_remote_ref(remote_name, ref, hash);
+    //     if (!remote_ref){
+    //         printf("Remote Ref : '%s' not found\n", remote_name);
+    //         exit(1);
+    //     }
+
+    //     // char **local_commits = go_through_local_commits(hash, hash_fetched);
+
+    //     // for (size_t i=0; local_commits[i] != NULL; i++){
+    //     //     printf("local commit hash: %s", local_commits[i]);
+    //     // }
+
+    //     ref_node = ref_node->next;
+    // }
+
+
+    // finish_wants(transport);
+
+    // close_transport(transport);
+    
+    // free(url);
     // exit(1);
 }
 
