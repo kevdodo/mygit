@@ -18,7 +18,9 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     // printf("ref received: %s\n", ref);
     // printf("hash: %s\n", hash);
 
-    char **refs = split_path_into_directories(strdup(ref));
+    char * a = strdup(ref);
+
+    char **refs = split_path_into_directories(a);
     if (strcmp(refs[1], "heads") == 0){
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
@@ -29,6 +31,7 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     // for (size_t i=0; refs[i] != NULL; i++){
     //     free(refs[i]);
     // }
+    free(a);
     free(refs);
 }
 
@@ -208,9 +211,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         }
 
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
-            printf("Already up to date\n");
-            // return NULL;
-        
+            printf("Already up to date\n");       
         } else {
             char *curr_hash_copy = strdup(curr_hash);
 
@@ -231,12 +232,13 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         free(ref);
         branch = branch->next;
     }
-    if (hash_table_size(hash_set) == 0){
+    finish_updates(transport);
+    size_t brodie = hash_table_size(hash_set);
+    if (brodie == 0){
         free_hash_table(hash_set, NULL);
         return NULL;
     }
 
-    finish_updates(transport);
 
     return hash_set;
 }
@@ -412,28 +414,31 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         assert(branch_list != NULL);
         
         hash_table_t *hash_set = push_branches_for_remote(branch_list, remote, ref_to_hash, transport);
+
         if (hash_set == NULL){
             close_transport(transport);
+        } else {
+            // CLEAN UP THIS 
+            size_t num_objects = hash_table_size(hash_set);
+
+            start_pack(transport, num_objects);
+            push_pack(hash_set, transport);
+
+            finish_pack(transport);
+
+            linked_list_t *successful_refs = init_linked_list();
+
+            check_updates(transport, receive_updated_refs, successful_refs);
+
+            set_remote_branch_success(successful_refs, remote);
+
+            close_transport(transport);
+
+            free_linked_list(successful_refs, free);
+            free_hash_table(hash_set, NULL);
         }
-        
-        size_t num_objects = hash_table_size(hash_set);
 
-        start_pack(transport, num_objects);
-        push_pack(hash_set, transport);
-
-        finish_pack(transport);
-
-        linked_list_t *successful_refs = init_linked_list();
-
-        check_updates(transport, receive_updated_refs, successful_refs);
-
-        set_remote_branch_success(successful_refs, remote);
-
-        close_transport(transport);
-
-        free_linked_list(successful_refs, free);
-        free_hash_table(hash_set, NULL);
-
+        free_hash_table(ref_to_hash, free);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
         curr_remote = curr_remote->next;
         free(url);
