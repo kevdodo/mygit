@@ -85,7 +85,7 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
         if (strcmp("104e6a4a7a0872bd86e1ecfd8a44835f221a638a", tree_entry.hash) == 0){
             printf("WE GOT EM : %s\n", tree_entry.name);
         }
-        hash_table_add(hash_list, strdup(tree_entry.hash), "yooo");
+        hash_table_add(hash_list, tree_entry.hash, "yooo");
         if (tree_entry.mode == MODE_DIRECTORY){
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
         }
@@ -163,6 +163,7 @@ void push_pack(hash_table_t *hash_set, transport_t *transport){
         uint8_t *contents = read_object(hash, &type, &length);
 
         send_pack_object(transport, type, contents, length);
+        free(contents);
         
         hash_node = hash_node->next;
     }
@@ -179,7 +180,8 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         bool found = get_remote_ref(remote, branch_name, my_remote_hash);
         if (!found){
             printf("branch %s remote was not found\n", branch_name);
-            exit(1);
+            // exit(1);
+            set_remote_ref(remote, branch_name, ZERO_HASH);
         }
 
         printf("branch: %s\n", branch_name);
@@ -188,7 +190,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
-        if (strcmp(my_remote_hash, ZERO_HASH) == 0){
+        if (strcmp(my_remote_hash, ZERO_HASH) == 0 || remote_hash == NULL){
             printf("lets gooooo\n");
         } else {
             if ((strcmp(remote_hash, my_remote_hash) != 0) ){
@@ -208,25 +210,32 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
             printf("Already up to date\n");
             // return NULL;
-        }
-        char *curr_hash_copy = strdup(curr_hash);
-
-        char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
-
-        printf("curr hash update %s\n", curr_hash_copy);
-
-        send_update(transport, ref, remote_hash, curr_hash_copy);
-        free(curr_hash_copy);
-
-        // send one update for each branch
         
-        // TODO: Not efficient think of a better way????
-        for (size_t i=0; hashes_to_push[i] != NULL; i++){
-            add_hashes_and_content(hashes_to_push[i], transport, hash_set);
+        } else {
+            char *curr_hash_copy = strdup(curr_hash);
+
+            char **hashes_to_push = get_commit_hashes_to_push(curr_hash, remote_hash);
+
+            printf("curr hash update %s\n", curr_hash_copy);
+
+            send_update(transport, ref, remote_hash, curr_hash_copy);
+            free(curr_hash_copy);
+
+            // send one update for each branch
+            
+            // TODO: Not efficient think of a better way????
+            for (size_t i=0; hashes_to_push[i] != NULL; i++){
+                add_hashes_and_content(hashes_to_push[i], transport, hash_set);
+            }
         }
         free(ref);
         branch = branch->next;
     }
+    if (hash_table_size(hash_set) == 0){
+        free_hash_table(hash_set, NULL);
+        return NULL;
+    }
+
     finish_updates(transport);
 
     return hash_set;
