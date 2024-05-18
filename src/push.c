@@ -219,9 +219,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         free(curr_hash_copy);
 
         // send one update for each branch
-
-
-
+        
         // TODO: Not efficient think of a better way????
         for (size_t i=0; hashes_to_push[i] != NULL; i++){
             add_hashes_and_content(hashes_to_push[i], transport, hash_set);
