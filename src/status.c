@@ -76,6 +76,7 @@ char **get_all_files_in_directory() {
 void print_staged_for_commit(index_file_t *idx_file, hash_table_t *commit_table){
 
     list_node_t *curr_node = key_set(idx_file->entries);
+    bool first = false;
 
     while (curr_node != NULL){
         char *file_name = curr_node->value;
@@ -83,11 +84,19 @@ void print_staged_for_commit(index_file_t *idx_file, hash_table_t *commit_table)
 
         char *hash_commit = (char *) hash_table_get(commit_table, file_name);
         if (hash_commit == NULL) {
+            if (!first){
+                printf("Staged for commit:\n");
+                first = true;
+            }
             // in the index, not in the commit 
             printf("\tnew file: %s\n", file_name);
         } else{
             // The hashes are different, indicating modified
             if (strcmp(idx_entry->sha1, hash_commit) != 0){
+                if (!first){
+                    printf("Staged for commit:\n");
+                    first = true;
+                }
                 printf("\tmodified: %s\n", file_name);
             }
             // otherwise they're the same file
@@ -103,12 +112,64 @@ void print_staged_for_commit(index_file_t *idx_file, hash_table_t *commit_table)
 
         if (!hash_table_contains(idx_file->entries, file_name)){
             // index file doesn't have it, but commit does
+            if (!first){
+                printf("Staged for commit:\n");
+                first = true;
+            }
             printf("\tdeleted: %s\n", file_name);
         }
         commit_node = commit_node->next;
     }
+    if (first){
+        printf("\n");
+    }
 }
 
+
+void print_not_staged_for_commit(index_file_t *idx_file, char **files, hash_table_t *work_tree){
+    bool first = false;
+    for (int i = 0; files[i] != NULL; i++) {
+        char *file_path = files[i];
+        char *file_contents = get_file_contents(file_path);
+
+        object_hash_t hash;
+        get_object_hash(BLOB, file_contents, strlen(file_contents), hash);
+
+        hash_table_add(work_tree, file_path, (char *) hash);
+        if (hash_table_contains(idx_file->entries, file_path)){
+            // printf("yuhhhh\n");
+            index_entry_t *index_entry = hash_table_get(idx_file->entries, file_path);
+            if (strcmp(hash, index_entry->sha1) != 0){
+                // printf("idx_hash  %s\n", index_entry->sha1);
+                // printf("file hash %s\n",  hash);
+                if (!first){
+                    printf("Not staged for commit:\n");
+                    first = true;
+                }
+                printf("\tmodified: %s\n", file_path);
+            }
+        }
+        free(file_contents);
+    }
+
+
+    list_node_t *curr_node2 = key_set(idx_file->entries);
+
+    // iterating through the index file to see if one has gotten deleted
+    while (curr_node2 != NULL){
+        char *file_name = curr_node2->value;
+        if (!hash_table_contains(work_tree, file_name)){
+            if (!first){
+                printf("Not staged for commit:\n");
+            }
+            printf("\tdeleted: %s\n", file_name);
+        }
+        curr_node2 = curr_node2->next;
+    }
+    if (first){
+        printf("\n");
+    }
+}
 
 void status(void) {
     bool *detached = malloc(sizeof(bool));
@@ -142,51 +203,22 @@ void status(void) {
 
     index_file_t *idx_file = read_index_file();
 
-    printf("Staged for commit:\n");
     print_staged_for_commit(idx_file, commit_table);
 
-    char **files = get_all_files_in_directory();
 
+    char **files = get_all_files_in_directory();
     hash_table_t *work_tree = hash_table_init();
 
-    printf("Not staged for commit:\n");
-    for (int i = 0; files[i] != NULL; i++) {
-        // printf("%s\n", files[i]);
-        char *file_path = files[i];
-        char *file_contents = get_file_contents(file_path);
+    print_not_staged_for_commit(idx_file, files, work_tree);
 
-        object_hash_t hash;
-        get_object_hash(BLOB, file_contents, strlen(file_contents), hash);
-
-        hash_table_add(work_tree, file_path, (char *) hash);
-        if (hash_table_contains(idx_file->entries, file_path)){
-            // printf("yuhhhh\n");
-            index_entry_t *index_entry = hash_table_get(idx_file->entries, file_path);
-            if (strcmp(hash, index_entry->sha1) != 0){
-                // printf("idx_hash  %s\n", index_entry->sha1);
-                // printf("file hash %s\n",  hash);
-                printf("\tmodified: %s\n", file_path);
-            }
-        }
-        free(file_contents);
-    }
-
-
-    list_node_t *curr_node2 = key_set(idx_file->entries);
-
-    // iterating through the index file to see if one has gotten deleted
-    while (curr_node2 != NULL){
-        char *file_name = curr_node2->value;
-        if (!hash_table_contains(work_tree, file_name)){
-            printf("\tdeleted: %s\n", file_name);
-        }
-        curr_node2 = curr_node2->next;
-    }
-
-    printf("Untracked files:\n");
+    bool first = false;
     for (int i = 0; files[i] != NULL; i++) {
         char *file_path = files[i];
         if (!hash_table_contains(idx_file->entries, file_path)){
+            if (!first){
+                printf("Untracked files:\n");
+                first = true;
+            }
             printf("\t%s\n", file_path);
         }
     }
