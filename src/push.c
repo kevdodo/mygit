@@ -345,7 +345,7 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
     // Create the "merge" value
     char merge[1000];
     snprintf(merge, sizeof(merge), "refs/heads/%s", branch_name);
-    new_section->properties[1].value = strdup(merge);
+    new_section->properties[1].value = strdup("a");//strdup(merge);
 
     return new_config;
 }
