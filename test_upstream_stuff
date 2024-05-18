@@ -9,6 +9,7 @@ git checkout -b aaa
 echo $(uuidgen) > bruh
 git add .
 git commit -m "first commit"
+./expand-all-packfiles
 git push -u origin aaa
 git push origin --delete aaa
 git checkout master
