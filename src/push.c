@@ -179,7 +179,6 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
         printf("branch: %s\n", branch_name);
         char *ref = make_head_ref_from_branch(branch_name);
-        printf("whaaaaa %s\n", ref);
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
