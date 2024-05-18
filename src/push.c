@@ -182,11 +182,16 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
+        if (my_remote_hash == "" && remote_hash == NULL){
 
-        if (my_remote_hash != NULL && (strcmp(remote_hash, my_remote_hash) != 0) ){
-            printf("you gotta fetch first\n");
-            exit(1);
+        } else {
+            if (my_remote_hash != NULL && (strcmp(remote_hash, my_remote_hash) != 0) ){
+                printf("you gotta fetch first\n");
+                exit(1);
+            }
         }
+
+        
 
         object_hash_t curr_hash;
         bool found_branch = get_branch_ref(branch_name, curr_hash);
@@ -201,10 +206,10 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
         // TODO: Handle deleting the ref
         // char *old_hash = remote_hash;
-        // for (size_t i=0; hashes_to_push[i] != NULL; i++){
-        //     printf("hash to push: %s\n", hashes_to_push[i]);
-        //     old_hash = hashes_to_push[i];
-        // }
+        for (size_t i=0; hashes_to_push[i] != NULL; i++){
+            printf("hash to push: %s\n", hashes_to_push[i]);
+            // old_hash = hashes_to_push[i];
+        }
 
         printf("curr hash update %s\n", curr_hash_copy);
 
