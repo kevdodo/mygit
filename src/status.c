@@ -191,7 +191,7 @@ void status(void) {
         // printf("couldn't find head!!!\n");
         // exit(1);
         while (true){
-            printf("hiiii\n")
+            printf("hiiii\n");
         }
         // todo: worry about the memory leaks
     } else {
