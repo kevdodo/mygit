@@ -106,15 +106,13 @@ char *get_remote(config_t *config, char * branch){
     config_section_t * branch_sec = get_branch_section(config, branch);
     if (branch_sec == NULL){
         printf("fatal: The current branch '%s' has no upstream branch.\n", branch);
-        // exit(1);
-        return NULL;
+        exit(0);
     }
     // TODO: "If a branch is new, it may not have a config section yet;"
 
     char *remote = get_property_value(branch_sec, "remote");
     if (remote == NULL){
         printf("failed to push to branch %s, does not exist in config\n", branch);
-        // exit(1);
         return NULL;
     }
     return remote;
@@ -124,7 +122,7 @@ char *get_merge(config_t *config, char * branch){
     config_section_t * branch_sec = get_branch_section(config, branch);
     if (branch_sec == NULL){
         printf("fatal: The current branch '%s' has no upstream branch.\n", branch);
-        // exit(1);
+        exit(0);
     }
     // TODO: "If a branch is new, it may not have a config section yet;"
 
@@ -132,6 +130,7 @@ char *get_merge(config_t *config, char * branch){
     if (merge == NULL){
         printf("failed to push to branch %s, merge is not in the config\n", branch);
         // exit(1);
+        return NULL;
     }
     return merge;
 }
@@ -202,9 +201,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
         if (my_remote_hash == NULL){
-            while (true){
-                printf("aa\n");
-            }
+            printf("noooo wayyyy\n");
         }
         if (strcmp(my_remote_hash, ZERO_HASH) == 0 || remote_hash == NULL){
             printf("lets gooooo\n");
