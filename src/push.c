@@ -25,8 +25,8 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
     // }
-    // free(a);
-    // free(refs);
+    free(a);
+    free(refs);
 }
 
 void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remote_hash){
@@ -150,7 +150,7 @@ void push_pack(hash_table_t *hash_set, transport_t *transport){
         // printf("contents %s\n", contents);
         if (contents != NULL){
             send_pack_object(transport, type, contents, length);
-            // free(contents);
+            free(contents);
         }
 
         
@@ -206,7 +206,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             printf("curr hash update %s\n", curr_hash_copy);
 
             send_update(transport, ref, remote_hash, curr_hash_copy);
-            // free(curr_hash_copy);
+            free(curr_hash_copy);
 
             // send one update for each branch
             
@@ -222,7 +222,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             // for (size_t i=0; hashes_to_push[i] != NULL; i++){
             // }
         }
-        // free(ref);
+        free(ref);
         branch = branch->next;
     }
     finish_updates(transport);
@@ -280,7 +280,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
         printf("curr hash: %s\n", curr_hash);
         set_remote_ref(remote, branch, curr_hash);
         good_refs = good_refs->next;
-        // free(branch);
+        free(branch);
     }
 }
 
@@ -331,6 +331,8 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
     new_section->name = strdup(section_name);
     new_section->property_count = 2;
     new_section->properties = malloc(new_section->property_count * sizeof(config_property_t));
+
+    // set_property_value()
 
     // Initialize the "remote" property
     new_section->properties[0].key = strdup("remote");
@@ -438,14 +440,14 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
             close_transport(transport);
 
-            // free_linked_list(successful_refs, free);
-            // free_hash_table(hash_set, NULL);
+            free_linked_list(successful_refs, free);
+            free_hash_table(hash_set, NULL);
         }
 
         // free_hash_table(ref_to_hash, free);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
         curr_remote = curr_remote->next;
-        // free(url);
+        free(url);
     }
 
     // free_config(config);
