@@ -21,10 +21,10 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
     char * a = strdup(ref);
 
     char **refs = split_path_into_directories(a);
-    if (strcmp(refs[1], "heads") == 0){
+    // if (strcmp(refs[1], "heads") == 0){
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
-    }
+    // }
     // free(a);
     // free(refs);
 }
@@ -42,9 +42,6 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
     }
     hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
 
-
-
-
     // needs to work with merge thingies
     printf("commit %s\n", hash);
     if (commit->parents > 0){
@@ -55,7 +52,7 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
         }
     }
     
-    // free_commit(commit);
+    free_commit(commit);
 
 }
 
@@ -80,7 +77,7 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
         }
     }
-    // free_tree(tree);
+    free_tree(tree);
 }
 
 void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_table_t* hash_set){
