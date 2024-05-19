@@ -142,9 +142,9 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
         char *branch_name = branch_names[i];
         char *remote = get_remote(config, branch_name);
         char *merge =  get_merge(config, branch_name);
-        if (remote == NULL || merge == NULL){
-            continue;
-        }
+        // if (remote == NULL || merge == NULL){
+        //     continue;
+        // }
         // get_property_value()
         linked_list_t *pushes = hash_table_get(remote_table, remote);
         if (pushes == NULL){
