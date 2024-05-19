@@ -360,7 +360,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
                 // Free the old config and set the new one as the current config
                 // free_config(config);
-                config = new_config;
+                config = read_config();
             }
         }
         // free_config(config);
