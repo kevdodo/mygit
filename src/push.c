@@ -178,13 +178,16 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         char *remote_hash = hash_table_get(ref_to_hash, ref);
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
+        if (my_remote_hash == NULL){
+                while (true){
+                    printf("aa\n");
+                }
+        }
         if (strcmp(my_remote_hash, ZERO_HASH) == 0 || remote_hash == NULL){
             printf("lets gooooo\n");
         } else {
             if ((strcmp(remote_hash, my_remote_hash) != 0) ){
-                while (true){
-                    printf("aa\n");
-                }
+
                 printf("you gotta fetch first\n");
                 exit(1);
             }
