@@ -182,6 +182,9 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             printf("lets gooooo\n");
         } else {
             if ((strcmp(remote_hash, my_remote_hash) != 0) ){
+                while (true){
+                    printf("aa\n");
+                }
                 printf("you gotta fetch first\n");
                 exit(1);
             }
@@ -404,8 +407,6 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         config_section_t *remote_sec = get_remote_section(config, remote);
         if (remote_sec == NULL){
             printf("config couldn't find thee remote\n");
-            while (true){
-            }
             exit(1);
         }
         char *url = get_url(remote_sec);
