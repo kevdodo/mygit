@@ -25,19 +25,19 @@ void ermm2(char *ref, object_hash_t hash, void *aux){
         hash_table_t *table = (hash_table_t *)aux;
         hash_table_add(table, ref, strdup((char *)hash));    
     }
-    free(a);
-    free(refs);
+    // free(a);
+    // free(refs);
 }
 
 void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remote_hash){
     printf("hash %s\n", hash);
     commit_t *commit = read_commit(hash);
     if (remote_hash != NULL && strcmp(hash, remote_hash) == 0) {
-        free_commit(commit);
+        // free_commit(commit);
         return;
     }
     if (hash_table_contains(hash_table, hash)){
-        free_commit(commit);
+        // free_commit(commit);
         return;
     }
     hash_table_add(hash_table, hash, "aaaaaaaaaaaa");
@@ -55,7 +55,7 @@ void get_commit_hashes_to_push(hash_table_t* hash_table, char *hash, char *remot
         }
     }
     
-    free_commit(commit);
+    // free_commit(commit);
 
 }
 
@@ -80,7 +80,7 @@ void add_hash_list_tree(char *tree_hash, transport_t *transport,  hash_table_t* 
             add_hash_list_tree(tree_entry.hash, transport, hash_list);
         }
     }
-    free_tree(tree);
+    // free_tree(tree);
 }
 
 void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_table_t* hash_set){
@@ -93,7 +93,7 @@ void add_hashes_and_content(char *commit_hash, transport_t *transport, hash_tabl
     hash_table_add(hash_set, tree_hash, "yoooo");
 
     add_hash_list_tree(tree_hash, transport, hash_set);
-    free_commit(commit);
+    // free_commit(commit);
 }
 
 char *get_branch_config(char *branch){
@@ -153,7 +153,7 @@ void push_pack(hash_table_t *hash_set, transport_t *transport){
         // printf("contents %s\n", contents);
         if (contents != NULL){
             send_pack_object(transport, type, contents, length);
-            free(contents);
+            // free(contents);
         }
 
         
@@ -209,7 +209,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             printf("curr hash update %s\n", curr_hash_copy);
 
             send_update(transport, ref, remote_hash, curr_hash_copy);
-            free(curr_hash_copy);
+            // free(curr_hash_copy);
 
             // send one update for each branch
             
@@ -220,18 +220,18 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
 
                 hash_to_push = hash_to_push->next;
             }
-            free_hash_table(hashes_to_push, NULL);
+            // free_hash_table(hashes_to_push, NULL);
             // TODO: Not efficient think of a better way????
             // for (size_t i=0; hashes_to_push[i] != NULL; i++){
             // }
         }
-        free(ref);
+        // free(ref);
         branch = branch->next;
     }
     finish_updates(transport);
     size_t brodie = hash_table_size(hash_set);
     if (brodie == 0){
-        free_hash_table(hash_set, NULL);
+        // free_hash_table(hash_set, NULL);
         return NULL;
     }
 
@@ -283,7 +283,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
         printf("curr hash: %s\n", curr_hash);
         set_remote_ref(remote, branch, curr_hash);
         good_refs = good_refs->next;
-        free(branch);
+        // free(branch);
     }
 }
 
@@ -306,7 +306,7 @@ char **get_all_branches(size_t *branch_count, linked_list_t* branches) {
         i++;
     }
 
-    free_linked_list(branches, free);
+    // free_linked_list(branches, free);
 
     return branch_names;
 }
@@ -441,18 +441,18 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
             close_transport(transport);
 
-            free_linked_list(successful_refs, free);
-            free_hash_table(hash_set, NULL);
+            // free_linked_list(successful_refs, free);
+            // free_hash_table(hash_set, NULL);
         }
 
-        free_hash_table(ref_to_hash, free);
+        // free_hash_table(ref_to_hash, free);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
         curr_remote = curr_remote->next;
-        free(url);
+        // free(url);
     }
 
-    free_config(config);
-    free_hash_table(remote_table, (free_func_t) free_linked_list_char);
+    // free_config(config);
+    // free_hash_table(remote_table, (free_func_t) free_linked_list_char);
 }
     
 
