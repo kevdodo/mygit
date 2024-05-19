@@ -179,9 +179,9 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         printf("remote_hash: %s\n", remote_hash);
         printf("my hash: %s\n", my_remote_hash);
         if (my_remote_hash == NULL){
-                while (true){
-                    printf("aa\n");
-                }
+            while (true){
+                printf("aa\n");
+            }
         }
         if (strcmp(my_remote_hash, ZERO_HASH) == 0 || remote_hash == NULL){
             printf("lets gooooo\n");
@@ -247,27 +247,6 @@ void receive_updated_refs(char *ref, void *aux){
     linked_list_t *ll = (linked_list_t *) aux;
     list_push_back(ll, strdup(ref));
 }
-
-// maps the branches to it's hashes
-// hash_table_t *get_remote_hash_refs(char *curr_remote, linked_list_t *branches){
-//     list_node_t *curr_branch = branches->head;
-
-//     hash_table_t *remote_hash_refs = hash_table_init();
-//     while (curr_branch != NULL){
-//         char *branch_name = curr_branch->value;
-        
-//         object_hash_t hash;
-//         bool found_branch = get_branch_ref(branch_name, hash);
-//         if (!found_branch){
-//             printf("COuld not find branch\n");
-//         }
-//         hash_table_add(remote_hash_refs, branch_name, strdup(hash));
-//         curr_branch = curr_branch->next;
-//     }
-//     return remote_hash_refs;
-// }
-
-
 
 void set_remote_branch_success(linked_list_t *successful_branches, char *remote){
     list_node_t * good_refs = successful_branches->head;
@@ -380,7 +359,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 set_remote_ref(set_remote, branch_name, ZERO_HASH);
 
                 // Free the old config and set the new one as the current config
-                // free_config(config);
+                free_config(config);
                 config = new_config;
             }
         }
