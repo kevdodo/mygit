@@ -351,6 +351,9 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 printf("????\n");
                 set_property_value(config_sec, "remote", set_remote);
                 write_config(config);
+                while (true){
+                    printf("aa\n");
+                }
                 continue;
             } else{
                 config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
@@ -404,26 +407,25 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
         if (hash_set == NULL){
             close_transport(transport);
-        } else {
-            // CLEAN UP THIS 
-            size_t num_objects = hash_table_size(hash_set);
-
-            start_pack(transport, num_objects);
-            push_pack(hash_set, transport);
-
-            finish_pack(transport);
-
-            linked_list_t *successful_refs = init_linked_list();
-
-            check_updates(transport, receive_updated_refs, successful_refs);
-
-            set_remote_branch_success(successful_refs, remote);
-
-            close_transport(transport);
-
-            free_linked_list(successful_refs, free);
-            free_hash_table(hash_set, NULL);
         }
+        // CLEAN UP THIS 
+        size_t num_objects = hash_table_size(hash_set);
+
+        start_pack(transport, num_objects);
+        push_pack(hash_set, transport);
+
+        finish_pack(transport);
+
+        linked_list_t *successful_refs = init_linked_list();
+
+        check_updates(transport, receive_updated_refs, successful_refs);
+
+        set_remote_branch_success(successful_refs, remote);
+
+        close_transport(transport);
+
+        free_linked_list(successful_refs, free);
+        free_hash_table(hash_set, NULL);
 
         // free_hash_table(ref_to_hash, free);
         // NEED TO UPDATE THE CURRENT REF AND MERGE WHATEVER
