@@ -378,8 +378,11 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
 
             config_section_t *config_sec = get_branch_section(config, branch_name);
             if (config_sec != NULL){
-                printf("????\n");
                 set_property_value(config_sec, "remote", set_remote);
+                // Create the "merge" value
+                char merge[2000];
+                snprintf(merge, sizeof(merge), "refs/heads/%s", branch_name);
+                set_property_value(config_sec, "merge",strdup(merge));
                 write_config(config);
                 continue;
             } else{
