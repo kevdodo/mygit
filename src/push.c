@@ -150,7 +150,7 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
 
         char *remote = get_property_value(branch_sec, "remote");
 
-        char *merge =  get_property_value(branch_sec, "remote");
+        char *merge =  get_property_value(branch_sec, "merge");
         // if (remote == NULL || merge == NULL){
         //     continue;
         // }
