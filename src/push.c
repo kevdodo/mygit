@@ -143,17 +143,22 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
         char *branch_name = branch_names[i];
 
         config_section_t * branch_sec = get_branch_section(config, branch_name);
+
+        char * remote = NULL;
         if (branch_sec == NULL){
-            printf("fatal: The current branch '%s' has no upstream branch.\n", branch_name);
-            exit(1);
+            // printf("fatal: The current branch '%s' has no upstream branch.\n", branch_name);
+            // exit(1);
+        } else {
+            remote = get_property_value(branch_sec, "remote");
+            // char *merge =  get_property_value(branch_sec, "merge");
         }
 
-        char *remote = get_property_value(branch_sec, "remote");
-        
-        char *merge =  get_property_value(branch_sec, "merge");
+        // "For your implementation, only concern yourself with the “remote” value"
+
         if (remote == NULL){
             printf("fatal: The current branch '%s' has no upstream branch.\n", branch_name);
-            continue;
+            // continue;
+            remote = strdup("origin");
         }
         // get_property_value()
         linked_list_t *pushes = hash_table_get(remote_table, remote);
