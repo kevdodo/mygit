@@ -106,14 +106,14 @@ char *get_remote(config_t *config, char * branch){
     config_section_t * branch_sec = get_branch_section(config, branch);
     if (branch_sec == NULL){
         printf("fatal: The current branch '%s' has no upstream branch.\n", branch);
-        exit(1);
+        return;
     }
     // TODO: "If a branch is new, it may not have a config section yet;"
 
     char *remote = get_property_value(branch_sec, "remote");
     if (remote == NULL){
         printf("failed to push to branch %s, does not exist in config\n", branch);
-        exit(1);
+        return;
     }
     return remote;
 }
@@ -189,7 +189,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
             if ((strcmp(remote_hash, my_remote_hash) != 0) ){
 
                 printf("you gotta fetch first\n");
-                exit(1);
+                return;
             }
         }
 
@@ -198,7 +198,7 @@ hash_table_t *push_branches_for_remote(linked_list_t *branch_list, char *remote,
         bool found_branch = get_branch_ref(branch_name, curr_hash);
         if (!found_branch){
             printf("Branch: %s was not found\n", branch_name);
-            exit(1);
+            return;
         }
 
         if (remote_hash != NULL && strcmp(curr_hash, remote_hash) == 0){
@@ -259,7 +259,7 @@ void set_remote_branch_success(linked_list_t *successful_branches, char *remote)
         bool found_branch = get_branch_ref(branch, curr_hash);
         if (!found_branch){
             printf("Branch: %s was not found\n", branch);
-            exit(1);
+            return;
         }
 
         printf("curr hash: %s\n", curr_hash);
@@ -389,7 +389,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         config_section_t *remote_sec = get_remote_section(config, remote);
         if (remote_sec == NULL){
             printf("config couldn't find thee remote\n");
-            exit(1);
+            return;
         }
         char *url = get_url(remote_sec);
         printf("url: %s\n", url);
