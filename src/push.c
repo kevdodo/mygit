@@ -117,6 +117,22 @@ char *get_remote(config_t *config, char * branch){
     }
     return remote;
 }
+char *get_merge(config_t *config, char * branch){
+
+    config_section_t * branch_sec = get_branch_section(config, branch);
+    if (branch_sec == NULL){
+        printf("fatal: The current branch '%s' has no upstream branch.\n", branch);
+        exit(1);
+    }
+    // TODO: "If a branch is new, it may not have a config section yet;"
+
+    char *merge = get_property_value(branch_sec, "merge");
+    if (merge == NULL){
+        printf("failed to push to branch %s, merge is not in the config\n", branch);
+        exit(1);
+    }
+    return merge;
+}
 
 // get the remotes and the branches that correspond to that remote
 hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_t * config){
@@ -124,6 +140,7 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
     for (size_t i = 0; i < branch_count; i++){
         char *branch_name = branch_names[i];
         char *remote = get_remote(config, branch_name);
+        char *merge =  get_merge(config, branch_name);
         linked_list_t *pushes = hash_table_get(remote_table, remote);
         if (pushes == NULL){
             linked_list_t* ll = init_linked_list();
