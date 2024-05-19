@@ -354,18 +354,16 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 // while (true){
                 //     printf("aa\n");
                 // }
-                exit(1);
                 continue;
-            } else{
-                config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
-                write_config(new_config);
+            } 
+            config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
+            write_config(new_config);
 
-                set_remote_ref(set_remote, branch_name, ZERO_HASH);
+            set_remote_ref(set_remote, branch_name, ZERO_HASH);
 
-                // Free the old config and set the new one as the current config
-                // free_config(config);
-                config = read_config();
-            }
+            // Free the old config and set the new one as the current config
+            // free_config(config);
+            config = read_config();
         }
         // free_config(config);
     }
