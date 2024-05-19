@@ -354,6 +354,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 // while (true){
                 //     printf("aa\n");
                 // }
+                config = read_config();
                 continue;
             } 
             config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
