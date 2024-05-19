@@ -113,6 +113,7 @@ char *get_remote(config_t *config, char * branch){
     char *remote = get_property_value(branch_sec, "remote");
     if (remote == NULL){
         printf("failed to push to branch %s, does not exist in config\n", branch);
+        exit(1);
         return NULL;
     }
     return remote;
@@ -129,8 +130,8 @@ char *get_merge(config_t *config, char * branch){
     char *merge = get_property_value(branch_sec, "merge");
     if (merge == NULL){
         printf("failed to push to branch %s, merge is not in the config\n", branch);
-        // exit(1);
-        return NULL;
+        exit(1);
+        // return NULL;
     }
     return merge;
 }
