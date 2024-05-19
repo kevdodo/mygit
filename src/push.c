@@ -140,7 +140,7 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
     for (size_t i = 0; i < branch_count; i++){
         char *branch_name = branch_names[i];
         char *remote = get_remote(config, branch_name);
-        char *merge =  get_merge(config, branch_name);
+        // char *merge =  get_merge(config, branch_name);
         linked_list_t *pushes = hash_table_get(remote_table, remote);
         if (pushes == NULL){
             linked_list_t* ll = init_linked_list();
