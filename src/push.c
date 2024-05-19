@@ -325,14 +325,12 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
     // Initialize the new section
     config_section_t *new_section = &new_config->sections[new_config->section_count - 1];
 
-    char section_name[1000];
+    char section_name[2000];
     snprintf(section_name, sizeof(section_name), "branch \"%s\"", branch_name);
 
     new_section->name = strdup(section_name);
     new_section->property_count = 2;
     new_section->properties = malloc(new_section->property_count * sizeof(config_property_t));
-
-    // set_property_value()
 
     // Initialize the "remote" property
     new_section->properties[0].key = strdup("remote");
@@ -343,7 +341,7 @@ config_t *copy_config_and_add_section(const config_t *old_config, const char *br
     new_section->properties[1].key = strdup("merge");
 
     // Create the "merge" value
-    char merge[1000];
+    char merge[2000];
     snprintf(merge, sizeof(merge), "refs/heads/%s", branch_name);
     new_section->properties[1].value = strdup(merge);
 
