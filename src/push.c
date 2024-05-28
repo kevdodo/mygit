@@ -154,7 +154,7 @@ hash_table_t *get_remotes(size_t branch_count, const char**branch_names, config_
         }
 
         // "For your implementation, only concern yourself with the “remote” value"
-
+        // BRUHHHHHHH
         if (remote == NULL){
             printf("fatal: The current branch '%s' has no upstream branch.\n", branch_name);
             // continue;
@@ -374,6 +374,7 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
         config_t *config = read_config();
         if (get_remote_section(config, set_remote) == NULL){
             printf("error: src refspec %s does not match any\n", set_remote);
+            free_config(config);
             return;
         }
         for (size_t i=0; i < branch_count; i++){
@@ -390,18 +391,19 @@ void push(size_t branch_count, const char **branch_names, const char *set_remote
                 set_property_value(config_sec, "merge",strdup(merge));
                 write_config(config);
                 continue;
-            } else{
-                config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
-                write_config(new_config);
+            } 
 
-                set_remote_ref(set_remote, branch_name, ZERO_HASH);
+            config_t *new_config = copy_config_and_add_section(config, branch_name, set_remote);
+            write_config(new_config);
 
-                // Free the old config and set the new one as the current config
-                // free_config(config);
-                config = read_config();
-            }
+            // Set it to zero to be changed later
+            set_remote_ref(set_remote, branch_name, ZERO_HASH);
+
+            // Free the old config and set the new one as the current config
+            free_config(config);
+            config = read_config();
         }
-        // free_config(config);
+        free_config(config);
     }
 
     if (branch_count == 0 && branch_names == NULL){
